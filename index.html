@@ -18,13 +18,13 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
     }
 
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
       }
 
       to {
@@ -59,6 +59,30 @@
       }
     }
 
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes crossFade {
+      0% {
+        opacity: 0;
+        transform: scale(0.9) rotate(-3deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+      }
+    }
+
     .fade-in {
       animation: fadeIn 0.5s ease-out;
     }
@@ -71,6 +95,14 @@
       animation: float 3s ease-in-out infinite;
     }
 
+    .slide-in {
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .cross-fade {
+      animation: crossFade 0.5s ease-out;
+    }
+
     .gradient-bg {
       background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
     }
@@ -80,6 +112,9 @@
       max-height: 480px;
       display: flex;
       flex-direction: column;
+      background: rgba(23, 23, 23, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .question-animation {
@@ -99,7 +134,7 @@
 
     .progress-bar-container {
       height: 8px;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
       overflow: hidden;
     }
@@ -108,6 +143,25 @@
       height: 100%;
       background: linear-gradient(90deg, #0077B5, #00A0DC);
       transition: width 0.3s ease;
+    }
+
+    .tooltip {
+      position: relative;
+    }
+
+    .tooltip:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      z-index: 10;
     }
 
     @media (max-width: 640px) {
@@ -120,13 +174,48 @@
         height: 120px;
       }
     }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    [role="button"]:focus-visible,
+    button:focus-visible {
+      outline: 2px solid #00A0DC;
+      outline-offset: 2px;
+    }
   </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+<body class="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
   <div id="root"></div>
 
   <script type="text/babel" data-type="module">
+    // Preload images
+    const preloadImages = (images) => {
+      images.forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
+    };
+
+    // Audio feedback
+    const playSound = (type) => {
+      const audio = new Audio(
+        type === 'click'
+          ? 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YWoGAACBhYqFbF1fdH2Fh4NtYGBsfYWLhHFjY2h3gIWDdGZma3N8gIB3a2ptcHZ6enl0b3Fyd3t8e3h0dXZ5fX5/fXt6e3x+gIGBf359fX6AgYKCgICAgICChISEg4GBgYGDhYWFhIKCgoKEhoaGhYSEhISGh4eHhoWFhYWGiIiIh4aGhoaHiYmJiIeHh4eIiYmJiYiIiIiIiouLioiIiIiKi4uLioqKioqLjIyMi4qKioqLjY2NjIuLi4uMjY2NjYyMjIyNjo6OjY2NjY2Oj4+Pjo6Ojo6PkJCQj4+Pj4+QkZGRkJCQkJCRkpKSkZGRkZGSk5OTkpKSkpKTlJSUk5OTk5OUlZWVlJSUlJSVlpaWlZWVlZWWl5eXlpaWlpaXmJiYl5eXl5eYmZmZmJiYmJiZmpqamZmZmZmam5ubmpqampqbnJycm5ubm5ucnZ2dnJycnJydnp6enZ2dnZ2en5+fnp6enp6foKCgn5+fn5+goaGhoKCgoKChoqKioaGhoaGio6OjoqKioqKjpKSko6Ojo6OkpaWlpKSkpKSlpqamp6enp6eoqaqqqampqamqq6urrKysrKytrq6ur6+vr6+wsrKys7Ozs7O0tbW1tra2tra3uLi4ubm5ubm6u7u7vLy8vLy9vr6+v7+/v7/AwcHBwsLCwsLDxMTExcXFxcXGx8fHyMjIyMjJysrKy8vLy8vMzc3Nzs7Ozs7P0NDQ0dHR0dHS09PT1NTU1NTV1tbW19fX19fY2dnZ2tra2trb3Nzc3d3d3d3e39/f4ODg4ODh4uLi4+Pj4+Pk5eXl5ubm5ubn6Ojo6enp6enq6+vr7Ozs7Ozt7u7u7+/v7+/w8fHx8vLy8vLz9PT09fX19fX29/f3+Pj4+Pj5+vr6+/v7+/v8/f39/v7+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+          : 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YWoGAACBhYqFbF1fdH2Fh4NtYGBsfYWLhHFjY2h3gIWDdGZma3N8gIB3a2ptcHZ6enl0b3Fyd3t8e3h0dXZ5fX5/fXt6e3x+gIGBf359fX6AgYKCgICAgICChISEg4GBgYGDhYWFhIKCgoKEhoaGhYSEhISGh4eHhoWFhYWGiIiIh4aGhoaHiYmJiIeHh4eIiYmJiYiIiIiIiouLioiIiIiKi4uLioqKioqLjIyMi4qKioqLjY2NjIuLi4uMjY2NjYyMjIyNjo6OjY2NjY2Oj4+Pjo6Ojo6PkJCQj4+Pj4+QkZGRkJCQkJCRkpKSkZGRkZGSk5OTkpKSkpKTlJSUk5OTk5OUlZWVlJSUlJSVlpaWlZWVlZWWl5eXlpaWlpaXmJiYl5eXl5eYmZmZmJiYmJiZmpqamZmZmZmam5ubmpqampqbnJycm5ubm5ucnZ2dnJycnJydnp6enZ2dnZ2en5+fnp6enp6foKCgn5+fn5+goaGhoKCgoKChoqKioaGhoaGio6OjoqKioqKjpKSko6Ojo6OkpaWlpKSkpKSlpqamp6enp6eoqaqqqampqamqq6urrKysrKytrq6ur6+vr6+wsrKys7Ozs7O0tbW1tra2tra3uLi4ubm5ubm6u7u7vLy8vLy9vr6+v7+/v7/AwcHBwsLCwsLDxMTExcXFxcXGx8fHyMjIyMjJysrKy8vLy8vMzc3Nzs7Ozs7P0NDQ0dHR0dHS09PT1NTU1NTV1tbW19fX19fY2dnZ2tra2trb3Nzc3d3d3d3e39/f4ODg4ODh4uLi4+Pj4+Pk5eXl5ubm5ubn6Ojo6enp6enq6+vr7Ozs7Ozt7u7u7+/v7+/w8fHx8vLy8vLz9PT09fX19fX29/f3+Pj4+Pj5+vr6+/v7+/v8/f39/v7+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+      );
+      audio.play().catch(() => { }); // Ignore autoplay restrictions
+    };
+
     // Questions data with animations
     const questionsData = [
       {
@@ -203,68 +292,109 @@
       }
     ];
 
-    // Theme toggle component with fancy animation
-    const ThemeToggle = ({ isDark, onToggle }) => (
-      <button
-        onClick={onToggle}
-        className="fixed top-4 right-4 p-3 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 bg-white dark:bg-gray-800 shadow-lg"
-        aria-label="Toggle theme"
-      >
-        <div className="w-6 h-6 relative">
-          {isDark ? (
-            <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          ) : (
-            <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          )}
-        </div>
-      </button>
+    // Preload all animations
+    preloadImages(questionsData.map(q => q.animation));
+
+    // Social share component
+    const SocialShare = () => (
+      <div className="flex gap-3 justify-center" role="group" aria-label="Sosyal medya paylaşım butonları">
+        <button
+          className="p-2 rounded-full hover:bg-blue-600 transition-colors"
+          aria-label="Twitter'da paylaş"
+          onClick={() => playSound('click')}
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+          </svg>
+        </button>
+        <button
+          className="p-2 rounded-full hover:bg-blue-800 transition-colors"
+          aria-label="LinkedIn'de paylaş"
+          onClick={() => playSound('click')}
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+            <rect x="2" y="9" width="4" height="12" />
+            <circle cx="4" cy="4" r="2" />
+          </svg>
+        </button>
+      </div>
     );
 
-    // Answer button component with icons
-    const AnswerButton = ({ text, onClick, isSelected }) => (
+    // LinkedIn Profile Link component
+    const LinkedInProfileLink = () => (
+      <div className="tooltip" data-tooltip="Yakında!">
+        <button
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors"
+          aria-label="LinkedIn profilini bağla (yakında aktif olacak)"
+          onClick={() => playSound('click')}
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+            <rect x="2" y="9" width="4" height="12" />
+            <circle cx="4" cy="4" r="2" />
+          </svg>
+          Profili Bağla
+        </button>
+      </div>
+    );
+
+    // Theme toggle component
+    const ThemeToggle = ({ isDark, onToggle }) => (
       <button
-        onClick={onClick}
-        className={`
-          px-8 py-4 rounded-xl transition-all duration-300 transform 
-          hover:scale-105 active:scale-95 flex items-center gap-3 
-          ${isSelected
-            ? 'gradient-bg text-white shadow-lg'
-            : 'glass-effect text-gray-800 dark:text-gray-200 hover:shadow-lg'
-          }
-        `}
+        onClick={() => { onToggle(); playSound('click'); }}
+        className="fixed top-4 right-4 p-3 rounded-full transition-all duration-300 transform hover:scale-110 
+          active:scale-95 bg-opacity-20 bg-white backdrop-blur-sm"
+        aria-label={isDark ? "Açık temaya geç" : "Koyu temaya geç"}
       >
-        {text === "Evet" ? (
+        {isDark ? (
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            />
           </svg>
         ) : (
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+            />
           </svg>
         )}
-        {text}
       </button>
     );
 
-    // Progress bar component with improved styling
-    const ProgressBar = ({ current, total }) => (
-      <div className="progress-bar-container">
-        <div
-          className="progress-bar"
-          style={{ width: `${(current / total) * 100}%` }}
-        />
+    // Intro component
+    const Intro = ({ onStart }) => (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card-container p-8 rounded-2xl max-w-2xl w-full text-center cross-fade">
+          <div className="space-y-6">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 
+              bg-clip-text text-transparent">
+              LinkedIn Profil Analizi
+            </h1>
+            <p className="text-xl text-gray-300">
+              Profilinizi profesyonel standartlara göre değerlendirin
+            </p>
+            <button
+              onClick={() => { onStart(); playSound('click'); }}
+              className="gradient-bg text-white px-8 py-4 rounded-xl text-xl font-semibold
+                transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg"
+              aria-label="Değerlendirmeye başla"
+            >
+              Başla
+            </button>
+            <LinkedInProfileLink />
+          </div>
+        </div>
       </div>
     );
 
     // Main App component
     const App = () => {
+      const [started, setStarted] = React.useState(false);
       const [currentQuestion, setCurrentQuestion] = React.useState(0);
       const [answers, setAnswers] = React.useState(new Array(questionsData.length).fill(null));
-      const [isDark, setIsDark] = React.useState(false);
+      const [isDark, setIsDark] = React.useState(true);
       const [score, setScore] = React.useState(0);
 
       React.useEffect(() => {
@@ -275,7 +405,17 @@
         }
       }, [isDark]);
 
+      if (!started) {
+        return (
+          <>
+            <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
+            <Intro onStart={() => setStarted(true)} />
+          </>
+        );
+      }
+
       const handleAnswer = (answer) => {
+        playSound('click');
         const newAnswers = [...answers];
         newAnswers[currentQuestion] = answer;
         setAnswers(newAnswers);
@@ -284,7 +424,6 @@
           setCurrentQuestion(curr => curr + 1);
         }
 
-        // Update score
         const newScore = newAnswers.reduce((total, ans, idx) =>
           total + (ans ? questionsData[idx].score : 0), 0);
         setScore(newScore);
@@ -301,23 +440,16 @@
 
       return (
         <div className="min-h-screen p-4 sm:p-6 md:p-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
-                LinkedIn Profil Değerlendirme
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Profilinizin profesyonellik seviyesini ölçün
-              </p>
-            </div>
+          <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
 
+          <div className="max-w-3xl mx-auto">
             {!isComplete ? (
               <div className="fade-in">
-                <div className="card-container glass-effect rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
+                <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
                   <div className="question-animation float">
                     <img
                       src={questionsData[currentQuestion].animation}
-                      alt="Question animation"
+                      alt=""
                       className="h-full w-auto object-contain rounded-lg"
                     />
                   </div>
@@ -325,54 +457,83 @@
                   <div className="flex-grow">
                     <div className="mb-6">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl">
+                        <span className="text-2xl" role="img" aria-hidden="true">
                           {questionsData[currentQuestion].icon}
                         </span>
-                        <p className="text-xl font-medium text-gray-800 dark:text-white">
+                        <p className="text-xl font-medium text-gray-100">
                           {questionsData[currentQuestion].question}
                         </p>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Soru {currentQuestion + 1}/{questionsData.length} • {questionsData[currentQuestion].score} puan
+                      <p className="text-sm text-gray-400">
+                        Soru {currentQuestion + 1}/{questionsData.length}
                       </p>
                     </div>
 
-                    <ProgressBar current={currentQuestion + 1} total={questionsData.length} />
+                    <div className="progress-bar-container mb-6">
+                      <div
+                        className="progress-bar"
+                        style={{ width: `${((currentQuestion + 1) / questionsData.length) * 100}%` }}
+                        role="progressbar"
+                        aria-valuenow={currentQuestion + 1}
+                        aria-valuemin="0"
+                        aria-valuemax={questionsData.length}
+                      />
+                    </div>
 
-                    <div className="flex justify-center gap-4 mt-6">
-                      <AnswerButton
-                        text="Evet"
+                    <div className="flex justify-center gap-4">
+                      <button
                         onClick={() => handleAnswer(true)}
-                        isSelected={answers[currentQuestion] === true}
-                      />
-                      <AnswerButton
-                        text="Hayır"
+                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                          hover:scale-105 active:scale-95 flex items-center gap-3
+                          ${answers[currentQuestion] === true
+                            ? 'gradient-bg text-white shadow-lg'
+                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                        aria-pressed={answers[currentQuestion] === true}
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Evet
+                      </button>
+                      <button
                         onClick={() => handleAnswer(false)}
-                        isSelected={answers[currentQuestion] === false}
-                      />
+                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                          hover:scale-105 active:scale-95 flex items-center gap-3
+                          ${answers[currentQuestion] === false
+                            ? 'gradient-bg text-white shadow-lg'
+                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                        aria-pressed={answers[currentQuestion] === false}
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Hayır
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="scale-in">
-                <div className="card-container glass-effect rounded-2xl p-8 shadow-xl text-center">
-                  <div className="text-8xl mb-6 float">
+                <div className="card-container rounded-2xl p-8 shadow-xl text-center">
+                  <div className="text-8xl mb-6 float" role="img" aria-hidden="true">
                     {score >= 70 ? "🏆" : score >= 50 ? "🌟" : "🎯"}
                   </div>
-                  <h2 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
-                    {score}/100 Puan
+                  <h2 className="text-4xl font-bold mb-4 text-white">
+                    {score}/100
                   </h2>
-                  <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
+                  <p className="text-xl text-gray-300 mb-8">
                     {getScoreMessage(score)}
                   </p>
+                  <SocialShare />
                   <button
                     onClick={() => {
+                      playSound('click');
                       setCurrentQuestion(0);
                       setAnswers(new Array(questionsData.length).fill(null));
                       setScore(0);
                     }}
-                    className="gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+                    className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
                       hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -389,7 +550,6 @@
       );
     };
 
-    // Render the app
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
