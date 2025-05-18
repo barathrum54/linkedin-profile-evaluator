@@ -117,6 +117,16 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    .question-text {
+      min-height: 80px;
+      max-height: 80px;
+      overflow-y: auto;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
     .question-animation {
       height: 180px;
       width: 100%;
@@ -191,6 +201,18 @@
       outline: 2px solid #00A0DC;
       outline-offset: 2px;
     }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
   </style>
 </head>
 
@@ -198,22 +220,15 @@
   <div id="root"></div>
 
   <script type="text/babel" data-type="module">
+    // Audio feedback with base64 encoded short click sound
+    const clickSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAADAAAGhgBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVWqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr///////////////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAAYbUxJa2AAAAAAAAAAAAAAAAAAAAAP/7UMQAAAesTXBQQwAB0jKkC4lgAIAmSBEChJkJHP/IxGCGIYhkwQgMSAjAhSXA+D4Pg+/pBA0/B8HwfBAEAQdBAEP/DgQ/B8HwfB8EAQBA0EAQBAEH4Pg+D4PvUCAIGggCAIAg/B8HwfB96gQBA0DgQBAEH4Pg+D4Pg+CAP//+D4Pg+D4IAQBA4EAQBB+D4Pg+D4PggCAIHAgCAIAg+D4Pg+D4Pg+CAIAgcCAIAgCAIAg//+CAIAgcCAIAgCAIAg+D4Pg+D4IAgCBwIAgCAIAgCAIP//ggCAIHAgCAIAgCAIAg+D4Pg+D4IAgcCAIAgCAIAgCAIA//8EAQOBAEAQBAEAQfg+D4Pg+D4IgcCAIAgCAIAgCAIAgD//wQBA4EAQBAEAQBB+D4Pg+D4PgiAIAgCAIAgCAIAgCAP//B8EAQBAEAQBAEAQBA0EAQBAEAQBAEAQBAEAQBAEAP/7UMQvg8xldxWPYAAhC6yMexgAA/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8=");
+
     // Preload images
     const preloadImages = (images) => {
       images.forEach(src => {
         const img = new Image();
         img.src = src;
       });
-    };
-
-    // Audio feedback
-    const playSound = (type) => {
-      const audio = new Audio(
-        type === 'click'
-          ? 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YWoGAACBhYqFbF1fdH2Fh4NtYGBsfYWLhHFjY2h3gIWDdGZma3N8gIB3a2ptcHZ6enl0b3Fyd3t8e3h0dXZ5fX5/fXt6e3x+gIGBf359fX6AgYKCgICAgICChISEg4GBgYGDhYWFhIKCgoKEhoaGhYSEhISGh4eHhoWFhYWGiIiIh4aGhoaHiYmJiIeHh4eIiYmJiYiIiIiIiouLioiIiIiKi4uLioqKioqLjIyMi4qKioqLjY2NjIuLi4uMjY2NjYyMjIyNjo6OjY2NjY2Oj4+Pjo6Ojo6PkJCQj4+Pj4+QkZGRkJCQkJCRkpKSkZGRkZGSk5OTkpKSkpKTlJSUk5OTk5OUlZWVlJSUlJSVlpaWlZWVlZWWl5eXlpaWlpaXmJiYl5eXl5eYmZmZmJiYmJiZmpqamZmZmZmam5ubmpqampqbnJycm5ubm5ucnZ2dnJycnJydnp6enZ2dnZ2en5+fnp6enp6foKCgn5+fn5+goaGhoKCgoKChoqKioaGhoaGio6OjoqKioqKjpKSko6Ojo6OkpaWlpKSkpKSlpqamp6enp6eoqaqqqampqamqq6urrKysrKytrq6ur6+vr6+wsrKys7Ozs7O0tbW1tra2tra3uLi4ubm5ubm6u7u7vLy8vLy9vr6+v7+/v7/AwcHBwsLCwsLDxMTExcXFxcXGx8fHyMjIyMjJysrKy8vLy8vMzc3Nzs7Ozs7P0NDQ0dHR0dHS09PT1NTU1NTV1tbW19fX19fY2dnZ2tra2trb3Nzc3d3d3d3e39/f4ODg4ODh4uLi4+Pj4+Pk5eXl5ubm5ubn6Ojo6enp6enq6+vr7Ozs7Ozt7u7u7+/v7+/w8fHx8vLy8vLz9PT09fX19fX29/f3+Pj4+Pj5+vr6+/v7+/v8/f39/v7+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
-          : 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YWoGAACBhYqFbF1fdH2Fh4NtYGBsfYWLhHFjY2h3gIWDdGZma3N8gIB3a2ptcHZ6enl0b3Fyd3t8e3h0dXZ5fX5/fXt6e3x+gIGBf359fX6AgYKCgICAgICChISEg4GBgYGDhYWFhIKCgoKEhoaGhYSEhISGh4eHhoWFhYWGiIiIh4aGhoaHiYmJiIeHh4eIiYmJiYiIiIiIiouLioiIiIiKi4uLioqKioqLjIyMi4qKioqLjY2NjIuLi4uMjY2NjYyMjIyNjo6OjY2NjY2Oj4+Pjo6Ojo6PkJCQj4+Pj4+QkZGRkJCQkJCRkpKSkZGRkZGSk5OTkpKSkpKTlJSUk5OTk5OUlZWVlJSUlJSVlpaWlZWVlZWWl5eXlpaWlpaXmJiYl5eXl5eYmZmZmJiYmJiZmpqamZmZmZmam5ubmpqampqbnJycm5ubm5ucnZ2dnJycnJydnp6enZ2dnZ2en5+fnp6enp6foKCgn5+fn5+goaGhoKCgoKChoqKioaGhoaGio6OjoqKioqKjpKSko6Ojo6OkpaWlpKSkpKSlpqamp6enp6eoqaqqqampqamqq6urrKysrKytrq6ur6+vr6+wsrKys7Ozs7O0tbW1tra2tra3uLi4ubm5ubm6u7u7vLy8vLy9vr6+v7+/v7/AwcHBwsLCwsLDxMTExcXFxcXGx8fHyMjIyMjJysrKy8vLy8vMzc3Nzs7Ozs7P0NDQ0dHR0dHS09PT1NTU1NTV1tbW19fX19fY2dnZ2tra2trb3Nzc3d3d3d3e39/f4ODg4ODh4uLi4+Pj4+Pk5eXl5ubm5ubn6Ojo6enp6enq6+vr7Ozs7Ozt7u7u7+/v7+/w8fHx8vLy8vLz9PT09fX19fX29/f3+Pj4+Pj5+vr6+/v7+/v8/f39/v7+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
-      );
-      audio.play().catch(() => { }); // Ignore autoplay restrictions
     };
 
     // Questions data with animations
@@ -295,13 +310,13 @@
     // Preload all animations
     preloadImages(questionsData.map(q => q.animation));
 
-    // Social share component
+    // Social share component with more icons
     const SocialShare = () => (
-      <div className="flex gap-3 justify-center" role="group" aria-label="Sosyal medya paylaşım butonları">
+      <div className="flex gap-4 justify-center" role="group" aria-label="Sosyal medya paylaşım butonları">
         <button
           className="p-2 rounded-full hover:bg-blue-600 transition-colors"
           aria-label="Twitter'da paylaş"
-          onClick={() => playSound('click')}
+          onClick={() => clickSound.play().catch(() => { })}
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
@@ -310,7 +325,7 @@
         <button
           className="p-2 rounded-full hover:bg-blue-800 transition-colors"
           aria-label="LinkedIn'de paylaş"
-          onClick={() => playSound('click')}
+          onClick={() => clickSound.play().catch(() => { })}
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
@@ -318,56 +333,32 @@
             <circle cx="4" cy="4" r="2" />
           </svg>
         </button>
-      </div>
-    );
-
-    // LinkedIn Profile Link component
-    const LinkedInProfileLink = () => (
-      <div className="tooltip" data-tooltip="Yakında!">
         <button
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors"
-          aria-label="LinkedIn profilini bağla (yakında aktif olacak)"
-          onClick={() => playSound('click')}
+          className="p-2 rounded-full hover:bg-purple-600 transition-colors"
+          aria-label="Instagram'da paylaş"
+          onClick={() => clickSound.play().catch(() => { })}
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-            <rect x="2" y="9" width="4" height="12" />
-            <circle cx="4" cy="4" r="2" />
+            <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6.5-.25a1.25 1.25 0 1 0-2.5 0 1.25 1.25 0 0 0 2.5 0zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
           </svg>
-          Profili Bağla
+        </button>
+        <button
+          className="p-2 rounded-full hover:bg-green-600 transition-colors"
+          aria-label="WhatsApp'ta paylaş"
+          onClick={() => clickSound.play().catch(() => { })}
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+          </svg>
         </button>
       </div>
     );
 
-    // Theme toggle component
-    const ThemeToggle = ({ isDark, onToggle }) => (
-      <button
-        onClick={() => { onToggle(); playSound('click'); }}
-        className="fixed top-4 right-4 p-3 rounded-full transition-all duration-300 transform hover:scale-110 
-          active:scale-95 bg-opacity-20 bg-white backdrop-blur-sm"
-        aria-label={isDark ? "Açık temaya geç" : "Koyu temaya geç"}
-      >
-        {isDark ? (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            />
-          </svg>
-        )}
-      </button>
-    );
-
-    // Intro component
+    // Intro component with centered profile link button
     const Intro = ({ onStart }) => (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card-container p-8 rounded-2xl max-w-2xl w-full text-center cross-fade">
-          <div className="space-y-6">
+          <div className="space-y-8">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 
               bg-clip-text text-transparent">
               LinkedIn Profil Analizi
@@ -375,18 +366,42 @@
             <p className="text-xl text-gray-300">
               Profilinizi profesyonel standartlara göre değerlendirin
             </p>
-            <button
-              onClick={() => { onStart(); playSound('click'); }}
-              className="gradient-bg text-white px-8 py-4 rounded-xl text-xl font-semibold
-                transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg"
-              aria-label="Değerlendirmeye başla"
-            >
-              Başla
-            </button>
-            <LinkedInProfileLink />
+            <div className="space-y-4">
+              <button
+                onClick={() => { onStart(); clickSound.play().catch(() => { }); }}
+                className="w-full gradient-bg text-white px-8 py-4 rounded-xl text-xl font-semibold
+                  transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg"
+                aria-label="Değerlendirmeye başla"
+              >
+                Başla
+              </button>
+              <button
+                className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl
+                  bg-opacity-20 bg-white hover:bg-opacity-30 transition-all duration-300
+                  text-white font-medium"
+                aria-label="LinkedIn profilini bağla (yakında aktif olacak)"
+                onClick={() => clickSound.play().catch(() => { })}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect x="2" y="9" width="4" height="12" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+                Yakında
+              </button>
+            </div>
           </div>
         </div>
       </div>
+    );
+
+    // Footer component
+    const Footer = () => (
+      <footer className="footer">
+        <p className="text-sm text-gray-400">
+          © {new Date().getFullYear()} LinkedIn Profil Değerlendirme. Tüm hakları saklıdır.
+        </p>
+      </footer>
     );
 
     // Main App component
@@ -394,28 +409,10 @@
       const [started, setStarted] = React.useState(false);
       const [currentQuestion, setCurrentQuestion] = React.useState(0);
       const [answers, setAnswers] = React.useState(new Array(questionsData.length).fill(null));
-      const [isDark, setIsDark] = React.useState(true);
       const [score, setScore] = React.useState(0);
 
-      React.useEffect(() => {
-        if (isDark) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }, [isDark]);
-
-      if (!started) {
-        return (
-          <>
-            <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
-            <Intro onStart={() => setStarted(true)} />
-          </>
-        );
-      }
-
       const handleAnswer = (answer) => {
-        playSound('click');
+        clickSound.play().catch(() => { });
         const newAnswers = [...answers];
         newAnswers[currentQuestion] = answer;
         setAnswers(newAnswers);
@@ -438,115 +435,125 @@
         return "Profilinizi geliştirmek için önerilerimizi dikkate alın. 🎯";
       };
 
+      if (!started) {
+        return (
+          <>
+            <Intro onStart={() => setStarted(true)} />
+            <Footer />
+          </>
+        );
+      }
+
       return (
-        <div className="min-h-screen p-4 sm:p-6 md:p-8">
-          <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
-
-          <div className="max-w-3xl mx-auto">
-            {!isComplete ? (
-              <div className="fade-in">
-                <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
-                  <div className="question-animation float">
-                    <img
-                      src={questionsData[currentQuestion].animation}
-                      alt=""
-                      className="h-full w-auto object-contain rounded-lg"
-                    />
-                  </div>
-
-                  <div className="flex-grow">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl" role="img" aria-hidden="true">
-                          {questionsData[currentQuestion].icon}
-                        </span>
-                        <p className="text-xl font-medium text-gray-100">
-                          {questionsData[currentQuestion].question}
-                        </p>
-                      </div>
-                      <p className="text-sm text-gray-400">
-                        Soru {currentQuestion + 1}/{questionsData.length}
-                      </p>
-                    </div>
-
-                    <div className="progress-bar-container mb-6">
-                      <div
-                        className="progress-bar"
-                        style={{ width: `${((currentQuestion + 1) / questionsData.length) * 100}%` }}
-                        role="progressbar"
-                        aria-valuenow={currentQuestion + 1}
-                        aria-valuemin="0"
-                        aria-valuemax={questionsData.length}
+        <>
+          <div className="min-h-screen p-4 sm:p-6 md:p-8">
+            <div className="max-w-3xl mx-auto">
+              {!isComplete ? (
+                <div className="fade-in">
+                  <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
+                    <div className="question-animation float">
+                      <img
+                        src={questionsData[currentQuestion].animation}
+                        alt=""
+                        className="h-full w-auto object-contain rounded-lg"
                       />
                     </div>
 
-                    <div className="flex justify-center gap-4">
-                      <button
-                        onClick={() => handleAnswer(true)}
-                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
-                          hover:scale-105 active:scale-95 flex items-center gap-3
-                          ${answers[currentQuestion] === true
-                            ? 'gradient-bg text-white shadow-lg'
-                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                        aria-pressed={answers[currentQuestion] === true}
-                      >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        Evet
-                      </button>
-                      <button
-                        onClick={() => handleAnswer(false)}
-                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
-                          hover:scale-105 active:scale-95 flex items-center gap-3
-                          ${answers[currentQuestion] === false
-                            ? 'gradient-bg text-white shadow-lg'
-                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                        aria-pressed={answers[currentQuestion] === false}
-                      >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Hayır
-                      </button>
+                    <div className="flex-grow">
+                      <div className="mb-6">
+                        <div className="flex items-start gap-2 mb-2">
+                          <span className="text-2xl" role="img" aria-hidden="true">
+                            {questionsData[currentQuestion].icon}
+                          </span>
+                          <p className="question-text text-xl font-medium text-gray-100">
+                            {questionsData[currentQuestion].question}
+                          </p>
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          Soru {currentQuestion + 1}/{questionsData.length}
+                        </p>
+                      </div>
+
+                      <div className="progress-bar-container mb-6">
+                        <div
+                          className="progress-bar"
+                          style={{ width: `${((currentQuestion + 1) / questionsData.length) * 100}%` }}
+                          role="progressbar"
+                          aria-valuenow={currentQuestion + 1}
+                          aria-valuemin="0"
+                          aria-valuemax={questionsData.length}
+                        />
+                      </div>
+
+                      <div className="flex justify-center gap-4">
+                        <button
+                          onClick={() => handleAnswer(true)}
+                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                            hover:scale-105 active:scale-95 flex items-center gap-3
+                            ${answers[currentQuestion] === true
+                              ? 'gradient-bg text-white shadow-lg'
+                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                          aria-pressed={answers[currentQuestion] === true}
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Evet
+                        </button>
+                        <button
+                          onClick={() => handleAnswer(false)}
+                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                            hover:scale-105 active:scale-95 flex items-center gap-3
+                            ${answers[currentQuestion] === false
+                              ? 'gradient-bg text-white shadow-lg'
+                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                          aria-pressed={answers[currentQuestion] === false}
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          Hayır
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="scale-in">
-                <div className="card-container rounded-2xl p-8 shadow-xl text-center">
-                  <div className="text-8xl mb-6 float" role="img" aria-hidden="true">
-                    {score >= 70 ? "🏆" : score >= 50 ? "🌟" : "🎯"}
+              ) : (
+                <div className="scale-in">
+                  <div className="card-container rounded-2xl p-8 shadow-xl text-center">
+                    <div className="text-8xl mb-6 float" role="img" aria-hidden="true">
+                      {score >= 70 ? "🏆" : score >= 50 ? "🌟" : "🎯"}
+                    </div>
+                    <h2 className="text-4xl font-bold mb-4 text-white">
+                      {score}/100
+                    </h2>
+                    <p className="text-xl text-gray-300 mb-8">
+                      {getScoreMessage(score)}
+                    </p>
+                    <SocialShare />
+                    <button
+                      onClick={() => {
+                        clickSound.play().catch(() => { });
+                        setCurrentQuestion(0);
+                        setAnswers(new Array(questionsData.length).fill(null));
+                        setScore(0);
+                      }}
+                      className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+                        hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Tekrar Başla
+                    </button>
                   </div>
-                  <h2 className="text-4xl font-bold mb-4 text-white">
-                    {score}/100
-                  </h2>
-                  <p className="text-xl text-gray-300 mb-8">
-                    {getScoreMessage(score)}
-                  </p>
-                  <SocialShare />
-                  <button
-                    onClick={() => {
-                      playSound('click');
-                      setCurrentQuestion(0);
-                      setAnswers(new Array(questionsData.length).fill(null));
-                      setScore(0);
-                    }}
-                    className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
-                      hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Tekrar Başla
-                  </button>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+          <Footer />
+        </>
       );
     };
 
