@@ -94,6 +94,49 @@
       }
     }
 
+    @keyframes scoreCount {
+      from {
+        height: 0%;
+      }
+
+      to {
+        height: var(--score-height);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
     .fade-in {
       animation: fadeIn 0.5s ease-out;
     }
@@ -131,7 +174,7 @@
 
     .question-text {
       margin-top: 1rem;
-      min-height: 50px;
+      min-height: 110px;
       height: auto;
       overflow: visible;
       display: block;
@@ -153,8 +196,7 @@
     }
 
     .question-animation img {
-      max-width: 100%;
-      max-height: 100%;
+      width: 100%;
       object-fit: cover;
       border-radius: 0.5rem;
     }
@@ -243,6 +285,143 @@
       background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(10px);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .score-container {
+      height: 300px;
+      width: 60px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(180deg, #00A0DC 0%, #0077B5 100%);
+      border-radius: 30px;
+      animation: scoreCount 3s ease-out forwards;
+    }
+
+    .grade-container {
+      height: 300px;
+      width: 180px;
+      position: relative;
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+
+    .grade-marker {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .grade-marker.active {
+      font-size: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .grade-marker.active[data-grade="S"] {
+      color: #aed6f7;
+      text-shadow: 0 0 10px rgba(174, 214, 247, 0.5);
+      background: rgba(174, 214, 247, 0.1);
+    }
+
+    .grade-marker.active[data-grade="A"] {
+      color: #f7bcae;
+      text-shadow: 0 0 10px rgba(247, 188, 174, 0.5);
+      background: rgba(247, 188, 174, 0.1);
+    }
+
+    .grade-marker.active[data-grade="B"] {
+      color: #d6acd0;
+      text-shadow: 0 0 10px rgba(214, 172, 208, 0.5);
+      background: rgba(214, 172, 208, 0.1);
+    }
+
+    .grade-marker.active[data-grade="C"] {
+      color: #b1c9a7;
+      text-shadow: 0 0 10px rgba(177, 201, 167, 0.5);
+      background: rgba(177, 201, 167, 0.1);
+    }
+
+    .grade-marker.active[data-grade="D"] {
+      color: #dda03f;
+      text-shadow: 0 0 10px rgba(221, 160, 63, 0.5);
+      background: rgba(221, 160, 63, 0.1);
+    }
+
+    .grade-letter {
+      min-width: 32px;
+      text-align: center;
+    }
+
+    .grade-label {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    .grade-marker.active .grade-label {
+      font-size: 1.2rem;
+      opacity: 1;
+    }
+
+    .score-number {
+      font-size: 4rem;
+      font-weight: bold;
+      margin: 1rem 0;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    }
+
+    .score-message {
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+      animation: fadeInUp 0.5s ease-out 3s backwards;
+    }
+
+    .score-number.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loader {
+      width: 80px;
+      height: 80px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: #00A0DC;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 1rem;
+      opacity: 1;
+      transition: opacity 0.3s ease-out;
+    }
+
+    .loader.fade-out {
+      animation: fadeOut 0.3s ease-out forwards;
     }
   </style>
 </head>
@@ -434,12 +613,103 @@
       </footer>
     );
 
+    const ScoreDisplay = ({ score, getScoreMessage, onRestart }) => {
+      const [showLoader, setShowLoader] = React.useState(true);
+
+      React.useEffect(() => {
+        if (isComplete) {
+          const timer = setTimeout(() => {
+            setShowLoader(false);
+          }, 1000);
+          return () => clearTimeout(timer);
+        }
+      }, [isComplete]);
+
+      return (
+        <div className="scale-in">
+          <div className="card-container rounded-2xl p-8 shadow-xl">
+            <div className="flex flex-col items-center">
+              <div className="flex items-center justify-center mb-8">
+                <div className="score-container">
+                  <div
+                    className="score-fill"
+                    style={{ "--score-height": `${score}%` }}
+                  />
+                </div>
+                <div className="grade-container">
+                  <div className={`grade-marker ${score >= 85 ? 'active' : ''}`} data-grade="S">
+                    <div className="grade-letter">S</div>
+                    <div className="grade-label">Profesyonel</div>
+                  </div>
+                  <div className={`grade-marker ${score >= 70 && score < 85 ? 'active' : ''}`} data-grade="A">
+                    <div className="grade-letter">A</div>
+                    <div className="grade-label">Takibe Değer</div>
+                  </div>
+                  <div className={`grade-marker ${score >= 50 && score < 70 ? 'active' : ''}`} data-grade="B">
+                    <div className="grade-letter">B</div>
+                    <div className="grade-label">Fena Değil</div>
+                  </div>
+                  <div className={`grade-marker ${score >= 30 && score < 50 ? 'active' : ''}`} data-grade="C">
+                    <div className="grade-letter">C</div>
+                    <div className="grade-label">Ne iş Belli Değil</div>
+                  </div>
+                  <div className={`grade-marker ${score < 30 ? 'active' : ''}`} data-grade="D">
+                    <div className="grade-letter">D</div>
+                    <div className="grade-label">Sadece Var</div>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                {showLoader && <div className={`loader ${!showLoader ? 'fade-out' : ''}`} />}
+                <div className={`score-number ${!showLoader ? 'visible' : ''}`}>
+                  {score}/100
+                </div>
+              </div>
+              <p className="score-message">
+                {getScoreMessage(score)}
+              </p>
+              <SocialShare />
+              <button
+                onClick={onRestart}
+                className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+                  hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Tekrar Başla
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
     // Main App component
     const App = () => {
       const [started, setStarted] = React.useState(false);
       const [currentQuestion, setCurrentQuestion] = React.useState(0);
       const [answers, setAnswers] = React.useState(new Array(questionsData.length).fill(null));
       const [score, setScore] = React.useState(0);
+      const [showScoreLoader, setShowScoreLoader] = React.useState(true);
+
+      React.useEffect(() => {
+        if (isComplete) {
+          const timer = setTimeout(() => {
+            setShowScoreLoader(false);
+          }, 1000);
+          return () => clearTimeout(timer);
+        }
+      }, [isComplete]);
+
+      const handleRestart = () => {
+        clickSound.play().catch(() => { });
+        setCurrentQuestion(0);
+        setAnswers(new Array(questionsData.length).fill(null));
+        setScore(0);
+        setShowScoreLoader(true);
+      };
 
       const handleAnswer = (answer) => {
         clickSound.play().catch(() => { });
@@ -449,6 +719,11 @@
 
         if (currentQuestion < questionsData.length - 1) {
           setCurrentQuestion(curr => curr + 1);
+        } else {
+          // When the last question is answered, start the loader animation
+          setTimeout(() => {
+            setShowScoreLoader(false);
+          }, 1000);
         }
 
         const newScore = newAnswers.reduce((total, ans, idx) =>
@@ -476,104 +751,140 @@
 
       return (
         <>
-          <div className="min-h-screen p-4 sm:p-6 md:p-8 flex items-center justify-center">            <div className="w-full max-w-3xl">
-            {!isComplete ? (
-              <div className="fade-in">
-                <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
-                  <div className="question-animation float">                      <div className="w-full h-full flex items-center justify-center">                        <img src={questionsData[currentQuestion].animation} alt="" className="max-w-full max-h-full object-contain rounded-lg" />                      </div>                    </div>
+          <div className="min-h-screen p-4 sm:p-6 md:p-8 flex items-center justify-center">
+            <div className="w-full max-w-3xl">
+              {!isComplete ? (
+                <div className="fade-in">
+                  <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
+                    <div className="question-animation float">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <img
+                          src={questionsData[currentQuestion].animation}
+                          alt=""
+                          className="max-w-full max-h-full object-contain rounded-lg"
+                        />
+                      </div>
+                    </div>
 
-                  <div className="flex-grow">
-                    <div className="mb-6">
-                      <div className="flex items-baseline gap-2 mb-2 ">
-                        <span className="text-2xl" role="img" aria-hidden="true">
-                          {questionsData[currentQuestion].icon}
-                        </span>
-                        <p className="question-text text-xl font-medium text-gray-100">
-                          {questionsData[currentQuestion].question}
+                    <div className="flex-grow">
+                      <div className="mb-6">
+                        <div className="flex items-baseline gap-2 mb-2">
+                          <span className="text-2xl" role="img" aria-hidden="true">
+                            {questionsData[currentQuestion].icon}
+                          </span>
+                          <p className="question-text">
+                            {questionsData[currentQuestion].question}
+                          </p>
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          Soru {currentQuestion + 1}/{questionsData.length}
                         </p>
                       </div>
-                      <p className="text-sm text-gray-400">
-                        Soru {currentQuestion + 1}/{questionsData.length}
-                      </p>
-                    </div>
 
-                    <div className="progress-bar-container mb-6">
-                      <div
-                        className="progress-bar"
-                        style={{ width: `${((currentQuestion + 1) / questionsData.length) * 100}%` }}
-                        role="progressbar"
-                        aria-valuenow={currentQuestion + 1}
-                        aria-valuemin="0"
-                        aria-valuemax={questionsData.length}
-                      />
-                    </div>
+                      <div className="progress-bar-container mb-6">
+                        <div
+                          className="progress-bar"
+                          style={{ width: `${((currentQuestion + 1) / questionsData.length) * 100}%` }}
+                          role="progressbar"
+                          aria-valuenow={currentQuestion + 1}
+                          aria-valuemin="0"
+                          aria-valuemax={questionsData.length}
+                        />
+                      </div>
 
-                    <div className="flex justify-center gap-4">
-                      <button
-                        onClick={() => handleAnswer(true)}
-                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                      <div className="flex justify-center gap-4">
+                        <button
+                          onClick={() => handleAnswer(true)}
+                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
                             hover:scale-105 active:scale-95 flex items-center gap-3
                             ${answers[currentQuestion] === true
-                            ? 'gradient-bg text-white shadow-lg'
-                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                        aria-pressed={answers[currentQuestion] === true}
-                      >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        Evet
-                      </button>
-                      <button
-                        onClick={() => handleAnswer(false)}
-                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                              ? 'gradient-bg text-white shadow-lg'
+                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                          aria-pressed={answers[currentQuestion] === true}
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Evet
+                        </button>
+                        <button
+                          onClick={() => handleAnswer(false)}
+                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
                             hover:scale-105 active:scale-95 flex items-center gap-3
                             ${answers[currentQuestion] === false
-                            ? 'gradient-bg text-white shadow-lg'
-                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                        aria-pressed={answers[currentQuestion] === false}
+                              ? 'gradient-bg text-white shadow-lg'
+                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                          aria-pressed={answers[currentQuestion] === false}
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          Hayır
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="scale-in">
+                  <div className="card-container rounded-2xl p-8 shadow-xl">
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center justify-center mb-8">
+                        <div className="score-container">
+                          <div
+                            className="score-fill"
+                            style={{ "--score-height": `${score}%` }}
+                          />
+                        </div>
+                        <div className="grade-container">
+                          <div className={`grade-marker ${score >= 85 ? 'active' : ''}`} data-grade="S">
+                            <div className="grade-letter">S</div>
+                            <div className="grade-label">Profesyonel</div>
+                          </div>
+                          <div className={`grade-marker ${score >= 70 && score < 85 ? 'active' : ''}`} data-grade="A">
+                            <div className="grade-letter">A</div>
+                            <div className="grade-label">Takibe Değer</div>
+                          </div>
+                          <div className={`grade-marker ${score >= 50 && score < 70 ? 'active' : ''}`} data-grade="B">
+                            <div className="grade-letter">B</div>
+                            <div className="grade-label">Fena Değil</div>
+                          </div>
+                          <div className={`grade-marker ${score >= 30 && score < 50 ? 'active' : ''}`} data-grade="C">
+                            <div className="grade-letter">C</div>
+                            <div className="grade-label">Ne iş Belli Değil</div>
+                          </div>
+                          <div className={`grade-marker ${score < 30 ? 'active' : ''}`} data-grade="D">
+                            <div className="grade-letter">D</div>
+                            <div className="grade-label">Sadece Var</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        {showScoreLoader && <div className={`loader ${!showScoreLoader ? 'fade-out' : ''}`} />}
+                        <div className={`score-number ${!showScoreLoader ? 'visible' : ''}`}>
+                          {score}/100
+                        </div>
+                      </div>
+                      <p className="score-message">
+                        {getScoreMessage(score)}
+                      </p>
+                      <SocialShare />
+                      <button
+                        onClick={handleRestart}
+                        className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+                          hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
                       >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Hayır
+                        Tekrar Başla
                       </button>
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="scale-in">
-                <div className="card-container rounded-2xl p-8 shadow-xl text-center">
-                  <div className="text-8xl mb-6 float" role="img" aria-hidden="true">
-                    {score >= 70 ? "🏆" : score >= 50 ? "🌟" : "🎯"}
-                  </div>
-                  <h2 className="text-4xl font-bold mb-4 text-white">
-                    {score}/100
-                  </h2>
-                  <p className="text-xl text-gray-300 mb-8">
-                    {getScoreMessage(score)}
-                  </p>
-                  <SocialShare />
-                  <button
-                    onClick={() => {
-                      clickSound.play().catch(() => { });
-                      setCurrentQuestion(0);
-                      setAnswers(new Array(questionsData.length).fill(null));
-                      setScore(0);
-                    }}
-                    className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
-                        hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Tekrar Başla
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
           </div>
           <Footer />
         </>
