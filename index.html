@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LinkedIn Profil Değerlendirme</title>
+  <title>LinkedIn Profile Profiler</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React and ReactDOM -->
@@ -108,23 +108,22 @@
     }
 
     .card-container {
-      min-height: 480px;
-      max-height: 480px;
+      min-height: min-content;
+      height: auto;
       display: flex;
       flex-direction: column;
       background: rgba(23, 23, 23, 0.95);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
+      margin: auto;
     }
 
     .question-text {
-      min-height: 80px;
-      max-height: 80px;
-      overflow-y: auto;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      min-height: 100px;
+      height: auto;
+      overflow: visible;
+      display: block;
+      margin-bottom: 1rem;
     }
 
     .question-animation {
@@ -176,12 +175,19 @@
 
     @media (max-width: 640px) {
       .card-container {
-        min-height: 400px;
-        max-height: 400px;
+        min-height: min-content;
+        height: auto;
+        padding: 1rem;
       }
 
       .question-animation {
         height: 120px;
+      }
+
+      .question-text {
+        height: 150px;
+        font-size: 1rem;
+        line-height: 1.5;
       }
     }
 
@@ -399,7 +405,7 @@
     const Footer = () => (
       <footer className="footer">
         <p className="text-sm text-gray-400">
-          © {new Date().getFullYear()} LinkedIn Profil Değerlendirme. Tüm hakları saklıdır.
+          © {new Date().getFullYear()} LinkedIn Profile Profiler. Tüm hakları saklıdır.
         </p>
       </footer>
     );
@@ -446,111 +452,110 @@
 
       return (
         <>
-          <div className="min-h-screen p-4 sm:p-6 md:p-8">
-            <div className="max-w-3xl mx-auto">
-              {!isComplete ? (
-                <div className="fade-in">
-                  <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
-                    <div className="question-animation float">
-                      <img
-                        src={questionsData[currentQuestion].animation}
-                        alt=""
-                        className="h-full w-auto object-contain rounded-lg"
+          <div className="min-h-screen p-4 sm:p-6 md:p-8 flex items-center justify-center">            <div className="w-full max-w-3xl">
+            {!isComplete ? (
+              <div className="fade-in">
+                <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
+                  <div className="question-animation float">
+                    <img
+                      src={questionsData[currentQuestion].animation}
+                      alt=""
+                      className="h-full w-auto object-contain rounded-lg"
+                    />
+                  </div>
+
+                  <div className="flex-grow">
+                    <div className="mb-6">
+                      <div className="flex items-start gap-2 mb-2">
+                        <span className="text-2xl" role="img" aria-hidden="true">
+                          {questionsData[currentQuestion].icon}
+                        </span>
+                        <p className="question-text text-xl font-medium text-gray-100">
+                          {questionsData[currentQuestion].question}
+                        </p>
+                      </div>
+                      <p className="text-sm text-gray-400">
+                        Soru {currentQuestion + 1}/{questionsData.length}
+                      </p>
+                    </div>
+
+                    <div className="progress-bar-container mb-6">
+                      <div
+                        className="progress-bar"
+                        style={{ width: `${((currentQuestion + 1) / questionsData.length) * 100}%` }}
+                        role="progressbar"
+                        aria-valuenow={currentQuestion + 1}
+                        aria-valuemin="0"
+                        aria-valuemax={questionsData.length}
                       />
                     </div>
 
-                    <div className="flex-grow">
-                      <div className="mb-6">
-                        <div className="flex items-start gap-2 mb-2">
-                          <span className="text-2xl" role="img" aria-hidden="true">
-                            {questionsData[currentQuestion].icon}
-                          </span>
-                          <p className="question-text text-xl font-medium text-gray-100">
-                            {questionsData[currentQuestion].question}
-                          </p>
-                        </div>
-                        <p className="text-sm text-gray-400">
-                          Soru {currentQuestion + 1}/{questionsData.length}
-                        </p>
-                      </div>
-
-                      <div className="progress-bar-container mb-6">
-                        <div
-                          className="progress-bar"
-                          style={{ width: `${((currentQuestion + 1) / questionsData.length) * 100}%` }}
-                          role="progressbar"
-                          aria-valuenow={currentQuestion + 1}
-                          aria-valuemin="0"
-                          aria-valuemax={questionsData.length}
-                        />
-                      </div>
-
-                      <div className="flex justify-center gap-4">
-                        <button
-                          onClick={() => handleAnswer(true)}
-                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                    <div className="flex justify-center gap-4">
+                      <button
+                        onClick={() => handleAnswer(true)}
+                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
                             hover:scale-105 active:scale-95 flex items-center gap-3
                             ${answers[currentQuestion] === true
-                              ? 'gradient-bg text-white shadow-lg'
-                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                          aria-pressed={answers[currentQuestion] === true}
-                        >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Evet
-                        </button>
-                        <button
-                          onClick={() => handleAnswer(false)}
-                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                            ? 'gradient-bg text-white shadow-lg'
+                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                        aria-pressed={answers[currentQuestion] === true}
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Evet
+                      </button>
+                      <button
+                        onClick={() => handleAnswer(false)}
+                        className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
                             hover:scale-105 active:scale-95 flex items-center gap-3
                             ${answers[currentQuestion] === false
-                              ? 'gradient-bg text-white shadow-lg'
-                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                          aria-pressed={answers[currentQuestion] === false}
-                        >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                          Hayır
-                        </button>
-                      </div>
+                            ? 'gradient-bg text-white shadow-lg'
+                            : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                        aria-pressed={answers[currentQuestion] === false}
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Hayır
+                      </button>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="scale-in">
-                  <div className="card-container rounded-2xl p-8 shadow-xl text-center">
-                    <div className="text-8xl mb-6 float" role="img" aria-hidden="true">
-                      {score >= 70 ? "🏆" : score >= 50 ? "🌟" : "🎯"}
-                    </div>
-                    <h2 className="text-4xl font-bold mb-4 text-white">
-                      {score}/100
-                    </h2>
-                    <p className="text-xl text-gray-300 mb-8">
-                      {getScoreMessage(score)}
-                    </p>
-                    <SocialShare />
-                    <button
-                      onClick={() => {
-                        clickSound.play().catch(() => { });
-                        setCurrentQuestion(0);
-                        setAnswers(new Array(questionsData.length).fill(null));
-                        setScore(0);
-                      }}
-                      className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+              </div>
+            ) : (
+              <div className="scale-in">
+                <div className="card-container rounded-2xl p-8 shadow-xl text-center">
+                  <div className="text-8xl mb-6 float" role="img" aria-hidden="true">
+                    {score >= 70 ? "🏆" : score >= 50 ? "🌟" : "🎯"}
+                  </div>
+                  <h2 className="text-4xl font-bold mb-4 text-white">
+                    {score}/100
+                  </h2>
+                  <p className="text-xl text-gray-300 mb-8">
+                    {getScoreMessage(score)}
+                  </p>
+                  <SocialShare />
+                  <button
+                    onClick={() => {
+                      clickSound.play().catch(() => { });
+                      setCurrentQuestion(0);
+                      setAnswers(new Array(questionsData.length).fill(null));
+                      setScore(0);
+                    }}
+                    className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
                         hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Tekrar Başla
-                    </button>
-                  </div>
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Tekrar Başla
+                  </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
           </div>
           <Footer />
         </>
