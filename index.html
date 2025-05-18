@@ -130,20 +130,33 @@
     }
 
     .question-text {
-      min-height: 100px;
+      margin-top: 1rem;
+      min-height: 50px;
       height: auto;
       overflow: visible;
       display: block;
       margin-bottom: 1rem;
+      font-size: 1.5rem !important;
     }
 
     .question-animation {
-      height: 180px;
+      height: 200px;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
       margin-bottom: 1rem;
+      background: linear-gradient(135deg, rgba(0, 119, 181, 0.1) 0%, rgba(0, 160, 220, 0.1) 100%);
+      border-radius: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-animation img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 0.5rem;
     }
 
     .glass-effect {
@@ -192,7 +205,8 @@
       }
 
       .question-animation {
-        height: 120px;
+        height: 160px;
+        padding: 0.5rem;
       }
 
       .question-text {
@@ -252,74 +266,74 @@
     const questionsData = [
       {
         "question": "Profil fotoğrafı: Kaliteli ve net mi?",
-        "score": 5,
-        "animation": "https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif",
+        "score": 8,
+        "animation": "images/q1.png",
         "icon": "📸"
       },
       {
         "question": "Profil Başlığı:  Odaklı bir şekilde ne yaptığını anlatıyor mu yoksa kalabalık mı?",
-        "score": 8,
-        "animation": "https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif",
+        "score": 15,
+        "animation": "images/q2.png",
         "icon": "🎭"
       },
       {
         "question": "Profil dili: Tanımlı profil dilin ile sayfada kullandığın dil uyumlu mu? (İngilizce açıklamaların varsa sayfanın dili de ingilizce olmalıdır)",
-        "score": 15,
-        "animation": "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy.gif",
+        "score": 5,
+        "animation": "images/q3.png",
         "icon": "📝"
       },
       {
-        "question": "Web Sitesi: Yönlendirme linkin portfoloyona, websitene, hizmetlerine, cv’ne yönlendirme yapıyor mu?",
+        "question": "Web Sitesi: Yönlendirme linkin portfoloyona, websitene, hizmetlerine, cv'ne yönlendirme yapıyor mu?",
         "score": 10,
-        "animation": "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyE/giphy.gif",
+        "animation": "images/q4.png",
         "icon": "🔗"
       },
       {
         "question": "Banner: Seni, işini, hizmetini veya teklifini yansıtan bir görsel mi yoksa alakasız mı?",
         "score": 5,
-        "animation": "https://media.giphy.com/media/3o7TKSha51ATTx9KzC/giphy.gif",
+        "animation": "images/q5.png",
         "icon": "🌍"
       },
       {
         "question": "İletişim bilgileri: E-posta, site, diğer sosyal medya linkleri ekli mi?",
         "score": 5,
-        "animation": "https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif",
+        "animation": "images/q6.png",
         "icon": "📧"
       },
       {
         "question": "Hakkında: Teknik ve davranışsal beceriler doğru yerleştirilmiş mi?",
         "score": 10,
-        "animation": "https://media.giphy.com/media/3o7TKRn6V9N2OmBmUw/giphy.gif",
+        "animation": "images/q7.png",
         "icon": "🛠️"
       },
       {
         "question": "Öne Çıkanlar (Featured):  Servislerin, projelerin veya yazıların bu alanda paylaşılmış mı?",
-        "score": 10,
-        "animation": "https://media.giphy.com/media/3o7TKNjg8dxB5STj8c/giphy.gif",
+        "score": 5,
+        "animation": "images/q8.png",
         "icon": "💡"
       },
       {
         "question": "Paylaşım: Kitle çekebilen bir içerik yapısına sahip misin ve düzenli paylaşım yapıyor musun?",
-        "score": 5,
-        "animation": "https://media.giphy.com/media/3o7TKMMyg3OKG8Va7K/giphy.gif",
+        "score": 14,
+        "animation": "images/q9.png",
         "icon": "🤝"
       },
       {
         "question": "Tavsiye: İş arkadaşların, yöneticiler, hizmet verdiklerin vb ile referans alışverişi yapıyor musun?",
-        "score": 14,
-        "animation": "https://media.giphy.com/media/3o7TKSpxAODZN6GRHi/giphy.gif",
+        "score": 5,
+        "animation": "images/q10.png",
         "icon": "📱"
       },
       {
         "question": "Otorite: Yaptığın iş hakkında verilen geri bildirimleri paylaşıyor musun?",
-        "score": 14,
-        "animation": "https://media.giphy.com/media/3o7TKSpxAODZN6GRHi/giphy.gif",
+        "score": 8,
+        "animation": "images/q11.png",
         "icon": "📱"
       },
       {
         "question": "Etkileşim: Başkaları ile bağlantı kurup içeriklerine yorumlarda bulunuyor musun?",
-        "score": 14,
-        "animation": "https://media.giphy.com/media/3o7TKSpxAODZN6GRHi/giphy.gif",
+        "score": 10,
+        "animation": "images/q12.png",
         "icon": "📱"
       }
     ];
@@ -466,17 +480,11 @@
             {!isComplete ? (
               <div className="fade-in">
                 <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
-                  <div className="question-animation float">
-                    <img
-                      src={questionsData[currentQuestion].animation}
-                      alt=""
-                      className="h-full w-auto object-contain rounded-lg"
-                    />
-                  </div>
+                  <div className="question-animation float">                      <div className="w-full h-full flex items-center justify-center">                        <img src={questionsData[currentQuestion].animation} alt="" className="max-w-full max-h-full object-contain rounded-lg" />                      </div>                    </div>
 
                   <div className="flex-grow">
                     <div className="mb-6">
-                      <div className="flex items-start gap-2 mb-2">
+                      <div className="flex items-baseline gap-2 mb-2 ">
                         <span className="text-2xl" role="img" aria-hidden="true">
                           {questionsData[currentQuestion].icon}
                         </span>
