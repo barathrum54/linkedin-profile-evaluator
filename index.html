@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Profile Evaluator</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React and ReactDOM -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel for JSX -->
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <style>
+    /* Custom animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-type="module">
+    // TypeScript interfaces (will be stripped in production but provide dev-time type safety)
+    /** @type {const} */
+    const questions = [
+      "Do you have a professional headshot?",
+      "Is your summary over 100 words?",
+      "Do you have at least 3 skills listed?",
+      "Have you included a custom headline?",
+      "Do you have 2+ recommendations?",
+      "Is your experience section detailed?"
+    ];
+
+    /** @type {const} */
+    const tips = [
+      "Add a professional headshot to make your profile more approachable",
+      "Write a comprehensive summary to tell your professional story",
+      "List relevant skills to appear in more searches",
+      "Create a custom headline to stand out",
+      "Request recommendations from colleagues",
+      "Detail your experience with achievements and metrics"
+    ];
+
+    // Theme toggle component
+    const ThemeToggle = ({ isDark, onToggle }) => (
+      <button
+        onClick={onToggle}
+        className="fixed top-4 right-4 p-2 rounded-full transition-transform hover:scale-110 active:scale-95"
+        aria-label="Toggle theme"
+      >
+        {isDark ? "🌞" : "🌙"}
+      </button>
+    );
+
+    // Answer button component
+    const AnswerButton = ({ text, onClick, isSelected }) => (
+      <button
+        onClick={onClick}
+        className={`px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 
+                ${isSelected
+            ? 'bg-blue-600 text-white'
+            : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}
+      >
+        {text}
+      </button>
+    );
+
+    // Main App component
+    const App = () => {
+      const [currentQuestion, setCurrentQuestion] = React.useState(0);
+      const [answers, setAnswers] = React.useState(new Array(questions.length).fill(null));
+      const [isDark, setIsDark] = React.useState(false);
+
+      // Handle theme toggle
+      React.useEffect(() => {
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }, [isDark]);
+
+      const handleAnswer = (answer) => {
+        const newAnswers = [...answers];
+        newAnswers[currentQuestion] = answer;
+        setAnswers(newAnswers);
+
+        if (currentQuestion < questions.length - 1) {
+          setCurrentQuestion(curr => curr + 1);
+        }
+      };
+
+      const score = answers.filter(answer => answer === true).length;
+      const isComplete = currentQuestion === questions.length - 1 && answers[currentQuestion] !== null;
+
+      // Get improvement tips based on 'No' answers
+      const getImprovementTips = () => {
+        return answers
+          .map((answer, index) => !answer ? tips[index] : null)
+          .filter(tip => tip !== null)
+          .slice(0, 2); // Show max 2 tips
+      };
+
+      return (
+        <div className={`min-h-screen ${isDark ? 'dark' : ''} transition-colors duration-300`}>
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6">
+            <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
+
+            <div className="max-w-2xl mx-auto pt-10">
+              <h1 className="text-3xl font-bold text-center mb-8">
+                LinkedIn Profile Evaluator
+              </h1>
+
+              {!isComplete ? (
+                <div className="fade-in">
+                  <div className="mb-8 text-center">
+                    <p className="text-xl mb-2">{questions[currentQuestion]}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Question {currentQuestion + 1} of {questions.length}
+                    </p>
+                  </div>
+
+                  <div className="flex justify-center gap-4">
+                    <AnswerButton
+                      text="Yes"
+                      onClick={() => handleAnswer(true)}
+                      isSelected={answers[currentQuestion] === true}
+                    />
+                    <AnswerButton
+                      text="No"
+                      onClick={() => handleAnswer(false)}
+                      isSelected={answers[currentQuestion] === false}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center fade-in">
+                  <h2 className="text-2xl font-bold mb-4">
+                    Your Profile is {score}/{questions.length} Optimized!
+                  </h2>
+
+                  {score < questions.length && (
+                    <div className="mt-6">
+                      <h3 className="text-xl mb-3">Tips for Improvement:</h3>
+                      <ul className="space-y-2">
+                        {getImprovementTips().map((tip, index) => (
+                          <li key={index} className="text-left bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                            {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setCurrentQuestion(0);
+                      setAnswers(new Array(questions.length).fill(null));
+                    }}
+                    className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-lg transition-all duration-200 hover:bg-blue-700 transform hover:scale-105 active:scale-95"
+                  >
+                    Start Over
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+
+</html>
