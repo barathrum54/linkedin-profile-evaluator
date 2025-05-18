@@ -15,6 +15,7 @@
   <!-- Heroicons -->
   <script src="https://unpkg.com/@heroicons/react@2.0.18/24/outline/esm/index.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -240,79 +241,78 @@
     // Questions data with animations
     const questionsData = [
       {
-        question: "Kapak fotoğrafınız işinizle ilgili sizi yansıtan bir görsel ya da profesyonelce hazırlanmış, hizmetlerinizi ve sizi anlatan bir tasarım mı? (1584 x 396 pixel)",
-        score: 5,
-        animation: "https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif",
-        icon: "📸"
+        "question": "Kapak fotoğrafınız işinizle ilgili sizi yansıtan ve profesyonelce hazırlanmış bir tasarım mı? (1584 x 396 pixel)",
+        "score": 5,
+        "animation": "https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif",
+        "icon": "📸"
       },
       {
-        question: "İşinizin ve sizin enerjinizin karşıya geçmesini sağlayan, kaliteli çözünürlükte bir görsel seçtiniz mi? (400x400 pixel)",
-        score: 8,
-        animation: "https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif",
-        icon: "🎭"
+        "question": "İşinizin enerjisini yansıtan, kaliteli çözünürlükte bir görsel kullanıyor musunuz? (400x400 pixel)",
+        "score": 8,
+        "animation": "https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif",
+        "icon": "🎭"
       },
       {
-        question: "Uzmanlığınızı net bir şekilde profilinizde belirtip, diğer detayları hakkında kısmına mı yazdınız, yoksa her şeyi uzun uzun açıklayarak karmaşık bir izlenim mi bıraktınız?",
-        score: 15,
-        animation: "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy.gif",
-        icon: "📝"
+        "question": "Uzmanlığınızı net bir şekilde profilinizde belirtip, diğer detayları hakkında kısmına yazdınız mı?",
+        "score": 15,
+        "animation": "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy.gif",
+        "icon": "📝"
       },
       {
-        question: "Profilinize, portföyünüze, web sitenize veya hizmetinizin bulunduğu yere yönlendiren bir link eklediniz mi?",
-        score: 10,
-        animation: "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyE/giphy.gif",
-        icon: "��"
+        "question": "Profilinize portföy, web sitesi veya hizmetlerinize yönlendiren bir link eklediniz mi?",
+        "score": 10,
+        "animation": "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyE/giphy.gif",
+        "icon": "🔗"
       },
       {
-        question: "İngilizce bir profil açıklaması kullanıyorsanız, profilinizin İngilizce versiyonunu da oluşturarak dil uyumluluğunu sağladınız mı?",
-        score: 5,
-        animation: "https://media.giphy.com/media/3o7TKSha51ATTx9KzC/giphy.gif",
-        icon: "🌍"
+        "question": "İngilizce profil açıklaması kullanıyorsanız, profilinizin İngilizce versiyonunu da oluşturdunuz mu?",
+        "score": 5,
+        "animation": "https://media.giphy.com/media/3o7TKSha51ATTx9KzC/giphy.gif",
+        "icon": "🌍"
       },
       {
-        question: "İletişim bilgilerinizde mail adresiniz, varsa web siteniz ve diğer profilleriniz yer alıyor mu?",
-        score: 5,
-        animation: "https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif",
-        icon: "📧"
+        "question": "İletişim bilgilerinizde mail adresiniz, web siteniz veya diğer profilleriniz yer alıyor mu?",
+        "score": 5,
+        "animation": "https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif",
+        "icon": "📧"
       },
       {
-        question: "Kullandığınız araçlar ve teknolojilerden bahsederken kısa, net ve maddeli bir anlatım mı kullanıyorsunuz?",
-        score: 10,
-        animation: "https://media.giphy.com/media/3o7TKRn6V9N2OmBmUw/giphy.gif",
-        icon: "🛠️"
+        "question": "Kullandığınız araç ve teknolojileri kısa, net ve maddeli bir şekilde açıklıyor musunuz?",
+        "score": 10,
+        "animation": "https://media.giphy.com/media/3o7TKRn6V9N2OmBmUw/giphy.gif",
+        "icon": "🛠️"
       },
       {
-        question: "Öne çıkarılanlar kısmında hizmetlerinizi ve diğerlerinden farklı yanlarınızı içeren doğru bir açıklama ve yönlendirme var mı?",
-        score: 5,
-        animation: "https://media.giphy.com/media/3o7TKsxW5sN4GqYsP6/giphy.gif",
-        icon: "⭐"
+        "question": "Öne çıkarılanlar kısmında hizmetlerinizi ve farklı yanlarınızı açıklayan bir yönlendirme eklediniz mi?",
+        "score": 5,
+        "animation": "https://media.giphy.com/media/3o7TKsxW5sN4GqYsP6/giphy.gif",
+        "icon": "⭐"
       },
       {
-        question: "Hizmetlerinizle ilgili geri dönüşleri kişilerden izin alarak paylaşıyor ve sosyal kanıt oluşturuyor musunuz?",
-        score: 8,
-        animation: "https://media.giphy.com/media/3o7TKRwpns23QMNNiE/giphy.gif",
-        icon: "👥"
+        "question": "Hizmetlerinizle ilgili geri dönüşleri izin alarak paylaşıp sosyal kanıt oluşturuyor musunuz?",
+        "score": 8,
+        "animation": "https://media.giphy.com/media/3o7TKRwpns23QMNNiE/giphy.gif",
+        "icon": "👥"
       },
       {
-        question: "Yapay zeka ile yazılmış, karakteri olmayan içerikler yerine kişisel fikirlerinizi, maddeli anlatımlarla ve önemli yerleri vurgulayarak mı yazıyorsunuz?",
-        score: 10,
-        animation: "https://media.giphy.com/media/3o7TKNjg8dxB5STj8c/giphy.gif",
-        icon: "💡"
+        "question": "İçeriklerinizi yapay zeka yerine kişisel fikirlerinizle, maddeli ve vurgulu bir şekilde yazıyor musunuz?",
+        "score": 10,
+        "animation": "https://media.giphy.com/media/3o7TKNjg8dxB5STj8c/giphy.gif",
+        "icon": "💡"
       },
       {
-        question: "İş arkadaşlarınız, danışanlarınız, yöneticileriniz veya proje yaptığınız kişilerle tavsiye alışverişi yapıyor musunuz?",
-        score: 5,
-        animation: "https://media.giphy.com/media/3o7TKMMyg3OKG8Va7K/giphy.gif",
-        icon: "🤝"
+        "question": "İş arkadaşlarınız veya proje ortaklarınızla tavsiye alışverişi yapıyor musunuz?",
+        "score": 5,
+        "animation": "https://media.giphy.com/media/3o7TKMMyg3OKG8Va7K/giphy.gif",
+        "icon": "🤝"
       },
       {
-        question: "LinkedIn'deki çeşitli paylaşım formatlarını kullanarak kitle çekiyor musunuz?",
-        score: 14,
-        animation: "https://media.giphy.com/media/3o7TKSpxAODZN6GRHi/giphy.gif",
-        icon: "📱"
+        "question": "LinkedIn’de çeşitli paylaşım formatlarını kullanarak kitle çekiyor musunuz?",
+        "score": 14,
+        "animation": "https://media.giphy.com/media/3o7TKSpxAODZN6GRHi/giphy.gif",
+        "icon": "📱"
       }
     ];
-
     // Preload all animations
     preloadImages(questionsData.map(q => q.animation));
 
