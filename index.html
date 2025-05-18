@@ -14,11 +14,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
   <!-- Heroicons -->
   <script src="https://unpkg.com/@heroicons/react@2.0.18/24/outline/esm/index.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
     body {
       font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
     }
 
     @keyframes fadeIn {
@@ -45,6 +45,20 @@
       }
     }
 
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
     .fade-in {
       animation: fadeIn 0.5s ease-out;
     }
@@ -53,30 +67,140 @@
       animation: scaleIn 0.3s ease-out;
     }
 
+    .float {
+      animation: float 3s ease-in-out infinite;
+    }
+
     .gradient-bg {
       background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
+    }
+
+    .card-container {
+      min-height: 480px;
+      max-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .question-animation {
+      height: 180px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .progress-bar-container {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0077B5, #00A0DC);
+      transition: width 0.3s ease;
+    }
+
+    @media (max-width: 640px) {
+      .card-container {
+        min-height: 400px;
+        max-height: 400px;
+      }
+
+      .question-animation {
+        height: 120px;
+      }
     }
   </style>
 </head>
 
-<body>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
   <div id="root"></div>
 
   <script type="text/babel" data-type="module">
-    // Questions and their scores
+    // Questions data with animations
     const questionsData = [
-      { question: "Kapak fotoğrafınız işinizle ilgili sizi yansıtan bir görsel ya da profesyonelce hazırlanmış, hizmetlerinizi ve sizi anlatan bir tasarım mı? (1584 x 396 pixel)", score: 5 },
-      { question: "İşinizin ve sizin enerjinizin karşıya geçmesini sağlayan, kaliteli çözünürlükte bir görsel seçtiniz mi? (400x400 pixel)", score: 8 },
-      { question: "Uzmanlığınızı net bir şekilde profilinizde belirtip, diğer detayları hakkında kısmına mı yazdınız, yoksa her şeyi uzun uzun açıklayarak karmaşık bir izlenim mi bıraktınız?", score: 15 },
-      { question: "Profilinize, portföyünüze, web sitenize veya hizmetinizin bulunduğu yere yönlendiren bir link eklediniz mi?", score: 10 },
-      { question: "İngilizce bir profil açıklaması kullanıyorsanız, profilinizin İngilizce versiyonunu da oluşturarak dil uyumluluğunu sağladınız mı?", score: 5 },
-      { question: "İletişim bilgilerinizde mail adresiniz, varsa web siteniz ve diğer profilleriniz yer alıyor mu?", score: 5 },
-      { question: "Kullandığınız araçlar ve teknolojilerden bahsederken kısa, net ve maddeli bir anlatım mı kullanıyorsunuz?", score: 10 },
-      { question: "Öne çıkarılanlar kısmında hizmetlerinizi ve diğerlerinden farklı yanlarınızı içeren doğru bir açıklama ve yönlendirme var mı?", score: 5 },
-      { question: "Hizmetlerinizle ilgili geri dönüşleri kişilerden izin alarak paylaşıyor ve sosyal kanıt oluşturuyor musunuz?", score: 8 },
-      { question: "Yapay zeka ile yazılmış, karakteri olmayan içerikler yerine kişisel fikirlerinizi, maddeli anlatımlarla ve önemli yerleri vurgulayarak mı yazıyorsunuz?", score: 10 },
-      { question: "İş arkadaşlarınız, danışanlarınız, yöneticileriniz veya proje yaptığınız kişilerle tavsiye alışverişi yapıyor musunuz?", score: 5 },
-      { question: "LinkedIn'deki çeşitli paylaşım formatlarını kullanarak kitle çekiyor musunuz?", score: 14 }
+      {
+        question: "Kapak fotoğrafınız işinizle ilgili sizi yansıtan bir görsel ya da profesyonelce hazırlanmış, hizmetlerinizi ve sizi anlatan bir tasarım mı? (1584 x 396 pixel)",
+        score: 5,
+        animation: "https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif",
+        icon: "📸"
+      },
+      {
+        question: "İşinizin ve sizin enerjinizin karşıya geçmesini sağlayan, kaliteli çözünürlükte bir görsel seçtiniz mi? (400x400 pixel)",
+        score: 8,
+        animation: "https://media.giphy.com/media/l46Cy1rHbQ92uuLXa/giphy.gif",
+        icon: "🎭"
+      },
+      {
+        question: "Uzmanlığınızı net bir şekilde profilinizde belirtip, diğer detayları hakkında kısmına mı yazdınız, yoksa her şeyi uzun uzun açıklayarak karmaşık bir izlenim mi bıraktınız?",
+        score: 15,
+        animation: "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy.gif",
+        icon: "📝"
+      },
+      {
+        question: "Profilinize, portföyünüze, web sitenize veya hizmetinizin bulunduğu yere yönlendiren bir link eklediniz mi?",
+        score: 10,
+        animation: "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyE/giphy.gif",
+        icon: "��"
+      },
+      {
+        question: "İngilizce bir profil açıklaması kullanıyorsanız, profilinizin İngilizce versiyonunu da oluşturarak dil uyumluluğunu sağladınız mı?",
+        score: 5,
+        animation: "https://media.giphy.com/media/3o7TKSha51ATTx9KzC/giphy.gif",
+        icon: "🌍"
+      },
+      {
+        question: "İletişim bilgilerinizde mail adresiniz, varsa web siteniz ve diğer profilleriniz yer alıyor mu?",
+        score: 5,
+        animation: "https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif",
+        icon: "📧"
+      },
+      {
+        question: "Kullandığınız araçlar ve teknolojilerden bahsederken kısa, net ve maddeli bir anlatım mı kullanıyorsunuz?",
+        score: 10,
+        animation: "https://media.giphy.com/media/3o7TKRn6V9N2OmBmUw/giphy.gif",
+        icon: "🛠️"
+      },
+      {
+        question: "Öne çıkarılanlar kısmında hizmetlerinizi ve diğerlerinden farklı yanlarınızı içeren doğru bir açıklama ve yönlendirme var mı?",
+        score: 5,
+        animation: "https://media.giphy.com/media/3o7TKsxW5sN4GqYsP6/giphy.gif",
+        icon: "⭐"
+      },
+      {
+        question: "Hizmetlerinizle ilgili geri dönüşleri kişilerden izin alarak paylaşıyor ve sosyal kanıt oluşturuyor musunuz?",
+        score: 8,
+        animation: "https://media.giphy.com/media/3o7TKRwpns23QMNNiE/giphy.gif",
+        icon: "👥"
+      },
+      {
+        question: "Yapay zeka ile yazılmış, karakteri olmayan içerikler yerine kişisel fikirlerinizi, maddeli anlatımlarla ve önemli yerleri vurgulayarak mı yazıyorsunuz?",
+        score: 10,
+        animation: "https://media.giphy.com/media/3o7TKNjg8dxB5STj8c/giphy.gif",
+        icon: "💡"
+      },
+      {
+        question: "İş arkadaşlarınız, danışanlarınız, yöneticileriniz veya proje yaptığınız kişilerle tavsiye alışverişi yapıyor musunuz?",
+        score: 5,
+        animation: "https://media.giphy.com/media/3o7TKMMyg3OKG8Va7K/giphy.gif",
+        icon: "🤝"
+      },
+      {
+        question: "LinkedIn'deki çeşitli paylaşım formatlarını kullanarak kitle çekiyor musunuz?",
+        score: 14,
+        animation: "https://media.giphy.com/media/3o7TKSpxAODZN6GRHi/giphy.gif",
+        icon: "📱"
+      }
     ];
 
     // Theme toggle component with fancy animation
@@ -104,10 +228,14 @@
     const AnswerButton = ({ text, onClick, isSelected }) => (
       <button
         onClick={onClick}
-        className={`px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 
-                flex items-center gap-3 shadow-lg ${isSelected
-            ? 'gradient-bg text-white'
-            : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200'}`}
+        className={`
+          px-8 py-4 rounded-xl transition-all duration-300 transform 
+          hover:scale-105 active:scale-95 flex items-center gap-3 
+          ${isSelected
+            ? 'gradient-bg text-white shadow-lg'
+            : 'glass-effect text-gray-800 dark:text-gray-200 hover:shadow-lg'
+          }
+        `}
       >
         {text === "Evet" ? (
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,11 +250,11 @@
       </button>
     );
 
-    // Progress bar component
+    // Progress bar component with improved styling
     const ProgressBar = ({ current, total }) => (
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-6">
+      <div className="progress-bar-container">
         <div
-          className="gradient-bg h-2 rounded-full transition-all duration-300"
+          className="progress-bar"
           style={{ width: `${(current / total) * 100}%` }}
         />
       </div>
@@ -137,6 +265,7 @@
       const [currentQuestion, setCurrentQuestion] = React.useState(0);
       const [answers, setAnswers] = React.useState(new Array(questionsData.length).fill(null));
       const [isDark, setIsDark] = React.useState(false);
+      const [score, setScore] = React.useState(0);
 
       React.useEffect(() => {
         if (isDark) {
@@ -154,52 +283,63 @@
         if (currentQuestion < questionsData.length - 1) {
           setCurrentQuestion(curr => curr + 1);
         }
+
+        // Update score
+        const newScore = newAnswers.reduce((total, ans, idx) =>
+          total + (ans ? questionsData[idx].score : 0), 0);
+        setScore(newScore);
       };
 
-      const calculateTotalScore = () => {
-        return answers.reduce((total, answer, index) => {
-          return total + (answer ? questionsData[index].score : 0);
-        }, 0);
-      };
-
-      const totalScore = calculateTotalScore();
       const isComplete = currentQuestion === questionsData.length - 1 && answers[currentQuestion] !== null;
 
       const getScoreMessage = (score) => {
         if (score >= 90) return "Mükemmel! LinkedIn profiliniz çok etkileyici! 🌟";
         if (score >= 70) return "Harika! Profiliniz oldukça iyi durumda! ✨";
-        if (score >= 50) return "İyi! Birkaç geliştirme ile profiliniz daha da iyi olabilir. ��";
+        if (score >= 50) return "İyi! Birkaç geliştirme ile profiliniz daha da iyi olabilir. 📈";
         return "Profilinizi geliştirmek için önerilerimizi dikkate alın. 🎯";
       };
 
       return (
-        <div className={`min-h-screen ${isDark ? 'dark' : ''}`}>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6">
-            <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
+        <div className="min-h-screen p-4 sm:p-6 md:p-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
+                LinkedIn Profil Değerlendirme
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Profilinizin profesyonellik seviyesini ölçün
+              </p>
+            </div>
 
-            <div className="max-w-3xl mx-auto pt-10">
-              <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold mb-4 gradient-text">
-                  LinkedIn Profil Değerlendirme
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Profilinizin profesyonellik seviyesini ölçün
-                </p>
-              </div>
+            {!isComplete ? (
+              <div className="fade-in">
+                <div className="card-container glass-effect rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
+                  <div className="question-animation float">
+                    <img
+                      src={questionsData[currentQuestion].animation}
+                      alt="Question animation"
+                      className="h-full w-auto object-contain rounded-lg"
+                    />
+                  </div>
 
-              {!isComplete ? (
-                <div className="fade-in">
-                  <ProgressBar current={currentQuestion + 1} total={questionsData.length} />
-
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl mb-8">
-                    <div className="mb-8">
-                      <p className="text-xl mb-2">{questionsData[currentQuestion].question}</p>
+                  <div className="flex-grow">
+                    <div className="mb-6">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-2xl">
+                          {questionsData[currentQuestion].icon}
+                        </span>
+                        <p className="text-xl font-medium text-gray-800 dark:text-white">
+                          {questionsData[currentQuestion].question}
+                        </p>
+                      </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Soru {currentQuestion + 1}/{questionsData.length} • {questionsData[currentQuestion].score} puan
                       </p>
                     </div>
 
-                    <div className="flex justify-center gap-4">
+                    <ProgressBar current={currentQuestion + 1} total={questionsData.length} />
+
+                    <div className="flex justify-center gap-4 mt-6">
                       <AnswerButton
                         text="Evet"
                         onClick={() => handleAnswer(true)}
@@ -213,37 +353,37 @@
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="scale-in">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl text-center">
-                    <div className="mb-8">
-                      <div className="text-6xl mb-4">
-                        {totalScore >= 70 ? "🌟" : totalScore >= 50 ? "✨" : "🎯"}
-                      </div>
-                      <h2 className="text-3xl font-bold mb-2">
-                        {totalScore}/100 Puan
-                      </h2>
-                      <p className="text-xl text-gray-600 dark:text-gray-400">
-                        {getScoreMessage(totalScore)}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        setCurrentQuestion(0);
-                        setAnswers(new Array(questionsData.length).fill(null));
-                      }}
-                      className="px-8 py-4 gradient-bg text-white rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Tekrar Başla
-                    </button>
+              </div>
+            ) : (
+              <div className="scale-in">
+                <div className="card-container glass-effect rounded-2xl p-8 shadow-xl text-center">
+                  <div className="text-8xl mb-6 float">
+                    {score >= 70 ? "🏆" : score >= 50 ? "🌟" : "🎯"}
                   </div>
+                  <h2 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
+                    {score}/100 Puan
+                  </h2>
+                  <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
+                    {getScoreMessage(score)}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setCurrentQuestion(0);
+                      setAnswers(new Array(questionsData.length).fill(null));
+                      setScore(0);
+                    }}
+                    className="gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+                      hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Tekrar Başla
+                  </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       );
