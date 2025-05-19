@@ -452,24 +452,31 @@
     // Star rating component
     const StarRating = ({ value, onRatingChange, labels }) => {
       const [hoverValue, setHoverValue] = React.useState(0);
+      const [displayLabel, setDisplayLabel] = React.useState('');
+      const [isLabelVisible, setIsLabelVisible] = React.useState(false);
 
       const handleMouseEnter = (index) => {
         setHoverValue(index);
         playSound(hoverSound);
+        setDisplayLabel(labels[index - 1]);
+        setIsLabelVisible(true);
       };
 
       const handleMouseLeave = () => {
         setHoverValue(0);
+        setIsLabelVisible(false);
       };
 
       const handleClick = (index) => {
         onRatingChange(index);
         playSound(clickSound);
+        setDisplayLabel(labels[index - 1]);
+        setIsLabelVisible(true);
       };
 
       return (
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center gap-4">
+        <div className="flex flex-col items-center gap-8">
+          <div className="flex items-center justify-center gap-8">
             {[1, 2, 3, 4, 5].map((index) => (
               <button
                 key={index}
@@ -480,9 +487,9 @@
                 aria-label={`Rate ${index} out of 5`}
               >
                 <svg
-                  className={`w-8 h-8 transition-all duration-300 transform group-hover:scale-110
+                  className={`w-24 h-24 transition-all duration-300 transform group-hover:scale-110
                     ${(hoverValue >= index || value >= index)
-                      ? 'text-yellow-400 fill-current filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]'
+                      ? 'text-yellow-400 fill-current filter drop-shadow-[0_0_16px_rgba(234,179,8,0.5)]'
                       : 'text-gray-400 stroke-current fill-none'
                     }`}
                   viewBox="0 0 24 24"
@@ -497,19 +504,15 @@
               </button>
             ))}
           </div>
-          <div className="flex items-center justify-center gap-4 mt-2">
-            {labels.map((label, index) => (
-              <span
-                key={index}
-                className={`text-sm font-medium transition-colors duration-300
-                  ${(hoverValue >= index + 1 || value >= index + 1)
-                    ? 'text-yellow-400'
-                    : 'text-gray-400'
-                  }`}
-              >
-                {label}
-              </span>
-            ))}
+          <div className="h-16 flex items-center justify-center">
+            <span
+              className={`text-xl font-bold transition-all duration-300
+                bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent
+                filter drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]
+                ${isLabelVisible ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}
+            >
+              {displayLabel}
+            </span>
           </div>
         </div>
       );
