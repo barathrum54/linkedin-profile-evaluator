@@ -516,6 +516,16 @@
         "icon": "📱"
       }
     ];
+
+    // Rating scale options with multipliers
+    const ratingScale = [
+      { value: 1, label: "Hiç Yapmıyorum", multiplier: 0.20 },
+      { value: 2, label: "Var ama özensiz", multiplier: 0.40 },
+      { value: 3, label: "Yeterli Değil", multiplier: 0.60 },
+      { value: 4, label: "Biraz Düzenlemek Yeterli", multiplier: 0.80 },
+      { value: 5, label: "Harika", multiplier: 1.00 }
+    ];
+
     // Preload all animations
     preloadImages(questionsData.map(q => q.animation));
 
@@ -711,24 +721,29 @@
         setShowScoreLoader(true);
       };
 
-      const handleAnswer = (answer) => {
+      const handleAnswer = (rating) => {
         clickSound.play().catch(() => { });
         const newAnswers = [...answers];
-        newAnswers[currentQuestion] = answer;
+        newAnswers[currentQuestion] = rating;
         setAnswers(newAnswers);
 
         if (currentQuestion < questionsData.length - 1) {
           setCurrentQuestion(curr => curr + 1);
         } else {
-          // When the last question is answered, start the loader animation
           setTimeout(() => {
             setShowScoreLoader(false);
           }, 1000);
         }
 
-        const newScore = newAnswers.reduce((total, ans, idx) =>
-          total + (ans ? questionsData[idx].score : 0), 0);
-        setScore(newScore);
+        // Calculate score with multipliers
+        const newScore = newAnswers.reduce((total, ans, idx) => {
+          if (ans === null) return total;
+          const rating = ratingScale.find(r => r.value === ans);
+          return total + (questionsData[idx].score * rating.multiplier);
+        }, 0);
+
+        // Round up the score
+        setScore(Math.ceil(newScore));
       };
 
       const isComplete = currentQuestion === questionsData.length - 1 && answers[currentQuestion] !== null;
@@ -792,35 +807,23 @@
                         />
                       </div>
 
-                      <div className="flex justify-center gap-4">
-                        <button
-                          onClick={() => handleAnswer(true)}
-                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
-                            hover:scale-105 active:scale-95 flex items-center gap-3
-                            ${answers[currentQuestion] === true
-                              ? 'gradient-bg text-white shadow-lg'
-                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                          aria-pressed={answers[currentQuestion] === true}
-                        >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Evet
-                        </button>
-                        <button
-                          onClick={() => handleAnswer(false)}
-                          className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
-                            hover:scale-105 active:scale-95 flex items-center gap-3
-                            ${answers[currentQuestion] === false
-                              ? 'gradient-bg text-white shadow-lg'
-                              : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
-                          aria-pressed={answers[currentQuestion] === false}
-                        >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                          Hayır
-                        </button>
+                      <div className="flex flex-col gap-4">
+                        {ratingScale.map((rating) => (
+                          <button
+                            key={rating.value}
+                            onClick={() => handleAnswer(rating.value)}
+                            className={`px-8 py-4 rounded-xl transition-all duration-300 transform 
+                              hover:scale-105 active:scale-95 flex items-center gap-3
+                              ${answers[currentQuestion] === rating.value
+                                ? 'gradient-bg text-white shadow-lg'
+                                : 'bg-opacity-20 bg-white text-white hover:bg-opacity-30'}`}
+                            aria-pressed={answers[currentQuestion] === rating.value}
+                          >
+                            <span className="text-xl font-bold">{rating.value}</span>
+                            <span className="flex-grow text-left">{rating.label}</span>
+                            <span className="text-sm opacity-75">({(rating.multiplier * 100).toFixed(0)}%)</span>
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
