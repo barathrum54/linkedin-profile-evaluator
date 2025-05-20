@@ -30,11 +30,10 @@ export default function Intro({ onStart }: IntroProps) {
               Başla
             </button>
             <button
-              className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl
-                bg-opacity-20 bg-white hover:bg-opacity-30 transition-all duration-300
-                text-white font-medium"
+              className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition-all duration-300 font-medium"
               aria-label="LinkedIn profilini bağla (yakında aktif olacak)"
               onClick={playClickSound}
+              disabled
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
