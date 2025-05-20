@@ -35,8 +35,8 @@ export default function StarRating({ value, onRatingChange, labels }: StarRating
   };
 
   return (
-    <div className="flex flex-col items-center gap-8">
-      <div className="flex items-center justify-center gap-8">
+    <div className="flex flex-col items-center gap-8 w-full">
+      <div className="flex items-center justify-between gap-2 w-full">
         {[1, 2, 3, 4, 5].map((index) => (
           <button
             key={index}
@@ -45,9 +45,10 @@ export default function StarRating({ value, onRatingChange, labels }: StarRating
             onMouseLeave={handleMouseLeave}
             onClick={() => handleClick(index)}
             aria-label={`Rate ${index} out of 5`}
+            type="button"
           >
             <svg
-              className={`w-24 h-24 transition-all duration-300 transform group-hover:scale-110
+              className={`w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24 transition-all duration-300 transform group-hover:scale-110
                 ${(hoverValue >= index || (value !== null && value >= index))
                   ? 'text-yellow-400 fill-current filter drop-shadow-[0_0_16px_rgba(234,179,8,0.5)]'
                   : 'text-gray-400 stroke-current fill-none'

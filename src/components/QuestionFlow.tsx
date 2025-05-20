@@ -6,6 +6,53 @@ import { useSound } from '@/hooks/useSound';
 import { questionsData, ratingScale, RatingScale } from '@/data/questions';
 import SocialShare from './SocialShare';
 
+function QuestionImageAlternator({ correctImage, wrongImage }: { correctImage: string; wrongImage: string }) {
+  const [showCorrect, setShowCorrect] = useState(true);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowCorrect((prev) => !prev);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+      <div
+        className={`absolute inset-0 transition-transform duration-700 ease-in-out ${showCorrect ? 'translate-x-0' : '-translate-x-full'} z-10`}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <img
+          src={correctImage}
+          alt="Doğru örnek"
+          className="w-full h-full object-contain rounded-lg"
+        />
+        <span className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg">
+          {/* Green Tick SVG */}
+          <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </span>
+      </div>
+      <div
+        className={`absolute inset-0 transition-transform duration-700 ease-in-out ${showCorrect ? 'translate-x-full' : 'translate-x-0'} z-10`}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <img
+          src={wrongImage}
+          alt="Yanlış örnek"
+          className="w-full h-full object-contain rounded-lg"
+        />
+        <span className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg">
+          {/* Red Cross SVG */}
+          <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function QuestionFlow() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(questionsData.length).fill(null));
@@ -139,10 +186,10 @@ export default function QuestionFlow() {
           <div className="card-container rounded-2xl p-6 sm:p-8 shadow-xl mb-8">
             <div className="question-animation float">
               <div className="w-full h-full flex items-center justify-center">
-                <img
-                  src={questionsData[currentQuestion].animation}
-                  alt=""
-                  className="max-w-full max-h-full object-contain rounded-lg"
+                <QuestionImageAlternator
+                  key={currentQuestion}
+                  correctImage={questionsData[currentQuestion].correctImage}
+                  wrongImage={questionsData[currentQuestion].wrongImage}
                 />
               </div>
             </div>
@@ -153,7 +200,7 @@ export default function QuestionFlow() {
                   <span className="text-2xl" role="img" aria-hidden="true">
                     {questionsData[currentQuestion].icon}
                   </span>
-                  <p className="question-text">
+                  <p className="question-text text-xs sm:text-sm md:text-base lg:text-xl leading-tight">
                     {questionsData[currentQuestion].question}
                   </p>
                 </div>

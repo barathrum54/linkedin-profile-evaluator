@@ -3,7 +3,7 @@ import React from 'react';
 const SocialShare = () => (
   <div className="flex gap-6 justify-center my-6" role="group" aria-label="Sosyal medya paylaşım butonları">
     <button
-      className="p-4 rounded-full hover:bg-blue-600 transition-colors bg-opacity-80"
+      className="p-4 rounded-full hover:bg-blue-600 transition-colors bg-opacity-80 cursor-pointer"
       aria-label="Twitter'da paylaş"
       onClick={() => {}}
     >
@@ -12,7 +12,7 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-4 rounded-full hover:bg-blue-800 transition-colors bg-opacity-80"
+      className="p-4 rounded-full hover:bg-blue-800 transition-colors bg-opacity-80 cursor-pointer"
       aria-label="LinkedIn'de paylaş"
       onClick={() => {}}
     >
@@ -23,7 +23,7 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-4 rounded-full hover:bg-purple-600 transition-colors bg-opacity-80"
+      className="p-4 rounded-full hover:bg-purple-600 transition-colors bg-opacity-80 cursor-pointer"
       aria-label="Instagram'da paylaş"
       onClick={() => {}}
     >
@@ -32,7 +32,7 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-4 rounded-full hover:bg-green-600 transition-colors bg-opacity-80"
+      className="p-4 rounded-full hover:bg-green-600 transition-colors bg-opacity-80 cursor-pointer"
       aria-label="WhatsApp'ta paylaş"
       onClick={() => {}}
     >
@@ -41,7 +41,7 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-4 rounded-full hover:bg-blue-400 transition-colors bg-opacity-80"
+      className="p-4 rounded-full hover:bg-blue-400 transition-colors bg-opacity-80 cursor-pointer"
       aria-label="Facebook'ta paylaş"
       onClick={() => {}}
     >
