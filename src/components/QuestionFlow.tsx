@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import StarRating from './StarRating';
 import { useSound } from '@/hooks/useSound';
 import { questionsData, ratingScale, RatingScale } from '@/data/questions';
+import SocialShare from './SocialShare';
 
 export default function QuestionFlow() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -111,6 +112,7 @@ export default function QuestionFlow() {
                 <p className="score-message">
                   {getScoreMessage(score)}
                 </p>
+                <SocialShare />
                 <button
                   onClick={handleRestart}
                   className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
