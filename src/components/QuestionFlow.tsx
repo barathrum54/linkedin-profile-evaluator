@@ -25,7 +25,7 @@ function ImageModal({
       >
         <img src={src} alt={alt} className="w-full h-auto rounded-lg" />
         <button
-          className="absolute top-2 right-2 text-white text-4xl font-bold bg-transparent"
+          className="absolute top-2 right-2 text-black bg-white text-2xl font-bold rounded-full h-8 w-8 opacity-80 flex items-center justify-center"
           onClick={onClose}
           aria-label="Kapat"
         >
