@@ -16,7 +16,7 @@ function ImageModal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30"
       onClick={onClose}
     >
       <div
@@ -29,7 +29,7 @@ function ImageModal({
           onClick={onClose}
           aria-label="Kapat"
         >
-          &times;
+          ×
         </button>
       </div>
     </div>
@@ -301,17 +301,17 @@ export default function QuestionFlow() {
       </div>
       {/* End screen (score/result) */}
       {isComplete && (
-        <div className="min-h-screen flex items-center justify-center p-8 bg-white">
+        <div className="min-h-screen flex items-center justify-center p-8 bg-gray-100">
           <div className="bg-white rounded-[16px] shadow-xl max-w-[350px] w-full text-center p-8">
             <div className="space-y-8">
-              <h2 className="text-3xl font-bold text-[#276090]">Sonuç</h2>
-              <div className="text-5xl font-bold text-[#357ab8]">
+              <h2 className="text-3xl font-bold text-gray-800">Sonuç</h2>
+              <div className="text-5xl font-bold text-blue-600">
                 {score}/100
               </div>
-              <p className="text-lg text-[#357ab8]">{getScoreMessage(score)}</p>
+              <p className="text-lg text-gray-700">{getScoreMessage(score)}</p>
               <button
                 onClick={handleRestart}
-                className="w-full bg-[#357ab8] text-white px-8 py-4 rounded-[20px] text-lg font-semibold transition-all duration-300 hover:bg-[#276090] active:bg-[#1d466e] shadow-lg"
+                className="w-full bg-blue-500 text-white px-8 py-4 rounded-[20px] text-lg font-semibold transition-all duration-300 hover:bg-blue-600 active:bg-blue-700 shadow-lg"
               >
                 Tekrar Başla
               </button>
