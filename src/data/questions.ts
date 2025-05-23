@@ -34,7 +34,7 @@ export const questionsData: Question[] = [
   },
   {
     question:
-      "Web Sitesi: Yönlendirme linkin portfoloyona, websitene, hizmetlerine, cv'ne yönlendirme yapıyor mu?",
+      "Web Sitesi: Yönlendirme linkin portfolyona, websitene, hizmetlerine, cv'ne yönlendirme yapıyor mu?",
     score: 10,
     correctImage: "/images/4.jpg",
     wrongImage: "/images/4-w.jpg",
