@@ -181,7 +181,7 @@ export default function QuestionFlow() {
                 <button
                   onClick={handleRestart}
                   className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
-                    hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
+                      hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
                 >
                   <svg
                     className="w-5 h-5"
@@ -207,9 +207,9 @@ export default function QuestionFlow() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-8 py-8 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-white px-8 py-8 flex flex-col items-center justify-center gap-3">
       {/* Static images above the card */}
-      <div className="w-full max-w-md flex flex-col gap-6 mb-10 px-8">
+      <div className="w-full max-w-md flex flex-col gap-6">
         {/* Correct Example */}
         <div
           className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
@@ -257,7 +257,7 @@ export default function QuestionFlow() {
       <div className="w-full flex justify-center">
         <div className="fade-in w-full max-w-[350px]">
           <div
-            className="bg-[#4a90c2] rounded-[16px] p-6 sm:p-4 shadow-xl mb-8 flex flex-col items-center"
+            className="bg-[#4a90c2] rounded-[16px] p-6 sm:p-4 shadow-xl flex flex-col items-center"
             style={{ height: "fit-content" }}
           >
             <div className="flex-grow w-full flex flex-col items-center">
@@ -270,13 +270,13 @@ export default function QuestionFlow() {
                 {ratingScale.map((r) => (
                   <button
                     key={r.value}
-                    className={`w-full py-2 sm:py-1 px-4 rounded-[10px] text-base sm:text-sm font-normal transition-all duration-200 focus:outline-none
-                      ${
-                        answers[currentQuestion] === r.value
-                          ? "bg-[#276090] text-white"
-                          : "bg-[#357ab8] text-white hover:bg-[#1d466e] active:bg-[#1d466e]"
-                      }
-                    `}
+                    className={`w-full py-2 sm:py-1 px-4 rounded-[10px] text-xs font-normal transition-all duration-200 focus:outline-none
+                        ${
+                          answers[currentQuestion] === r.value
+                            ? "bg-[#276090] text-white"
+                            : "bg-[#357ab8] text-white hover:bg-[#1d466e] active:bg-[#1d466e]"
+                        }
+                      `}
                     onClick={() => handleAnswer(r.value)}
                   >
                     {r.label}
@@ -285,11 +285,11 @@ export default function QuestionFlow() {
               </div>
               <button
                 className={`w-full py-2 sm:py-1 rounded-[20px] text-base sm:text-sm font-normal mt-1 transition-all duration-200
-                  ${
-                    answers[currentQuestion]
-                      ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
-                      : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
-                  }`}
+                    ${
+                      answers[currentQuestion]
+                        ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
+                        : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
+                    }`}
                 onClick={handleSubmit}
                 disabled={!answers[currentQuestion]}
               >
