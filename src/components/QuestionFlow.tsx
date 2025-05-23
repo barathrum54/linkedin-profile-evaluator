@@ -44,20 +44,17 @@ export default function QuestionFlow() {
   const [score, setScore] = useState(0);
   const [showScoreLoader, setShowScoreLoader] = useState(true);
   const [modalImg, setModalImg] = useState<string | null>(null);
+  const [isTestFinished, setIsTestFinished] = useState(false);
   const { playClickSound } = useSound();
 
-  const isComplete =
-    currentQuestion === questionsData.length - 1 &&
-    answers[currentQuestion] !== null;
-
   useEffect(() => {
-    if (isComplete) {
+    if (isTestFinished) {
       const timer = setTimeout(() => {
         setShowScoreLoader(false);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [isComplete]);
+  }, [isTestFinished]);
 
   const handleRestart = () => {
     playClickSound();
@@ -65,6 +62,7 @@ export default function QuestionFlow() {
     setAnswers(new Array(questionsData.length).fill(null));
     setScore(0);
     setShowScoreLoader(true);
+    setIsTestFinished(false);
   };
 
   const handleAnswer = (rating: number) => {
@@ -74,11 +72,6 @@ export default function QuestionFlow() {
   };
 
   const handleSubmit = () => {
-    if (currentQuestion < questionsData.length - 1) {
-      setCurrentQuestion((curr) => curr + 1);
-    } else {
-      setShowScoreLoader(false);
-    }
     // Calculate score with multipliers
     const newScore = answers.reduce(
       (total: number, ans: number | null, idx: number) => {
@@ -91,6 +84,13 @@ export default function QuestionFlow() {
       0
     );
     setScore(Math.ceil(newScore));
+
+    // Check if this is the last question and set isTestFinished accordingly
+    if (currentQuestion === questionsData.length - 1) {
+      setIsTestFinished(true);
+    } else {
+      setCurrentQuestion((curr) => curr + 1);
+    }
   };
 
   const getScoreMessage = (score: number) => {
@@ -101,7 +101,7 @@ export default function QuestionFlow() {
     return "Profilinizi geliştirmek için önerilerimizi dikkate alın. 🎯";
   };
 
-  if (isComplete) {
+  if (isTestFinished) {
     return (
       <div className="min-h-screen p-4 sm:p-6 md:p-8 flex items-center justify-center">
         <div className="w-full max-w-3xl">
@@ -302,7 +302,7 @@ export default function QuestionFlow() {
         />
       )}
       {/* End screen (score/result) */}
-      {isComplete && (
+      {isTestFinished && (
         <div className="min-h-screen flex items-center justify-center p-8 bg-gray-100">
           <div className="bg-white rounded-[16px] shadow-xl max-w-[350px] w-full text-center p-8">
             <div className="space-y-8">
