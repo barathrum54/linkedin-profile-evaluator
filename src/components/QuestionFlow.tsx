@@ -5,6 +5,37 @@ import { useSound } from "@/hooks/useSound";
 import { questionsData, ratingScale, RatingScale } from "@/data/questions";
 import SocialShare from "./SocialShare";
 
+function ImageModal({
+  src,
+  alt,
+  onClose,
+}: {
+  src: string;
+  alt: string;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img src={src} alt={alt} className="w-full h-auto rounded-lg" />
+        <button
+          className="absolute top-2 right-2 text-white text-4xl font-bold bg-transparent"
+          onClick={onClose}
+          aria-label="Kapat"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function QuestionFlow() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(
@@ -13,6 +44,7 @@ export default function QuestionFlow() {
   const [score, setScore] = useState(0);
   const [showScoreLoader, setShowScoreLoader] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalImg, setModalImg] = useState<string | null>(null);
   const { playClickSound } = useSound();
 
   const isComplete =
@@ -180,83 +212,91 @@ export default function QuestionFlow() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-white px-8 py-8 flex flex-col items-center justify-center">
       {/* Static images above the card */}
-      <div className="w-full max-w-md flex flex-col gap-4 mb-6">
+      <div className="w-full max-w-md flex flex-col gap-6 mb-10 px-8">
         {/* Correct Example */}
-        <div className="relative w-full bg-white rounded-xl shadow p-2">
+        <div
+          className="relative w-full bg-white rounded-xl shadow p-2 overflow-visible cursor-pointer"
+          onClick={() =>
+            setModalImg(questionsData[currentQuestion].correctImage)
+          }
+        >
           <img
             src={questionsData[currentQuestion].correctImage}
             alt="Doğru örnek"
             className="w-full h-auto object-contain rounded-lg"
           />
-          <span className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg">
+          <span className="absolute -top-6 right-0 z-20">
             <svg
-              className="w-8 h-8 text-green-500"
+              className="w-24 h-24 text-green-500"
               fill="none"
               stroke="currentColor"
-              strokeWidth="3"
-              viewBox="0 0 24 24"
+              strokeWidth="6"
+              viewBox="0 0 48 48"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
+                d="M10 26l8 8L38 14"
               />
             </svg>
           </span>
         </div>
         {/* Incorrect Example */}
-        <div className="relative w-full bg-white rounded-xl shadow p-2">
+        <div
+          className="relative w-full bg-white rounded-xl shadow p-2 overflow-visible cursor-pointer"
+          onClick={() => setModalImg(questionsData[currentQuestion].wrongImage)}
+        >
           <img
             src={questionsData[currentQuestion].wrongImage}
             alt="Yanlış örnek"
             className="w-full h-auto object-contain rounded-lg"
           />
-          <span className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg">
+          <span className="absolute -top-6 right-0 z-20">
             <svg
-              className="w-8 h-8 text-red-500"
+              className="w-24 h-24 text-red-500"
               fill="none"
               stroke="currentColor"
-              strokeWidth="3"
-              viewBox="0 0 24 24"
+              strokeWidth="6"
+              viewBox="0 0 48 48"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
+                d="M14 34L34 14M14 14l20 20"
               />
             </svg>
           </span>
         </div>
       </div>
+      {/* Modal for image viewing */}
+      {modalImg && (
+        <ImageModal
+          src={modalImg}
+          alt="Örnek"
+          onClose={() => setModalImg(null)}
+        />
+      )}
       {/* Blue card with question and answers */}
-      <div className="w-full max-w-3xl">
-        <div className="fade-in">
-          <div className="bg-[#3887c1] rounded-2xl p-6 sm:p-8 shadow-xl mb-8 flex flex-col items-center">
+      <div className="w-full flex justify-center">
+        <div className="fade-in w-full max-w-[350px]">
+          <div className="bg-[#4a90c2] rounded-[16px] p-6 shadow-xl mb-8 flex flex-col items-center">
             <div className="flex-grow w-full flex flex-col items-center">
-              <div className="mb-6 w-full">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-2xl" role="img" aria-hidden="true">
-                    {questionsData[currentQuestion].icon}
-                  </span>
-                  <p className="question-text text-white text-lg sm:text-xl md:text-2xl font-bold leading-tight">
-                    {questionsData[currentQuestion].question}
-                  </p>
-                </div>
-                <p className="text-sm text-blue-100 font-medium">
-                  Soru {currentQuestion + 1}/{questionsData.length}
+              <div className="mb-4 w-full">
+                <p className="question-text text-white text-base sm:text-lg md:text-xl font-medium leading-tight">
+                  {questionsData[currentQuestion].question}
                 </p>
               </div>
-              <div className="flex flex-col gap-4 w-full max-w-md mb-8">
+              <div className="flex flex-col gap-2 w-full mb-4">
                 {ratingScale.map((r) => (
                   <button
                     key={r.value}
-                    className={`w-full py-3 px-4 rounded-full text-base font-medium transition-all duration-200 focus:outline-none
+                    className={`w-full py-2 px-4 rounded-[10px] text-base font-normal transition-all duration-200 focus:outline-none
                       ${
                         answers[currentQuestion] === r.value
-                          ? "bg-[#5faee3] text-white font-bold"
-                          : "bg-[#b7d8f6] text-[#1a3c5a] hover:bg-[#a3cbe6]"
+                          ? "bg-[#276090] text-white"
+                          : "bg-[#357ab8] text-white hover:bg-[#1d466e] active:bg-[#1d466e]"
                       }
                     `}
                     onClick={() => handleAnswer(r.value)}
@@ -267,11 +307,11 @@ export default function QuestionFlow() {
                 ))}
               </div>
               <button
-                className={`w-full max-w-md py-3 rounded-full text-lg font-semibold mt-2 transition-all duration-200
+                className={`w-full py-2 rounded-[20px] text-base font-normal mt-1 transition-all duration-200
                   ${
                     answers[currentQuestion]
-                      ? "bg-[#5faee3] text-white hover:bg-[#3887c1]"
-                      : "bg-[#b7d8f6] text-blue-100 cursor-not-allowed"
+                      ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
+                      : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
                   }`}
                 onClick={handleSubmit}
                 disabled={!answers[currentQuestion] || isLoading}
@@ -279,8 +319,8 @@ export default function QuestionFlow() {
                 Gönder
               </button>
               {isLoading && (
-                <div className="mt-2 text-white text-sm flex items-center justify-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></span>
+                <div className="mt-1 text-[#276090] text-xs flex items-center justify-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
                   Loading...
                 </div>
               )}

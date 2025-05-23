@@ -1,7 +1,6 @@
 export interface Question {
   question: string;
   score: number;
-  icon: string;
   correctImage: string;
   wrongImage: string;
 }
@@ -16,7 +15,6 @@ export const questionsData: Question[] = [
   {
     question: "Profil fotoğrafı: Kaliteli ve net mi?",
     score: 8,
-    icon: "📸",
     correctImage: "/images/1.jpg",
     wrongImage: "/images/1-w.jpg",
   },
@@ -24,7 +22,6 @@ export const questionsData: Question[] = [
     question:
       "Profil Başlığı:  Odaklı bir şekilde ne yaptığını anlatıyor mu yoksa kalabalık mı?",
     score: 15,
-    icon: "🎭",
     correctImage: "/images/2.jpg",
     wrongImage: "/images/2-w.jpg",
   },
@@ -32,7 +29,6 @@ export const questionsData: Question[] = [
     question:
       "Profil dili: Tanımlı profil dilin ile sayfada kullandığın dil uyumlu mu? (İngilizce açıklamaların varsa sayfanın dili de ingilizce olmalıdır)",
     score: 5,
-    icon: "📝",
     correctImage: "/images/3.jpg",
     wrongImage: "/images/3-w.jpg",
   },
@@ -40,7 +36,6 @@ export const questionsData: Question[] = [
     question:
       "Web Sitesi: Yönlendirme linkin portfoloyona, websitene, hizmetlerine, cv'ne yönlendirme yapıyor mu?",
     score: 10,
-    icon: "🔗",
     correctImage: "/images/4.jpg",
     wrongImage: "/images/4-w.jpg",
   },
@@ -48,7 +43,6 @@ export const questionsData: Question[] = [
     question:
       "Banner: Seni, işini, hizmetini veya teklifini yansıtan bir görsel mi yoksa alakasız mı?",
     score: 5,
-    icon: "🌍",
     correctImage: "/images/5.jpg",
     wrongImage: "/images/5-w.jpg",
   },
@@ -56,7 +50,6 @@ export const questionsData: Question[] = [
     question:
       "İletişim bilgileri: E-posta, site, diğer sosyal medya linkleri ekli mi?",
     score: 5,
-    icon: "📧",
     correctImage: "/images/6.jpg",
     wrongImage: "/images/6-w.jpg",
   },
@@ -64,7 +57,6 @@ export const questionsData: Question[] = [
     question:
       "Hakkında: Teknik ve davranışsal beceriler doğru yerleştirilmiş mi?",
     score: 10,
-    icon: "🛠️",
     correctImage: "/images/7.jpg",
     wrongImage: "/images/7-w.jpg",
   },
@@ -72,7 +64,6 @@ export const questionsData: Question[] = [
     question:
       "Öne Çıkanlar (Featured):  Servislerin, projelerin veya yazıların bu alanda paylaşılmış mı?",
     score: 5,
-    icon: "💡",
     correctImage: "/images/8.jpg",
     wrongImage: "/images/8-w.jpg",
   },
@@ -80,7 +71,6 @@ export const questionsData: Question[] = [
     question:
       "Paylaşım: Kitle çekebilen bir içerik yapısına sahip misin ve düzenli paylaşım yapıyor musun?",
     score: 14,
-    icon: "🤝",
     correctImage: "/images/9.jpg",
     wrongImage: "/images/9-w.jpg",
   },
@@ -88,7 +78,6 @@ export const questionsData: Question[] = [
     question:
       "Tavsiye: İş arkadaşların, yöneticiler, hizmet verdiklerin vb ile referans alışverişi yapıyor musun?",
     score: 5,
-    icon: "📱",
     correctImage: "/images/10.jpg",
     wrongImage: "/images/10-w.jpg",
   },
@@ -96,7 +85,6 @@ export const questionsData: Question[] = [
     question:
       "Otorite: Yaptığın iş hakkında verilen geri bildirimleri paylaşıyor musun?",
     score: 8,
-    icon: "📱",
     correctImage: "/images/11.jpg",
     wrongImage: "/images/11-w.jpg",
   },
@@ -104,7 +92,6 @@ export const questionsData: Question[] = [
     question:
       "Etkileşim: Başkaları ile bağlantı kurup içeriklerine yorumlarda bulunuyor musun?",
     score: 10,
-    icon: "📱",
     correctImage: "/images/12.jpg",
     wrongImage: "/images/12-w.jpg",
   },
