@@ -98,9 +98,9 @@ export const questionsData: Question[] = [
 ];
 
 export const ratingScale: RatingScale[] = [
-  { value: 1, label: "Hiç Yapmıyorum", multiplier: 0.2 },
-  { value: 2, label: "Var ama özensiz", multiplier: 0.4 },
-  { value: 3, label: "Yeterli Değil", multiplier: 0.6 },
-  { value: 4, label: "Biraz Düzenlemek Yeterli", multiplier: 0.8 },
-  { value: 5, label: "Harika", multiplier: 1.0 },
+  { value: 1, label: "Henüz Üzerinde Çalışmadım", multiplier: 0.2 },
+  { value: 2, label: "Eksik ve Gelişime Açık", multiplier: 0.4 },
+  { value: 3, label: "Temel Seviyede Hazır", multiplier: 0.6 },
+  { value: 4, label: "Gözden Geçirilmiş ve Düzenli", multiplier: 0.8 },
+  { value: 5, label: "Stratejik ve Etkileyici", multiplier: 1.0 },
 ];
