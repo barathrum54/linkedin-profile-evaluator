@@ -207,42 +207,90 @@ export default function QuestionFlow() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-8 py-8 flex flex-col items-center justify-center gap-3">
-      {/* Static images above the card */}
-      <div className="w-full max-w-md flex flex-col gap-6">
-        {/* Correct Example */}
-        <div
-          className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
-          onClick={() =>
-            setModalImg(questionsData[currentQuestion].correctImage)
-          }
-        >
-          <img
-            src={questionsData[currentQuestion].correctImage}
-            alt="Doğru örnek"
-            className="w-full h-auto object-contain rounded-lg"
-          />
-          <img
-            src="/images/checkmark.png"
-            alt="Doğru"
-            className="absolute -top-8 right-4 z-20 w-16 h-16 sm:w-12 sm:h-12"
-          />
+    <div className="min-h-screen bg-white px-8 py-8 flex items-center justify-center">
+      {/* Container for two-column layout on large screens */}
+      <div className="w-full max-w-5xl flex flex-col lg:grid lg:grid-cols-2 lg:gap-8">
+        {/* First column: Correct and incorrect images */}
+        <div className="flex flex-col gap-6 mb-6 lg:mb-0">
+          {/* Correct Example */}
+          <div
+            className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
+            onClick={() =>
+              setModalImg(questionsData[currentQuestion].correctImage)
+            }
+          >
+            <img
+              src={questionsData[currentQuestion].correctImage}
+              alt="Doğru örnek"
+              className="w-full h-auto object-contain rounded-lg"
+            />
+            <img
+              src="/images/checkmark.png"
+              alt="Doğru"
+              className="absolute -top-8 right-4 z-20 w-10 h-10 lg:w-16 lg:h-16"
+            />
+          </div>
+          {/* Incorrect Example */}
+          <div
+            className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
+            onClick={() =>
+              setModalImg(questionsData[currentQuestion].wrongImage)
+            }
+          >
+            <img
+              src={questionsData[currentQuestion].wrongImage}
+              alt="Yanlış örnek"
+              className="w-full h-auto object-contain rounded-lg"
+            />
+            <img
+              src="/images/cross.png"
+              alt="Yanlış"
+              className="absolute -top-8 right-4 z-20 w-10 h-10 lg:w-16 lg:h-16"
+            />
+          </div>
         </div>
-        {/* Incorrect Example */}
-        <div
-          className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
-          onClick={() => setModalImg(questionsData[currentQuestion].wrongImage)}
-        >
-          <img
-            src={questionsData[currentQuestion].wrongImage}
-            alt="Yanlış örnek"
-            className="w-full h-auto object-contain rounded-lg"
-          />
-          <img
-            src="/images/cross.png"
-            alt="Yanlış"
-            className="absolute -top-8 right-4 z-20 w-16 h-16 sm:w-12 sm:h-12"
-          />
+        {/* Second column: Question card */}
+        <div className="flex justify-center">
+          <div className="fade-in w-full max-w-[350px] lg:max-w-[500px]">
+            <div className="bg-[#4a90c2] rounded-[16px] p-4 lg:p-8 shadow-xl flex flex-col items-center lg:h-full">
+              <div className="flex-grow w-full flex flex-col items-center lg:justify-between">
+                <div className="mb-4 w-full">
+                  <p className="text-white text-sm lg:text-2xl font-medium leading-tight">
+                    {questionsData[currentQuestion].question}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 w-full mb-4">
+                  {ratingScale.map((r) => (
+                    <button
+                      key={r.value}
+                      className={`w-full py-2 sm:py-1 px-4 rounded-[10px] text-xs lg:text-2xl font-normal transition-all duration-200 focus:outline-none
+                          ${
+                            answers[currentQuestion] === r.value
+                              ? "bg-[#276090] text-white"
+                              : "bg-[#357ab8] text-white hover:bg-[#1d466e] active:bg-[#1d466e]"
+                          }
+                        `}
+                      onClick={() => handleAnswer(r.value)}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  className={`w-full py-2 sm:py-1 rounded-[20px] text-xs lg:text-3xl font-normal mt-1 transition-all duration-200
+                      ${
+                        answers[currentQuestion]
+                          ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
+                          : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
+                      }`}
+                  onClick={handleSubmit}
+                  disabled={!answers[currentQuestion]}
+                >
+                  Gönder
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       {/* Modal for image viewing */}
@@ -253,52 +301,6 @@ export default function QuestionFlow() {
           onClose={() => setModalImg(null)}
         />
       )}
-      {/* Blue card with question and answers */}
-      <div className="w-full flex justify-center">
-        <div className="fade-in w-full max-w-[350px]">
-          <div
-            className="bg-[#4a90c2] rounded-[16px] p-6 sm:p-4 shadow-xl flex flex-col items-center"
-            style={{ height: "fit-content" }}
-          >
-            <div className="flex-grow w-full flex flex-col items-center">
-              <div className="mb-4 w-full">
-                <p className="question-text text-white text-lg sm:text-base font-medium leading-tight">
-                  {questionsData[currentQuestion].question}
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 w-full mb-4">
-                {ratingScale.map((r) => (
-                  <button
-                    key={r.value}
-                    className={`w-full py-2 sm:py-1 px-4 rounded-[10px] text-xs font-normal transition-all duration-200 focus:outline-none
-                        ${
-                          answers[currentQuestion] === r.value
-                            ? "bg-[#276090] text-white"
-                            : "bg-[#357ab8] text-white hover:bg-[#1d466e] active:bg-[#1d466e]"
-                        }
-                      `}
-                    onClick={() => handleAnswer(r.value)}
-                  >
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-              <button
-                className={`w-full py-2 sm:py-1 rounded-[20px] text-base sm:text-sm font-normal mt-1 transition-all duration-200
-                    ${
-                      answers[currentQuestion]
-                        ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
-                        : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
-                    }`}
-                onClick={handleSubmit}
-                disabled={!answers[currentQuestion]}
-              >
-                Gönder
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       {/* End screen (score/result) */}
       {isComplete && (
         <div className="min-h-screen flex items-center justify-center p-8 bg-gray-100">
