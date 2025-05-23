@@ -227,7 +227,7 @@ export default function QuestionFlow() {
             <img
               src="/images/checkmark.png"
               alt="Doğru"
-              className="absolute -top-8 right-4 z-20 w-10 h-10 lg:w-16 lg:h-16"
+              className="absolute lg:-top-8 -top-4 lg:right-0 right-1 z-20 w-10 h-10 lg:w-16 lg:h-16"
             />
           </div>
           {/* Incorrect Example */}
@@ -245,7 +245,7 @@ export default function QuestionFlow() {
             <img
               src="/images/cross.png"
               alt="Yanlış"
-              className="absolute -top-8 right-4 z-20 w-10 h-10 lg:w-16 lg:h-16"
+              className="absolute lg:-top-8 -top-4 lg:right-0 right-1 z-20 w-10 h-10 lg:w-16 lg:h-16"
             />
           </div>
         </div>
