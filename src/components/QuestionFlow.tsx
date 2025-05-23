@@ -263,7 +263,7 @@ export default function QuestionFlow() {
                   {ratingScale.map((r) => (
                     <button
                       key={r.value}
-                      className={`w-full py-2 sm:py-1 px-4 rounded-[10px] text-xs lg:text-2xl font-normal transition-all duration-200 focus:outline-none
+                      className={`w-full py-2 sm:py-1 px-4 lg:px-6 lg:py-3 rounded-[10px] text-xs lg:text-xl font-normal transition-all duration-200 focus:outline-none text-left
                           ${
                             answers[currentQuestion] === r.value
                               ? "bg-[#276090] text-white"
