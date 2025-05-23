@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useSound } from '@/hooks/useSound';
+import { useSound } from "@/hooks/useSound";
 
 interface IntroProps {
   onStart: () => void;
@@ -10,27 +10,28 @@ export default function Intro({ onStart }: IntroProps) {
   const { playClickSound } = useSound();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="card-container p-8 rounded-2xl max-w-2xl w-full text-center cross-fade">
+    <div className="min-h-screen flex items-center justify-center p-8 bg-white">
+      <div className="bg-white rounded-[16px] shadow-xl max-w-[350px] w-full text-center p-8">
         <div className="space-y-8">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 
-            bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-[#276090]">
             LinkedIn Profil Analizi
           </h1>
-          <p className="text-xl text-gray-300">
+          <p className="text-lg text-[#357ab8]">
             Profilinizi profesyonel standartlara göre değerlendirin
           </p>
           <div className="space-y-4">
             <button
-              onClick={() => { onStart(); playClickSound(); }}
-              className="w-full gradient-bg text-white px-8 py-4 rounded-xl text-xl font-semibold
-                transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg"
+              onClick={() => {
+                onStart();
+                playClickSound();
+              }}
+              className="w-full bg-[#357ab8] text-white px-8 py-4 rounded-[20px] text-lg font-semibold transition-all duration-300 hover:bg-[#276090] active:bg-[#1d466e] shadow-lg"
               aria-label="Değerlendirmeye başla"
             >
               Başla
             </button>
             <button
-              className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition-all duration-300 font-medium"
+              className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-gray-200 text-gray-500 hover:bg-gray-300 transition-all duration-300 font-medium"
               aria-label="LinkedIn profilini bağla (yakında aktif olacak)"
               onClick={playClickSound}
               disabled
@@ -47,4 +48,4 @@ export default function Intro({ onStart }: IntroProps) {
       </div>
     </div>
   );
-} 
+}

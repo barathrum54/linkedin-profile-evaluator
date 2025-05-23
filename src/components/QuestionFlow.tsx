@@ -43,7 +43,6 @@ export default function QuestionFlow() {
   );
   const [score, setScore] = useState(0);
   const [showScoreLoader, setShowScoreLoader] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [modalImg, setModalImg] = useState<string | null>(null);
   const { playClickSound } = useSound();
 
@@ -75,27 +74,23 @@ export default function QuestionFlow() {
   };
 
   const handleSubmit = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      if (currentQuestion < questionsData.length - 1) {
-        setCurrentQuestion((curr) => curr + 1);
-      } else {
-        setShowScoreLoader(false);
-      }
-      // Calculate score with multipliers
-      const newScore = answers.reduce(
-        (total: number, ans: number | null, idx: number) => {
-          if (ans === null) return total;
-          const rating: RatingScale | undefined = ratingScale.find(
-            (r) => r.value === ans
-          );
-          return total + questionsData[idx].score * (rating?.multiplier || 0);
-        },
-        0
-      );
-      setScore(Math.ceil(newScore));
-    }, 800);
+    if (currentQuestion < questionsData.length - 1) {
+      setCurrentQuestion((curr) => curr + 1);
+    } else {
+      setShowScoreLoader(false);
+    }
+    // Calculate score with multipliers
+    const newScore = answers.reduce(
+      (total: number, ans: number | null, idx: number) => {
+        if (ans === null) return total;
+        const rating: RatingScale | undefined = ratingScale.find(
+          (r) => r.value === ans
+        );
+        return total + questionsData[idx].score * (rating?.multiplier || 0);
+      },
+      0
+    );
+    setScore(Math.ceil(newScore));
   };
 
   const getScoreMessage = (score: number) => {
@@ -217,7 +212,7 @@ export default function QuestionFlow() {
       <div className="w-full max-w-md flex flex-col gap-6 mb-10 px-8">
         {/* Correct Example */}
         <div
-          className="relative w-full bg-white rounded-xl shadow p-2 overflow-visible cursor-pointer"
+          className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
           onClick={() =>
             setModalImg(questionsData[currentQuestion].correctImage)
           }
@@ -227,25 +222,15 @@ export default function QuestionFlow() {
             alt="Doğru örnek"
             className="w-full h-auto object-contain rounded-lg"
           />
-          <span className="absolute -top-6 right-0 z-20">
-            <svg
-              className="w-24 h-24 text-green-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="6"
-              viewBox="0 0 48 48"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10 26l8 8L38 14"
-              />
-            </svg>
-          </span>
+          <img
+            src="/images/checkmark.png"
+            alt="Doğru"
+            className="absolute -top-8 right-4 z-20 w-16 h-16 sm:w-12 sm:h-12"
+          />
         </div>
         {/* Incorrect Example */}
         <div
-          className="relative w-full bg-white rounded-xl shadow p-2 overflow-visible cursor-pointer"
+          className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
           onClick={() => setModalImg(questionsData[currentQuestion].wrongImage)}
         >
           <img
@@ -253,21 +238,11 @@ export default function QuestionFlow() {
             alt="Yanlış örnek"
             className="w-full h-auto object-contain rounded-lg"
           />
-          <span className="absolute -top-6 right-0 z-20">
-            <svg
-              className="w-24 h-24 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="6"
-              viewBox="0 0 48 48"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14 34L34 14M14 14l20 20"
-              />
-            </svg>
-          </span>
+          <img
+            src="/images/cross.png"
+            alt="Yanlış"
+            className="absolute -top-8 right-4 z-20 w-16 h-16 sm:w-12 sm:h-12"
+          />
         </div>
       </div>
       {/* Modal for image viewing */}
@@ -281,10 +256,13 @@ export default function QuestionFlow() {
       {/* Blue card with question and answers */}
       <div className="w-full flex justify-center">
         <div className="fade-in w-full max-w-[350px]">
-          <div className="bg-[#4a90c2] rounded-[16px] p-6 shadow-xl mb-8 flex flex-col items-center">
+          <div
+            className="bg-[#4a90c2] rounded-[16px] p-6 sm:p-4 shadow-xl mb-8 flex flex-col items-center"
+            style={{ height: "fit-content" }}
+          >
             <div className="flex-grow w-full flex flex-col items-center">
               <div className="mb-4 w-full">
-                <p className="question-text text-white text-base sm:text-lg md:text-xl font-medium leading-tight">
+                <p className="question-text text-white text-lg sm:text-base font-medium leading-tight">
                   {questionsData[currentQuestion].question}
                 </p>
               </div>
@@ -292,7 +270,7 @@ export default function QuestionFlow() {
                 {ratingScale.map((r) => (
                   <button
                     key={r.value}
-                    className={`w-full py-2 px-4 rounded-[10px] text-base font-normal transition-all duration-200 focus:outline-none
+                    className={`w-full py-2 sm:py-1 px-4 rounded-[10px] text-base sm:text-sm font-normal transition-all duration-200 focus:outline-none
                       ${
                         answers[currentQuestion] === r.value
                           ? "bg-[#276090] text-white"
@@ -300,34 +278,47 @@ export default function QuestionFlow() {
                       }
                     `}
                     onClick={() => handleAnswer(r.value)}
-                    disabled={isLoading}
                   >
                     {r.label}
                   </button>
                 ))}
               </div>
               <button
-                className={`w-full py-2 rounded-[20px] text-base font-normal mt-1 transition-all duration-200
+                className={`w-full py-2 sm:py-1 rounded-[20px] text-base sm:text-sm font-normal mt-1 transition-all duration-200
                   ${
                     answers[currentQuestion]
                       ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
                       : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
                   }`}
                 onClick={handleSubmit}
-                disabled={!answers[currentQuestion] || isLoading}
+                disabled={!answers[currentQuestion]}
               >
                 Gönder
               </button>
-              {isLoading && (
-                <div className="mt-1 text-[#276090] text-xs flex items-center justify-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-                  Loading...
-                </div>
-              )}
             </div>
           </div>
         </div>
       </div>
+      {/* End screen (score/result) */}
+      {isComplete && (
+        <div className="min-h-screen flex items-center justify-center p-8 bg-white">
+          <div className="bg-white rounded-[16px] shadow-xl max-w-[350px] w-full text-center p-8">
+            <div className="space-y-8">
+              <h2 className="text-3xl font-bold text-[#276090]">Sonuç</h2>
+              <div className="text-5xl font-bold text-[#357ab8]">
+                {score}/100
+              </div>
+              <p className="text-lg text-[#357ab8]">{getScoreMessage(score)}</p>
+              <button
+                onClick={handleRestart}
+                className="w-full bg-[#357ab8] text-white px-8 py-4 rounded-[20px] text-lg font-semibold transition-all duration-300 hover:bg-[#276090] active:bg-[#1d466e] shadow-lg"
+              >
+                Tekrar Başla
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
