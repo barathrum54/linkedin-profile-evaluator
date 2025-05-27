@@ -471,3 +471,24 @@ button:focus-visible {
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* Line clamp utility */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Mobile responsiveness for improvement screen */
+@media (max-width: 1023px) {
+  .improvement-grid {
+    grid-template-rows: auto 1fr;
+    height: calc(100vh - 8rem);
+  }
+  
+  .improvement-panel {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+}
