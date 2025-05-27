@@ -81,7 +81,7 @@ export default function PricingPage() {
           <div className={`relative bg-white rounded-3xl shadow-xl border-2 transition-all duration-300 hover:shadow-2xl ${
             selectedPlan === 'basic' ? 'border-purple-500 scale-105' : 'border-gray-200 hover:border-purple-300'
           }`}>
-            <div className="p-8">
+            <div className="p-8 flex flex-col justify-between h-full">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Temel Plan</h3>
                 <div className="flex items-center justify-center gap-2 mb-4">
@@ -154,7 +154,7 @@ export default function PricingPage() {
               </span>
             </div>
 
-            <div className="p-8">
+            <div className="p-8 flex flex-col justify-between h-full">
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Premium Plan</h3>
                 <div className="flex items-center justify-center gap-2 mb-4">
