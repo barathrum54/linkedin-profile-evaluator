@@ -1,50 +1,69 @@
 "use client";
 
-import { useSound } from "@/hooks/useSound";
+import { useRouter } from 'next/navigation';
 
-interface IntroProps {
-  onStart: () => void;
-}
+export default function Intro() {
+  const router = useRouter();
 
-export default function Intro({ onStart }: IntroProps) {
-  const { playClickSound } = useSound();
+  const handleStart = () => {
+    router.push('/test');
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-white">
-      <div className="bg-white rounded-[16px] shadow-xl max-w-[350px] w-full text-center p-8">
-        <div className="space-y-8">
-          <h1 className="text-3xl font-bold text-[#276090]">
-            LinkedIn Profil Analizi
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+      <div className="max-w-4xl mx-auto text-center">
+        <div className="mb-8">
+          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+            LinkedIn Profil Değerlendirici
           </h1>
-          <p className="text-lg text-[#357ab8]">
-            Profilinizi profesyonel standartlara göre değerlendirin
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            LinkedIn profilinizin ne kadar etkili olduğunu öğrenin ve kişiselleştirilmiş önerilerle profilinizi geliştirin.
           </p>
-          <div className="space-y-4">
-            <button
-              onClick={() => {
-                onStart();
-                playClickSound();
-              }}
-              className="w-full bg-[#357ab8] text-white px-8 py-4 rounded-[20px] text-lg font-semibold transition-all duration-300 hover:bg-[#276090] active:bg-[#1d466e] shadow-lg"
-              aria-label="Değerlendirmeye başla"
-            >
-              Başla
-            </button>
-            <button
-              className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-gray-200 text-gray-500 hover:bg-gray-300 transition-all duration-300 font-medium"
-              aria-label="LinkedIn profilini bağla (yakında aktif olacak)"
-              onClick={playClickSound}
-              disabled
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                <rect x="2" y="9" width="4" height="12" />
-                <circle cx="4" cy="4" r="2" />
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg border border-blue-100">
+            <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Yakında
-            </button>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Hızlı Analiz</h3>
+            <p className="text-gray-600 text-sm">12 kritik alanda profilinizi değerlendirin</p>
+          </div>
+          
+          <div className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg border border-blue-100">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Kişisel Öneriler</h3>
+            <p className="text-gray-600 text-sm">Puanınıza özel iyileştirme tavsiyeleri</p>
+          </div>
+          
+          <div className="bg-white/70 backdrop-blur rounded-2xl p-6 shadow-lg border border-blue-100">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Detaylı Rapor</h3>
+            <p className="text-gray-600 text-sm">Her alan için özel analiz ve çözümler</p>
           </div>
         </div>
+        
+        <button
+          onClick={handleStart}
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+        >
+          Başla
+        </button>
       </div>
     </div>
   );
