@@ -134,9 +134,6 @@ export default function ImprovementPage() {
   // Calculate overall statistics
   const totalScore = answers.reduce((sum: number, answer) => sum + (answer || 0), 0);
   const averageScore = Math.round(totalScore / answers.length);
-  const completedQuestions = answers.filter(answer => answer !== null).length;
-  const highScoreQuestions = answers.filter(answer => (answer || 0) >= 80).length;
-  const lowScoreQuestions = answers.filter(answer => (answer || 0) < 40).length;
 
   // Get priority areas (lowest scoring questions)
   const priorityAreas = questionsData

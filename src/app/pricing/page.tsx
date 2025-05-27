@@ -266,7 +266,7 @@ export default function PricingPage() {
                 onClick={() => handleSelectPlan('premium')}
                 className="bg-purple-800 text-white px-8 py-4 rounded-xl font-semibold hover:bg-purple-900 transition-colors"
               >
-                Premium'u Dene
+                Premium&apos;u Dene
               </button>
             </div>
           </div>

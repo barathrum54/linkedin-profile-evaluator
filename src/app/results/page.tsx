@@ -28,12 +28,6 @@ export default function ResultsPage() {
     return () => clearTimeout(timer);
   }, [router]);
 
-  const handleRestart = () => {
-    playClickSound();
-    localStorage.removeItem('testAnswers');
-    localStorage.removeItem('testScore');
-    router.push('/');
-  };
 
   const handleImprovement = () => {
     playClickSound();

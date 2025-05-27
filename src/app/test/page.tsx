@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSound } from "@/hooks/useSound";
 import { questionsData } from "@/data/questions";
