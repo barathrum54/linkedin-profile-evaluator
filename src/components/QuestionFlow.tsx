@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSound } from "@/hooks/useSound";
-import { questionsData, ratingScale, RatingScale } from "@/data/questions";
+import { questionsData } from "@/data/questions";
 import SocialShare from "./SocialShare";
 
 function ImageModal({
@@ -36,6 +36,26 @@ function ImageModal({
   );
 }
 
+// Helper function to get label based on slider value
+const getSliderLabel = (value: number): string => {
+  if (value >= 0 && value <= 19) return "Henüz Üzerinde Çalışmadım";
+  if (value >= 20 && value <= 39) return "Eksik ve Gelişime Açık";
+  if (value >= 40 && value <= 59) return "Temel Seviyede Hazır";
+  if (value >= 60 && value <= 79) return "Gözden Geçirilmiş ve Düzenli";
+  if (value >= 80 && value <= 100) return "Stratejik ve Etkileyici";
+  return "";
+};
+
+// Helper function to convert slider value to multiplier for scoring
+const getMultiplierFromSliderValue = (value: number): number => {
+  if (value >= 0 && value <= 19) return 0.2;
+  if (value >= 20 && value <= 39) return 0.4;
+  if (value >= 40 && value <= 59) return 0.6;
+  if (value >= 60 && value <= 79) return 0.8;
+  if (value >= 80 && value <= 100) return 1.0;
+  return 0;
+};
+
 export default function QuestionFlow() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(
@@ -65,21 +85,20 @@ export default function QuestionFlow() {
     setIsTestFinished(false);
   };
 
-  const handleAnswer = (rating: number) => {
+  const handleSliderChange = (value: number) => {
     const newAnswers = [...answers];
-    newAnswers[currentQuestion] = rating;
+    newAnswers[currentQuestion] = value;
     setAnswers(newAnswers);
   };
 
   const handleSubmit = () => {
+    playClickSound();
     // Calculate score with multipliers
     const newScore = answers.reduce(
       (total: number, ans: number | null, idx: number) => {
         if (ans === null) return total;
-        const rating: RatingScale | undefined = ratingScale.find(
-          (r) => r.value === ans
-        );
-        return total + questionsData[idx].score * (rating?.multiplier || 0);
+        const multiplier = getMultiplierFromSliderValue(ans);
+        return total + questionsData[idx].score * multiplier;
       },
       0
     );
@@ -259,32 +278,52 @@ export default function QuestionFlow() {
                     {questionsData[currentQuestion].question}
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 w-full mb-4">
-                  {ratingScale.map((r) => (
-                    <button
-                      key={r.value}
-                      className={`w-full py-2 sm:py-1 px-4 lg:px-6 lg:py-3 rounded-[10px] text-xs lg:text-xl font-normal transition-all duration-200 focus:outline-none text-left
-                          ${
-                            answers[currentQuestion] === r.value
-                              ? "bg-[#276090] text-white"
-                              : "bg-[#357ab8] text-white hover:bg-[#1d466e] active:bg-[#1d466e]"
-                          }
-                        `}
-                      onClick={() => handleAnswer(r.value)}
-                    >
-                      {r.label}
-                    </button>
-                  ))}
+                <div className="flex flex-col gap-4 w-full mb-4">
+                  {/* Numeric Score Display */}
+                  <div className="text-center">
+                    <div className="text-white text-4xl lg:text-6xl font-bold mb-2">
+                      {answers[currentQuestion] || 0}
+                    </div>
+                    <div className="text-white text-xs lg:text-sm opacity-80">
+                      Score
+                    </div>
+                  </div>
+                  
+                  {/* Slider */}
+                  <div className="flex items-center gap-3 w-full px-2">
+                    <span className="text-white text-xs lg:text-sm opacity-70 min-w-[20px]">0</span>
+                    <div className="flex-1 relative">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={answers[currentQuestion] || 0}
+                        onChange={(e) => handleSliderChange(Number(e.target.value))}
+                        className="w-full h-2 bg-white bg-opacity-30 rounded-lg appearance-none cursor-pointer slider"
+                        style={{
+                          background: `linear-gradient(to right, #ffffff ${answers[currentQuestion] || 0}%, rgba(255,255,255,0.3) ${answers[currentQuestion] || 0}%)`
+                        }}
+                      />
+                    </div>
+                    <span className="text-white text-xs lg:text-sm opacity-70 min-w-[30px]">100</span>
+                  </div>
+                  
+                  {/* Dynamic Label */}
+                  <div className="text-center">
+                    <div className="text-white text-base lg:text-xl font-medium bg-transparent bg-opacity-20 rounded-lg py-2 px-4">
+                      {getSliderLabel(answers[currentQuestion] || 0)}
+                    </div>
+                  </div>
                 </div>
                 <button
                   className={`w-full py-2 sm:py-1 rounded-[20px] text-xs lg:text-3xl font-normal mt-1 transition-all duration-200
                       ${
-                        answers[currentQuestion]
+                        answers[currentQuestion] !== null
                           ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
                           : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
                       }`}
                   onClick={handleSubmit}
-                  disabled={!answers[currentQuestion]}
+                  disabled={answers[currentQuestion] === null}
                 >
                   Gönder
                 </button>
