@@ -219,11 +219,11 @@ function ImprovementScreen({
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 improvement-grid h-[calc(100vh-20rem)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-8rem)]">
           
           {/* Left Panel - Questions List */}
-          <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-blue-100 overflow-hidden improvement-panel">
-            <div className="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-blue-100 overflow-hidden flex flex-col">
+            <div className="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">Sorular ve Puanlarınız</h2>
@@ -239,7 +239,7 @@ function ImprovementScreen({
                 </div>
               </div>
             </div>
-            <div className="overflow-y-auto h-full">
+            <div className="overflow-y-auto flex-1">
               {questionsData.map((question, index) => {
                 const userAnswer = answers[index] || 0;
                 const isSelected = selectedQuestion === index;
@@ -313,8 +313,8 @@ function ImprovementScreen({
           </div>
 
           {/* Right Panel - Question Details */}
-          <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-blue-100 overflow-hidden improvement-panel">
-            <div className="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-blue-100 overflow-hidden flex flex-col">
+            <div className="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900">
                   Soru {selectedQuestion + 1} Detayları
@@ -333,7 +333,7 @@ function ImprovementScreen({
               </div>
             </div>
             
-            <div className="p-6 overflow-y-auto h-full space-y-8">
+            <div className="p-6 overflow-y-auto flex-1 space-y-6">
               {/* Question */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
                 <h3 className="text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
@@ -383,7 +383,7 @@ function ImprovementScreen({
                 </div>
               </div>
 
-              {/* Examples with enhanced styling */}
+              {/* Examples with enhanced styling - Vertically Stacked */}
               <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                 <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -391,7 +391,7 @@ function ImprovementScreen({
                   </svg>
                   Örnekler
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-6">
                   <div className="group">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -405,7 +405,7 @@ function ImprovementScreen({
                       <img 
                         src={questionsData[selectedQuestion].correctImage}
                         alt="Doğru örnek"
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-green-500/10 group-hover:bg-green-500/20 transition-colors"></div>
                     </div>
@@ -423,7 +423,7 @@ function ImprovementScreen({
                       <img 
                         src={questionsData[selectedQuestion].wrongImage}
                         alt="Yanlış örnek"
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-red-500/10 group-hover:bg-red-500/20 transition-colors"></div>
                     </div>
