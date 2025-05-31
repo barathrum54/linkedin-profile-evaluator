@@ -47,6 +47,7 @@
     "jest-environment-jsdom": "^30.0.0-beta.3",
     "postcss": "^8.4.31",
     "tailwindcss": "^4",
+    "text-encoding": "^0.7.0",
     "typescript": "^5"
   }
 }

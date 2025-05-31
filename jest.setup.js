@@ -5,6 +5,11 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
 
+// Polyfills for Node.js environment
+import { TextEncoder, TextDecoder } from "util";
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 // Global test setup
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -47,9 +52,8 @@ jest.mock("next-auth/react", () => ({
   SessionProvider: ({ children }) => children,
 }));
 
-// Suppress console errors in tests
+// Only suppress console warnings, but allow errors for testing
 global.console = {
   ...console,
-  error: jest.fn(),
   warn: jest.fn(),
 };
