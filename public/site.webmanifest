@@ -1,0 +1,64 @@
+{
+  "name": "LinkedIn Profil Değerlendirici",
+  "short_name": "LinkedIn Profiler",
+  "description": "LinkedIn profilinizi AI destekli analiz ile optimize edin. Ücretsiz profil değerlendirmesi, detaylı rapor ve profesyonel gelişim önerileri.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0066CC",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "tr",
+  "categories": [
+    "productivity",
+    "business",
+    "career"
+  ],
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "LinkedIn Profil Analizi - Ana Sayfa"
+    },
+    {
+      "src": "/screenshot-narrow.jpg",
+      "sizes": "640x1136",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "LinkedIn Profil Analizi - Mobil Görünüm"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
