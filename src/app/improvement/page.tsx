@@ -4,6 +4,113 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { questionsData } from "@/data/questions";
 
+// Modal Component
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  imageSrc: string;
+  imageAlt: string;
+  imageType: "correct" | "wrong";
+}
+
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  imageSrc,
+  imageAlt,
+  imageType,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-4xl max-h-[90vh] w-full bg-white rounded-2xl overflow-visible shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute -right-2 -top-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center z-10 shadow-lg transition-colors duration-200"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        {/* Image Header */}
+        <div
+          className={`p-4 ${
+            imageType === "correct"
+              ? "bg-green-50 border-b border-green-200"
+              : "bg-red-50 border-b border-red-200"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                imageType === "correct" ? "bg-green-500" : "bg-red-500"
+              }`}
+            >
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {imageType === "correct" ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                )}
+              </svg>
+            </div>
+            <h3
+              className={`text-lg font-semibold ${
+                imageType === "correct" ? "text-green-800" : "text-red-800"
+              }`}
+            >
+              {imageType === "correct" ? "Doğru Örnek" : "Yanlış Örnek"}
+            </h3>
+          </div>
+        </div>
+
+        {/* Image */}
+        <div className="flex items-center justify-center bg-gray-100">
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            className="max-w-full max-h-[calc(90vh-120px)] object-contain"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Helper function to get improvement recommendations
 const getImprovementRecommendation = (
   questionIndex: number,
@@ -107,6 +214,11 @@ export default function ImprovementPage() {
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
   const [animateIn, setAnimateIn] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<{
+    src: string;
+    type: "correct" | "wrong";
+  } | null>(null);
 
   useEffect(() => {
     // Get answers from localStorage
@@ -139,6 +251,16 @@ export default function ImprovementPage() {
       // Otherwise, expand this question (and collapse any other)
       setExpandedQuestion(index);
     }
+  };
+
+  const openModal = (imageSrc: string, imageType: "correct" | "wrong") => {
+    setSelectedImage({ src: imageSrc, type: imageType });
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setModalOpen(false);
   };
 
   // Calculate overall statistics
@@ -435,7 +557,10 @@ export default function ImprovementPage() {
                                 <img
                                   src={question.correctImage}
                                   alt="Doğru örnek"
-                                  className="w-full h-32 object-cover"
+                                  className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                                  onClick={() => {
+                                    openModal(question.correctImage, "correct");
+                                  }}
                                 />
                               </div>
                             </div>
@@ -464,7 +589,10 @@ export default function ImprovementPage() {
                                 <img
                                   src={question.wrongImage}
                                   alt="Yanlış örnek"
-                                  className="w-full h-32 object-cover"
+                                  className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                                  onClick={() => {
+                                    openModal(question.wrongImage, "wrong");
+                                  }}
                                 />
                               </div>
                             </div>
@@ -537,6 +665,17 @@ export default function ImprovementPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {selectedImage && (
+        <Modal
+          isOpen={modalOpen}
+          onClose={closeModal}
+          imageSrc={selectedImage.src}
+          imageAlt="Seçilen örnek"
+          imageType={selectedImage.type}
+        />
+      )}
     </div>
   );
 }
