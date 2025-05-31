@@ -45,6 +45,7 @@ interface LeftDrawerProps {
   currentQuestion: number;
   answers: (number | null)[];
   onQuestionSelect: (index: number) => void;
+  showWarningIndicators: boolean;
 }
 
 const LeftDrawer: React.FC<LeftDrawerProps> = ({
@@ -53,6 +54,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
   currentQuestion,
   answers,
   onQuestionSelect,
+  showWarningIndicators,
 }) => {
   const drawerWidth = 280; // Fixed width
   const visibleWidth = drawerWidth * 0; // 10% visible
@@ -83,6 +85,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
             {questionsData.map((question, index) => {
               const isAnswered = answers[index] !== null;
               const isCurrent = index === currentQuestion;
+              const shouldShowWarning = !isAnswered && showWarningIndicators;
 
               return (
                 <button
@@ -93,6 +96,8 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
                       ? "bg-[#4a90c2] text-white border-[#4a90c2]"
                       : isAnswered
                       ? "bg-green-50 border-green-200 hover:bg-green-100"
+                      : shouldShowWarning
+                      ? "bg-yellow-50 border-yellow-200 hover:bg-yellow-100"
                       : "bg-gray-50 border-gray-200 hover:bg-gray-100"
                   }`}
                 >
@@ -100,19 +105,41 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
                     <span className="font-medium text-sm">
                       Soru {index + 1}
                     </span>
-                    {isAnswered && (
-                      <span
-                        className={`text-xs font-medium ${
-                          isCurrent ? "text-white" : "text-green-700"
-                        }`}
-                      >
-                        {answers[index]}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1">
+                      {isAnswered ? (
+                        <span
+                          className={`text-xs font-medium ${
+                            isCurrent ? "text-white" : "text-green-700"
+                          }`}
+                        >
+                          {answers[index]}
+                        </span>
+                      ) : shouldShowWarning ? (
+                        <div className="animate-pulse">
+                          <svg
+                            className="w-4 h-4 text-yellow-500"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                   <p
                     className={`text-xs leading-tight ${
-                      isCurrent ? "text-white/90" : "text-gray-600"
+                      isCurrent
+                        ? "text-white/90"
+                        : isAnswered
+                        ? "text-gray-600"
+                        : shouldShowWarning
+                        ? "text-yellow-600"
+                        : "text-gray-600"
                     }`}
                   >
                     {question.question.length > 50
@@ -255,6 +282,7 @@ export default function TestPage() {
   );
   const [modalImg, setModalImg] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showWarningIndicators, setShowWarningIndicators] = useState(false);
   const { playClickSound } = useSound();
 
   // Debug function to finish test with random answers
@@ -284,19 +312,33 @@ export default function TestPage() {
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = value;
     setAnswers(newAnswers);
+    // Reset warning indicators when user answers a question
+    if (showWarningIndicators) {
+      setShowWarningIndicators(false);
+    }
   };
 
   const handleQuestionSelect = (index: number) => {
     playClickSound();
     setCurrentQuestion(index);
+    setIsDrawerOpen(false); // Close drawer when question is selected
   };
 
   const handleSubmit = () => {
     playClickSound();
 
-    // Check if this is the last question
+    // If it's the last question, behave like finish test
     if (currentQuestion === questionsData.length - 1) {
-      // Calculate final score
+      const unansweredQuestions = answers.some((answer) => answer === null);
+
+      if (unansweredQuestions) {
+        // Enable warning indicators and open drawer
+        setShowWarningIndicators(true);
+        setIsDrawerOpen(true);
+        return;
+      }
+
+      // Calculate final score if all questions are answered
       const finalScore = answers.reduce(
         (total: number, ans: number | null, idx: number) => {
           if (ans === null) return total;
@@ -312,12 +354,44 @@ export default function TestPage() {
 
       router.push("/results");
     } else {
+      // Just move to next question for non-last questions
       setCurrentQuestion((curr) => curr + 1);
     }
   };
 
+  const handleFinishTest = () => {
+    playClickSound();
+
+    // Check for unanswered questions
+    const unansweredQuestions = answers.some((answer) => answer === null);
+
+    if (unansweredQuestions) {
+      // Enable warning indicators and open drawer
+      setShowWarningIndicators(true);
+      setIsDrawerOpen(true);
+      return;
+    }
+
+    // Calculate final score if all questions are answered
+    const finalScore = answers.reduce(
+      (total: number, ans: number | null, idx: number) => {
+        if (ans === null) return total;
+        const multiplier = getMultiplierFromSliderValue(ans);
+        return total + questionsData[idx].score * multiplier;
+      },
+      0
+    );
+
+    // Store answers and score in localStorage
+    localStorage.setItem("testAnswers", JSON.stringify(answers));
+    localStorage.setItem("testScore", Math.ceil(finalScore).toString());
+
+    router.push("/results");
+  };
+
   const currentAnswer = answers[currentQuestion];
   const isAnswered = currentAnswer !== null;
+  const allQuestionsAnswered = answers.every((answer) => answer !== null);
 
   return (
     <div className="min-h-screen bg-white">
@@ -328,6 +402,7 @@ export default function TestPage() {
         currentQuestion={currentQuestion}
         answers={answers}
         onQuestionSelect={handleQuestionSelect}
+        showWarningIndicators={showWarningIndicators}
       />
 
       {/* Main Content */}
@@ -447,8 +522,18 @@ export default function TestPage() {
                     onClick={handleSubmit}
                     disabled={!isAnswered}
                   >
-                    Gönder
+                    {"Gönder"}
                   </button>
+
+                  {/* Finish Test Button - Only show when all questions answered */}
+                  {allQuestionsAnswered && (
+                    <button
+                      onClick={handleFinishTest}
+                      className="w-full py-3 mt-4 rounded-[20px] text-xs lg:text-xl font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600 active:bg-green-700 shadow-lg"
+                    >
+                      Testi Bitir
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
