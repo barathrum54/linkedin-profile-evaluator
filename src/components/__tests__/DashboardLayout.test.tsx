@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import DashboardLayout from "../DashboardLayout";
 
 // Mock next-auth
@@ -28,7 +28,15 @@ jest.mock("next/navigation", () => ({
 
 // Mock next/link
 jest.mock("next/link", () => {
-  return function MockLink({ children, href, ...props }: any) {
+  return function MockLink({
+    children,
+    href,
+    ...props
+  }: {
+    children: React.ReactNode;
+    href: string;
+    [key: string]: unknown;
+  }) {
     return (
       <a href={href} {...props}>
         {children}
