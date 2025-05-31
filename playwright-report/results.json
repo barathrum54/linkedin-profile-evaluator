@@ -1,0 +1,580 @@
+{
+  "config": {
+    "configFile": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/playwright.config.ts",
+    "rootDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 4
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "playwright-report/results.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.52.0",
+    "workers": 4,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication Flow",
+          "file": "auth.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should navigate to sign up page",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30161,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts",
+                            "column": 16,
+                            "line": 10
+                          },
+                          "message": "Error: page.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=Ücretsiz Başlayın')\u001b[22m\n\n\n\u001b[0m \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m   test(\u001b[32m\"should navigate to sign up page\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m\"text=Ücretsiz Başlayın\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 11 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[32m\"/auth/signup\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 12 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m\"h1\"\u001b[39m))\u001b[33m.\u001b[39mtoContainText(\u001b[32m\"Hesap Oluşturun\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 13 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:10:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:26.741Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/video.webm"
+                        },
+                        {
+                          "name": "_error-context-1",
+                          "contentType": "text/markdown",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-65ff9e84f60c34ec8642",
+              "file": "auth.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "should navigate to sign in page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 6731,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:26.739Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-5ad0a596a18fe8dfc9c7",
+              "file": "auth.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "should show validation errors for empty sign up form",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 7328,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:26.728Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-f9d9e3ab16dbe183aeed",
+              "file": "auth.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "should show validation errors for invalid email",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 7140,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:26.736Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-c8dcb8442b3ea9c70219",
+              "file": "auth.spec.ts",
+              "line": 38,
+              "column": 7
+            },
+            {
+              "title": "should show error for weak password",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 8054,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.text-red-700')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.text-red-700')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.text-red-700')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.text-red-700')\u001b[22m\n\n    at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:64:49",
+                        "location": {
+                          "file": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts",
+                          "column": 49,
+                          "line": 64
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 62 |\u001b[39m\n \u001b[90m 63 |\u001b[39m     \u001b[90m// Should show custom validation error\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m\".text-red-700\"\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 66 |\u001b[39m\n \u001b[90m 67 |\u001b[39m   test(\u001b[32m\"should navigate between auth pages\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts",
+                            "column": 49,
+                            "line": 64
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.text-red-700')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.text-red-700')\u001b[22m\n\n\n\u001b[0m \u001b[90m 62 |\u001b[39m\n \u001b[90m 63 |\u001b[39m     \u001b[90m// Should show custom validation error\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m\".text-red-700\"\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 66 |\u001b[39m\n \u001b[90m 67 |\u001b[39m   test(\u001b[32m\"should navigate between auth pages\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:64:49\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:36.225Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/video.webm"
+                        },
+                        {
+                          "name": "_error-context-0",
+                          "contentType": "text/markdown",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts",
+                        "column": 49,
+                        "line": 64
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-3594025333461baff598",
+              "file": "auth.spec.ts",
+              "line": 53,
+              "column": 7
+            },
+            {
+              "title": "should navigate between auth pages",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4566,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:36.628Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-d605e414967b2452867b",
+              "file": "auth.spec.ts",
+              "line": 67,
+              "column": 7
+            },
+            {
+              "title": "should navigate to forgot password page",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 9308,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nLocator: locator('h1')\nExpected string: \u001b[32m\"Şifre\u001b[7m Sıfırlama\u001b[27m\"\u001b[39m\nReceived string: \u001b[31m\"Şifre\u001b[7mmi Unuttum\u001b[27m\"\u001b[39m\nCall log:\n\u001b[2m  - expect.toContainText with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1')\u001b[22m\n\u001b[2m    9 × locator resolved to <h1 class=\"text-3xl font-bold text-gray-900 mb-2\">Şifremi Unuttum</h1>\u001b[22m\n\u001b[2m      - unexpected value \"Şifremi Unuttum\"\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nLocator: locator('h1')\nExpected string: \u001b[32m\"Şifre\u001b[7m Sıfırlama\u001b[27m\"\u001b[39m\nReceived string: \u001b[31m\"Şifre\u001b[7mmi Unuttum\u001b[27m\"\u001b[39m\nCall log:\n\u001b[2m  - expect.toContainText with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1')\u001b[22m\n\u001b[2m    9 × locator resolved to <h1 class=\"text-3xl font-bold text-gray-900 mb-2\">Şifremi Unuttum</h1>\u001b[22m\n\u001b[2m      - unexpected value \"Şifremi Unuttum\"\u001b[22m\n\n    at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:87:38",
+                        "location": {
+                          "file": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts",
+                          "column": 38,
+                          "line": 87
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 85 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m\"text=Şifrenizi mi unuttunuz?\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 86 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[32m\"/auth/forgot-password\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 87 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m\"h1\"\u001b[39m))\u001b[33m.\u001b[39mtoContainText(\u001b[32m\"Şifre Sıfırlama\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 88 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 89 |\u001b[39m\n \u001b[90m 90 |\u001b[39m   test(\u001b[32m\"should show OAuth provider buttons\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts",
+                            "column": 38,
+                            "line": 87
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nLocator: locator('h1')\nExpected string: \u001b[32m\"Şifre\u001b[7m Sıfırlama\u001b[27m\"\u001b[39m\nReceived string: \u001b[31m\"Şifre\u001b[7mmi Unuttum\u001b[27m\"\u001b[39m\nCall log:\n\u001b[2m  - expect.toContainText with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1')\u001b[22m\n\u001b[2m    9 × locator resolved to <h1 class=\"text-3xl font-bold text-gray-900 mb-2\">Şifremi Unuttum</h1>\u001b[22m\n\u001b[2m      - unexpected value \"Şifremi Unuttum\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 85 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m\"text=Şifrenizi mi unuttunuz?\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 86 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[32m\"/auth/forgot-password\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 87 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m\"h1\"\u001b[39m))\u001b[33m.\u001b[39mtoContainText(\u001b[32m\"Şifre Sıfırlama\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 88 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 89 |\u001b[39m\n \u001b[90m 90 |\u001b[39m   test(\u001b[32m\"should show OAuth provider buttons\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:87:38\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:36.818Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/video.webm"
+                        },
+                        {
+                          "name": "_error-context-0",
+                          "contentType": "text/markdown",
+                          "path": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts",
+                        "column": 38,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-62cf6a911191975ab121",
+              "file": "auth.spec.ts",
+              "line": 82,
+              "column": 7
+            },
+            {
+              "title": "should show OAuth provider buttons",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 999,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:41.199Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-4617fd16d3fc6814804d",
+              "file": "auth.spec.ts",
+              "line": 90,
+              "column": 7
+            },
+            {
+              "title": "should handle sign in form submission",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 1048,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-05-31T15:15:42.202Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-abe5b6d04a49014c755a",
+              "file": "auth.spec.ts",
+              "line": 99,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-05-31T15:15:21.206Z",
+    "duration": 38574.697,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

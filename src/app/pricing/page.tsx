@@ -2,18 +2,35 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Layout from "@/components/Layout";
 
 export default function PricingPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [selectedPlan, setSelectedPlan] = useState<"basic" | "premium" | null>(
     null
   );
 
   const handleSelectPlan = (plan: "basic" | "premium") => {
     setSelectedPlan(plan);
-    // Navigate to payment page with selected plan
-    router.push(`/payment?plan=${plan}`);
+
+    // Check if user is authenticated
+    if (status === "loading") {
+      return; // Wait for session to load
+    }
+
+    if (!session) {
+      // Redirect to sign-in with plan selection in callback URL
+      router.push(
+        `/auth/signin?callbackUrl=${encodeURIComponent(
+          `/payment?plan=${plan}`
+        )}`
+      );
+    } else {
+      // User is authenticated, proceed to payment
+      router.push(`/payment?plan=${plan}`);
+    }
   };
 
   return (

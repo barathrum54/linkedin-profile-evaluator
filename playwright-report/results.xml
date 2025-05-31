@@ -1,0 +1,147 @@
+<testsuites id="" name="" tests="9" failures="3" skipped="0" errors="0" time="38.574697">
+<testsuite name="auth.spec.ts" timestamp="2025-05-31T15:15:26.215Z" hostname="chromium" tests="9" failures="3" skipped="0" time="75.335" errors="0">
+<testcase name="Authentication Flow › should navigate to sign up page" classname="auth.spec.ts" time="30.161">
+<failure message="auth.spec.ts:9:7 should navigate to sign up page" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:9:7 › Authentication Flow › should navigate to sign up page ────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('text=Ücretsiz Başlayın')
+
+
+       8 |
+       9 |   test("should navigate to sign up page", async ({ page }) => {
+    > 10 |     await page.click("text=Ücretsiz Başlayın");
+         |                ^
+      11 |     await expect(page).toHaveURL("/auth/signup");
+      12 |     await expect(page.locator("h1")).toContainText("Hesap Oluşturun");
+      13 |   });
+        at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:10:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/video.webm]]
+
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-should-navigate-to-sign-up-page-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Flow › should navigate to sign in page" classname="auth.spec.ts" time="6.731">
+</testcase>
+<testcase name="Authentication Flow › should show validation errors for empty sign up form" classname="auth.spec.ts" time="7.328">
+</testcase>
+<testcase name="Authentication Flow › should show validation errors for invalid email" classname="auth.spec.ts" time="7.14">
+</testcase>
+<testcase name="Authentication Flow › should show error for weak password" classname="auth.spec.ts" time="8.054">
+<failure message="auth.spec.ts:53:7 should show error for weak password" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:53:7 › Authentication Flow › should show error for weak password ───────
+
+    Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+
+    Locator: locator('.text-red-700')
+    Expected: visible
+    Received: <element(s) not found>
+    Call log:
+      - expect.toBeVisible with timeout 5000ms
+      - waiting for locator('.text-red-700')
+
+
+      62 |
+      63 |     // Should show custom validation error
+    > 64 |     await expect(page.locator(".text-red-700")).toBeVisible();
+         |                                                 ^
+      65 |   });
+      66 |
+      67 |   test("should navigate between auth pages", async ({ page }) => {
+        at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:64:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/video.webm]]
+
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-should-show-error-for-weak-password-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Flow › should navigate between auth pages" classname="auth.spec.ts" time="4.566">
+</testcase>
+<testcase name="Authentication Flow › should navigate to forgot password page" classname="auth.spec.ts" time="9.308">
+<failure message="auth.spec.ts:82:7 should navigate to forgot password page" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.ts:82:7 › Authentication Flow › should navigate to forgot password page ───
+
+    Error: Timed out 5000ms waiting for expect(locator).toContainText(expected)
+
+    Locator: locator('h1')
+    Expected string: "Şifre Sıfırlama"
+    Received string: "Şifremi Unuttum"
+    Call log:
+      - expect.toContainText with timeout 5000ms
+      - waiting for locator('h1')
+        9 × locator resolved to <h1 class="text-3xl font-bold text-gray-900 mb-2">Şifremi Unuttum</h1>
+          - unexpected value "Şifremi Unuttum"
+
+
+      85 |     await page.click("text=Şifrenizi mi unuttunuz?");
+      86 |     await expect(page).toHaveURL("/auth/forgot-password");
+    > 87 |     await expect(page.locator("h1")).toContainText("Şifre Sıfırlama");
+         |                                      ^
+      88 |   });
+      89 |
+      90 |   test("should show OAuth provider buttons", async ({ page }) => {
+        at /Users/minted_tr/Desktop/linkedin-profile-evaluator/e2e/auth.spec.ts:87:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/video.webm]]
+
+[[ATTACHMENT|../test-results/auth-Authentication-Flow-s-81926-ate-to-forgot-password-page-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication Flow › should show OAuth provider buttons" classname="auth.spec.ts" time="0.999">
+</testcase>
+<testcase name="Authentication Flow › should handle sign in form submission" classname="auth.spec.ts" time="1.048">
+</testcase>
+</testsuite>
+</testsuites>
