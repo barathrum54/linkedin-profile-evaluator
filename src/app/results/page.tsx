@@ -13,12 +13,12 @@ export default function ResultsPage() {
 
   useEffect(() => {
     // Get score from localStorage
-    const storedScore = localStorage.getItem('testScore');
+    const storedScore = localStorage.getItem("testScore");
     if (storedScore) {
       setScore(parseInt(storedScore));
     } else {
       // If no score found, redirect to home
-      router.push('/');
+      router.push("/");
       return;
     }
 
@@ -28,10 +28,9 @@ export default function ResultsPage() {
     return () => clearTimeout(timer);
   }, [router]);
 
-
   const handleImprovement = () => {
     playClickSound();
-    router.push('/improvement');
+    router.push("/improvement");
   };
 
   const getScoreMessage = (score: number) => {
@@ -43,12 +42,12 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 md:p-8 flex items-center justify-center">
-      <div className="w-full max-w-3xl">
+    <div className="sm:p-6 md:p-8 flex items-center justify-center">
+      <div className="h-full w-full max-w-3xl">
         <div className="scale-in">
           <div className="card-container rounded-2xl p-8 shadow-xl">
             <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center mb-8">
+              <div className="flex items-center justify-center">
                 <div className="score-container">
                   <div
                     className="score-fill"
@@ -120,7 +119,7 @@ export default function ResultsPage() {
               <SocialShare />
               <button
                 onClick={handleImprovement}
-                className="mt-8 gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+                className="gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
                     hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
               >
                 <svg
@@ -144,4 +143,4 @@ export default function ResultsPage() {
       </div>
     </div>
   );
-} 
+}
