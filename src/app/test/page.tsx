@@ -55,7 +55,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
   onQuestionSelect,
 }) => {
   const drawerWidth = 280; // Fixed width
-  const visibleWidth = drawerWidth * 0.1; // 10% visible
+  const visibleWidth = drawerWidth * 0; // 10% visible
 
   return (
     <div
@@ -137,13 +137,13 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
       {/* Toggle button in visible area */}
       <button
         onClick={onToggle}
-        className="absolute top-4 bg-[#4a90c2] text-white p-2 rounded-full shadow-lg hover:bg-[#3d7ba3] transition-colors duration-200"
+        className="absolute -right-10 top-4 bg-[#4a90c2] text-white p-2 rounded-lg  hover:bg-[#3d7ba3] transition-colors duration-200"
         style={{ right: `-${visibleWidth - 8}px` }}
         aria-label={isOpen ? "Menüyü Kapat" : "Menüyü Aç"}
       >
         {isOpen ? (
           <svg
-            className="w-5 h-5"
+            className="w-8 h-10"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -157,7 +157,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
           </svg>
         ) : (
           <svg
-            className="w-5 h-5"
+            className="w-8 h-10"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
