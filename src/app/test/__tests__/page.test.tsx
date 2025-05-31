@@ -343,7 +343,6 @@ describe("Test Page", () => {
 
       // Answer all questions with known values
       const answers = [20, 40, 80]; // Different multipliers: 0.4, 0.6, 1.0
-      const scores = [10, 15, 20]; // Question scores
       const expectedScore = Math.ceil(10 * 0.4 + 15 * 0.6 + 20 * 1.0); // 4 + 9 + 20 = 33
 
       for (let i = 0; i < 3; i++) {
