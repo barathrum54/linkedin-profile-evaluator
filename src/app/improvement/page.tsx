@@ -597,6 +597,60 @@ export default function ImprovementPage() {
               })}
             </div>
           </div>
+
+          {/* CTA Section - Navigate to Pricing */}
+          <div className="mt-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-none sm:rounded-2xl shadow-xl p-6 sm:p-8 text-white">
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-8 h-8 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                Profilinizi Bir Sonraki Seviyeye Taşıyın
+              </h2>
+              <p className="text-lg sm:text-xl text-blue-100 mb-6 max-w-2xl mx-auto">
+                Kişiselleştirilmiş koçluk ve detaylı analiz ile LinkedIn
+                profilinizi profesyonel seviyeye çıkarın
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button
+                  onClick={() => router.push("/pricing")}
+                  className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
+                >
+                  Fiyatları İncele
+                </button>
+                <div className="flex items-center gap-2 text-blue-200">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-sm">30 gün para iade garantisi</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
