@@ -42,84 +42,112 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="sm:p-6 md:p-8 flex items-center justify-center">
-      <div className="h-full w-full max-w-3xl">
-        <div className="scale-in">
-          <div className="card-container rounded-2xl p-8 shadow-xl">
-            <div className="flex flex-col items-center">
+    <div className="fixed inset-0 sm:relative sm:w-auto sm:h-auto sm:p-6 md:p-8 flex items-center justify-center bg-white">
+      <div className="h-full w-full sm:max-w-3xl">
+        <div className="animate-pulse-subtle h-full">
+          <div className="rounded-none sm:rounded-2xl p-6 sm:p-8 shadow-none sm:shadow-xl h-full flex flex-col justify-center bg-white border-0 sm:border border-gray-100">
+            <div className="flex flex-col items-center space-y-4  ">
+              {/* Score Visualization */}
               <div className="flex items-center justify-center">
-                <div className="score-container">
+                {/* Score Bar */}
+                <div className="h-[300px] w-[60px] bg-gray-100 rounded-full relative overflow-hidden border border-gray-200">
                   <div
-                    className="score-fill"
-                    style={
-                      { "--score-height": `${score}%` } as React.CSSProperties
-                    }
+                    className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-full transition-all duration-[3000ms] ease-out"
+                    style={{ height: showScoreLoader ? "0%" : `${score}%` }}
                   />
                 </div>
-                <div className="grade-container">
-                  <div
-                    className={`grade-marker ${score >= 85 ? "active" : ""}`}
-                    data-grade="S"
-                  >
-                    <div className="grade-letter">S</div>
-                    <div className="grade-label">Profesyonel</div>
-                  </div>
-                  <div
-                    className={`grade-marker ${
-                      score >= 70 && score < 85 ? "active" : ""
-                    }`}
-                    data-grade="A"
-                  >
-                    <div className="grade-letter">A</div>
-                    <div className="grade-label">Takibe Değer</div>
-                  </div>
-                  <div
-                    className={`grade-marker ${
-                      score >= 50 && score < 70 ? "active" : ""
-                    }`}
-                    data-grade="B"
-                  >
-                    <div className="grade-letter">B</div>
-                    <div className="grade-label">Fena Değil</div>
-                  </div>
-                  <div
-                    className={`grade-marker ${
-                      score >= 30 && score < 50 ? "active" : ""
-                    }`}
-                    data-grade="C"
-                  >
-                    <div className="grade-letter">C</div>
-                    <div className="grade-label">Ne iş Belli Değil</div>
-                  </div>
-                  <div
-                    className={`grade-marker ${score < 30 ? "active" : ""}`}
-                    data-grade="D"
-                  >
-                    <div className="grade-letter">D</div>
-                    <div className="grade-label">Sadece Var</div>
-                  </div>
+
+                {/* Grade Labels */}
+                <div className="h-[300px] w-[180px] relative ml-5 flex flex-col justify-between py-2.5">
+                  {[
+                    {
+                      grade: "S",
+                      label: "Profesyonel",
+                      range: [85, 100],
+                      color: "text-blue-600 bg-blue-50",
+                    },
+                    {
+                      grade: "A",
+                      label: "Takibe Değer",
+                      range: [70, 84],
+                      color: "text-red-600 bg-red-50",
+                    },
+                    {
+                      grade: "B",
+                      label: "Fena Değil",
+                      range: [50, 69],
+                      color: "text-purple-600 bg-purple-50",
+                    },
+                    {
+                      grade: "C",
+                      label: "Ne iş Belli Değil",
+                      range: [30, 49],
+                      color: "text-green-600 bg-green-50",
+                    },
+                    {
+                      grade: "D",
+                      label: "Sadece Var",
+                      range: [0, 29],
+                      color: "text-orange-600 bg-orange-50",
+                    },
+                  ].map((item) => {
+                    const isActive =
+                      score >= item.range[0] && score <= item.range[1];
+                    return (
+                      <div
+                        key={item.grade}
+                        className={`w-full flex items-center gap-3 font-bold transition-all duration-300 p-2 rounded-lg ${
+                          isActive
+                            ? `text-2xl ${item.color} shadow-sm`
+                            : "text-xl text-gray-400"
+                        }`}
+                      >
+                        <div className="min-w-[32px] text-center">
+                          {item.grade}
+                        </div>
+                        <div
+                          className={`${
+                            isActive
+                              ? "text-lg opacity-100"
+                              : "text-base opacity-80"
+                          }`}
+                        >
+                          {item.label}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
+
+              {/* Score Number */}
               <div className="relative">
                 {showScoreLoader && (
-                  <div
-                    className="loader"
-                    style={{ animation: "spin 1s linear infinite" }}
-                  />
+                  <div className="w-20 h-20 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin absolute left-1/2 transform -translate-x-1/2 mt-4" />
                 )}
                 <div
-                  className={`score-number ${
-                    !showScoreLoader ? "visible" : ""
+                  className={`text-6xl font-bold h-20 flex items-center justify-center text-gray-800 transition-opacity duration-300 ${
+                    !showScoreLoader
+                      ? "opacity-100 visible"
+                      : "opacity-0 invisible"
                   }`}
                 >
                   {score}/100
                 </div>
               </div>
-              <p className="score-message">{getScoreMessage(score)}</p>
+
+              {/* Score Message */}
+              <p className="text-2xl text-gray-600 text-center animate-fade-in-up">
+                {getScoreMessage(score)}
+              </p>
+
+              {/* Social Share */}
               <SocialShare />
+
+              {/* Improvement Button */}
               <button
                 onClick={handleImprovement}
-                className="gradient-bg text-white px-8 py-4 rounded-xl transition-all duration-300 
+                className="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-8 py-4 rounded-xl transition-all duration-300 
                     hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
               >
                 <svg
