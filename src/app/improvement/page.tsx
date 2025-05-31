@@ -107,7 +107,6 @@ export default function ImprovementPage() {
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
   const [animateIn, setAnimateIn] = useState(false);
-  const [showPricingBubble, setShowPricingBubble] = useState(true);
 
   useEffect(() => {
     // Get answers from localStorage
@@ -130,10 +129,6 @@ export default function ImprovementPage() {
 
   const handleBack = () => {
     router.push("/results");
-  };
-
-  const handlePricing = () => {
-    router.push("/pricing");
   };
 
   const handleQuestionClick = (index: number) => {
@@ -541,40 +536,6 @@ export default function ImprovementPage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Floating Action Button with Bubble */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {/* Bubble */}
-        {showPricingBubble && (
-          <div className="absolute bottom-full right-0 mb-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-2xl shadow-lg text-sm font-medium whitespace-nowrap animate-bounce">
-            Bu işin sırrını öğren
-            <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-purple-600"></div>
-          </div>
-        )}
-
-        {/* FAB Button */}
-        <button
-          onClick={() => {
-            setShowPricingBubble(false);
-            handlePricing();
-          }}
-          className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
-        >
-          <svg
-            className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </button>
       </div>
     </div>
   );
