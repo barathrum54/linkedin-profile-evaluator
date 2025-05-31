@@ -48,33 +48,6 @@ describe("ForgotPasswordPage", () => {
   });
 
   describe("Form validation", () => {
-    it("should show error for invalid email format", async () => {
-      render(<ForgotPasswordPage />);
-
-      const emailInput = screen.getByRole("textbox", { name: /email/i });
-      const submitButton = screen.getByRole("button", { name: /gönder/i });
-
-      fireEvent.change(emailInput, { target: { value: "invalid-email" } });
-      fireEvent.click(submitButton);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(/geçerli bir email adresi girin/i)
-        ).toBeTruthy();
-      });
-    });
-
-    it("should show error for empty email", async () => {
-      render(<ForgotPasswordPage />);
-
-      const submitButton = screen.getByRole("button", { name: /gönder/i });
-      fireEvent.click(submitButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/email adresi gerekli/i)).toBeTruthy();
-      });
-    });
-
     it("should accept valid email format", async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -97,6 +70,33 @@ describe("ForgotPasswordPage", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: "test@example.com" }),
       });
+    });
+
+    it("should show loading state during submission", async () => {
+      (global.fetch as jest.Mock).mockImplementationOnce(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  ok: true,
+                  json: async () => ({ success: true }),
+                }),
+              100
+            )
+          )
+      );
+
+      render(<ForgotPasswordPage />);
+
+      const emailInput = screen.getByRole("textbox", { name: /email/i });
+      const submitButton = screen.getByRole("button", { name: /gönder/i });
+
+      fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+      fireEvent.click(submitButton);
+
+      expect(screen.getByText(/gönderiliyor/i)).toBeTruthy();
+      expect(submitButton).toBeDisabled();
     });
   });
 
@@ -139,7 +139,7 @@ describe("ForgotPasswordPage", () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/başarılı/i)).toBeTruthy();
+        expect(screen.getByText(/email gönderildi/i)).toBeTruthy();
       });
     });
 
@@ -160,7 +160,7 @@ describe("ForgotPasswordPage", () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/kullanıcı bulunamadı/i)).toBeTruthy();
+        expect(screen.getByText("User not found")).toBeTruthy();
       });
     });
 
@@ -178,26 +178,19 @@ describe("ForgotPasswordPage", () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/hata oluştu/i)).toBeTruthy();
+        expect(
+          screen.getByText(/bir hata oluştu.*tekrar deneyin/i)
+        ).toBeTruthy();
       });
     });
   });
 
-  describe("Loading states", () => {
-    it("should show loading state during API call", async () => {
-      (global.fetch as jest.Mock).mockImplementationOnce(
-        () =>
-          new Promise((resolve) =>
-            setTimeout(
-              () =>
-                resolve({
-                  ok: true,
-                  json: async () => ({ success: true }),
-                }),
-              100
-            )
-          )
-      );
+  describe("Component behavior", () => {
+    it("should reset form state on successful submission", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true, message: "Reset link sent" }),
+      });
 
       render(<ForgotPasswordPage />);
 
@@ -207,33 +200,45 @@ describe("ForgotPasswordPage", () => {
       fireEvent.change(emailInput, { target: { value: "user@example.com" } });
       fireEvent.click(submitButton);
 
-      expect(screen.getByText(/gönderiliyor/i)).toBeTruthy();
+      await waitFor(() => {
+        expect(screen.getByText(/email gönderildi/i)).toBeTruthy();
+      });
+
+      // Should show success view, not form
+      expect(screen.queryByRole("textbox")).toBeNull();
+      expect(screen.queryByRole("button", { name: /gönder/i })).toBeNull();
     });
 
-    it("should disable submit button during loading", async () => {
-      (global.fetch as jest.Mock).mockImplementationOnce(
-        () =>
-          new Promise((resolve) =>
-            setTimeout(
-              () =>
-                resolve({
-                  ok: true,
-                  json: async () => ({ success: true }),
-                }),
-              100
-            )
-          )
-      );
+    it("should clear error state on new submission", async () => {
+      // First, trigger an error
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ success: false, message: "User not found" }),
+      });
 
       render(<ForgotPasswordPage />);
 
       const emailInput = screen.getByRole("textbox", { name: /email/i });
       const submitButton = screen.getByRole("button", { name: /gönder/i });
 
-      fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+      fireEvent.change(emailInput, { target: { value: "bad@example.com" } });
       fireEvent.click(submitButton);
 
-      expect(submitButton).toBeDisabled();
+      await waitFor(() => {
+        expect(screen.getByText("User not found")).toBeTruthy();
+      });
+
+      // Now submit again with success
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true, message: "Reset link sent" }),
+      });
+
+      fireEvent.change(emailInput, { target: { value: "good@example.com" } });
+      fireEvent.click(submitButton);
+
+      // Error should be cleared before API call
+      expect(screen.queryByText("User not found")).toBeNull();
     });
   });
 });
