@@ -7,12 +7,12 @@ const SocialShare = () => (
     aria-label="Sosyal medya paylaşım butonları"
   >
     <button
-      className="p-1 sm:p-4 rounded-full bg-gray-200 hover:bg-blue-300 transition-colors cursor-pointer"
+      className="p-2 sm:p-4 rounded-full bg-gray-200 hover:bg-blue-300 transition-colors cursor-pointer"
       aria-label="Twitter'da paylaş"
       onClick={() => {}}
     >
       <svg
-        className="w-4 h-4 sm:w-10 sm:h-10 text-blue-600"
+        className="w-6 h-6 sm:w-10 sm:h-10 text-blue-600"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
@@ -20,12 +20,12 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-1 sm:p-4 rounded-full bg-gray-200 hover:bg-blue-300 transition-colors cursor-pointer"
+      className="p-2 sm:p-4 rounded-full bg-gray-200 hover:bg-blue-300 transition-colors cursor-pointer"
       aria-label="LinkedIn'de paylaş"
       onClick={() => {}}
     >
       <svg
-        className="w-4 h-4 sm:w-10 sm:h-10 text-blue-600"
+        className="w-6 h-6 sm:w-10 sm:h-10 text-blue-600"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
@@ -35,12 +35,12 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-1 sm:p-4 rounded-full bg-gray-200 hover:bg-purple-200 transition-colors cursor-pointer"
+      className="p-2 sm:p-4 rounded-full bg-gray-200 hover:bg-purple-200 transition-colors cursor-pointer"
       aria-label="Instagram'da paylaş"
       onClick={() => {}}
     >
       <svg
-        className="w-4 h-4 sm:w-10 sm:h-10 text-purple-600"
+        className="w-6 h-6 sm:w-10 sm:h-10 text-purple-600"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
@@ -48,12 +48,12 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-1 sm:p-4 rounded-full bg-gray-200 hover:bg-green-200 transition-colors cursor-pointer"
+      className="p-2 sm:p-4 rounded-full bg-gray-200 hover:bg-green-200 transition-colors cursor-pointer"
       aria-label="WhatsApp'ta paylaş"
       onClick={() => {}}
     >
       <svg
-        className="w-4 h-4 sm:w-10 sm:h-10 text-green-600"
+        className="w-6 h-6 sm:w-10 sm:h-10 text-green-600"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
@@ -61,12 +61,12 @@ const SocialShare = () => (
       </svg>
     </button>
     <button
-      className="p-1 sm:p-4 rounded-full bg-gray-200 hover:bg-blue-200 transition-colors cursor-pointer"
+      className="p-2 sm:p-4 rounded-full bg-gray-200 hover:bg-blue-200 transition-colors cursor-pointer"
       aria-label="Facebook'ta paylaş"
       onClick={() => {}}
     >
       <svg
-        className="w-4 h-4 sm:w-10 sm:h-10 text-blue-500"
+        className="w-6 h-6 sm:w-10 sm:h-10 text-blue-500"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
