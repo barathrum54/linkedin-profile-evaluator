@@ -26,6 +26,7 @@ const customJestConfig = {
     "!src/**/loading.tsx", // Exclude loading files
     "!src/**/not-found.tsx", // Exclude error pages
     "!src/middleware.ts", // Exclude middleware
+    "!src/lib/auth.ts", // Exclude auth configuration (NextJS/NextAuth features)
   ],
   coverageThreshold: {
     global: {
