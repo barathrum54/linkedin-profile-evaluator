@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { questionsData } from "@/data/questions";
+import Layout from "@/components/Layout";
+import OptimizedImage from "@/components/OptimizedImage";
 
 // Modal Component
 interface ModalProps {
@@ -98,12 +100,16 @@ const Modal: React.FC<ModalProps> = ({
           </div>
         </div>
 
-        {/* Image */}
-        <div className="flex items-center justify-center bg-gray-100">
-          <img
+        {/* Image Container */}
+        <div
+          className="relative flex items-center justify-center bg-gray-100"
+          style={{ height: "calc(90vh - 120px)" }}
+        >
+          <OptimizedImage
             src={imageSrc}
             alt={imageAlt}
-            className="max-w-full max-h-[calc(90vh-120px)] object-contain"
+            fill
+            className="object-contain"
           />
         </div>
       </div>
@@ -213,7 +219,6 @@ export default function ImprovementPage() {
   const router = useRouter();
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
-  const [animateIn, setAnimateIn] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{
     src: string;
@@ -230,18 +235,7 @@ export default function ImprovementPage() {
       router.push("/");
       return;
     }
-    setAnimateIn(true);
   }, [router]);
-
-  const handleRestart = () => {
-    localStorage.removeItem("testAnswers");
-    localStorage.removeItem("testScore");
-    router.push("/");
-  };
-
-  const handleBack = () => {
-    router.push("/results");
-  };
 
   const handleQuestionClick = (index: number) => {
     // If clicked question is already expanded, collapse it
@@ -282,88 +276,26 @@ export default function ImprovementPage() {
     .slice(0, 3);
 
   if (answers.length === 0) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
   return (
-    <div
-      className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 transition-all duration-1000 ${
-        animateIn ? "opacity-100" : "opacity-0"
-      }`}
+    <Layout
+      className="bg-gradient-to-br from-blue-50 via-white to-indigo-50"
+      navbarProps={{
+        title: "Profil İyileştirme Rehberi",
+        subtitle: "Kişiselleştirilmiş öneriler ve analiz",
+        showBackButton: true,
+        showRestartButton: true,
+        backRoute: "/results",
+        maxWidth: "4xl",
+      }}
+      contentClassName="overflow-auto"
     >
-      {/* Enhanced Header */}
-      <div className="bg-white/80 backdrop-blur-lg shadow-lg border-b border-blue-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between lg:h-20 h-14">
-            <div className="flex items-center gap-4">
-              <div className="w-8 lg:w-12 h-8 lg:h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <div className="hidden md:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Profil İyileştirme Rehberi
-                </h1>
-                <p className="text-sm text-gray-600">
-                  Kişiselleştirilmiş öneriler ve analiz
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleRestart}
-                className="flex items-center gap-2 px-3 md:px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 border-0 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                <span className="hidden md:inline">Tekrar Başla</span>
-              </button>
-              <button
-                onClick={handleBack}
-                className="flex items-center gap-2 px-3 md:px-6 py-3 text-sm font-medium text-gray-700 bg-white/80 backdrop-blur border border-gray-200 rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-md hover:shadow-lg"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-                <span className="hidden md:inline">Geri Dön</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="w-full px-0 sm:px-4 lg:px-8 py-8">
         <div className="w-full lg:w-2/3 lg:max-w-4xl mx-auto">
@@ -553,14 +485,15 @@ export default function ImprovementPage() {
                                   Doğru Örnek
                                 </p>
                               </div>
-                              <div className="relative overflow-hidden rounded-lg border border-green-200">
-                                <img
+                              <div className="relative overflow-hidden rounded-lg border border-green-200 h-48">
+                                <OptimizedImage
                                   src={question.correctImage}
                                   alt="Doğru örnek"
-                                  className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                                  onClick={() => {
-                                    openModal(question.correctImage, "correct");
-                                  }}
+                                  fill
+                                  className="object-cover hover:scale-105 transition-transform duration-200"
+                                  onClick={() =>
+                                    openModal(question.correctImage, "correct")
+                                  }
                                 />
                               </div>
                             </div>
@@ -585,14 +518,15 @@ export default function ImprovementPage() {
                                   Yanlış Örnek
                                 </p>
                               </div>
-                              <div className="relative overflow-hidden rounded-lg border border-red-200">
-                                <img
+                              <div className="relative overflow-hidden rounded-lg border border-red-200 h-48">
+                                <OptimizedImage
                                   src={question.wrongImage}
                                   alt="Yanlış örnek"
-                                  className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                                  onClick={() => {
-                                    openModal(question.wrongImage, "wrong");
-                                  }}
+                                  fill
+                                  className="object-cover hover:scale-105 transition-transform duration-200"
+                                  onClick={() =>
+                                    openModal(question.wrongImage, "wrong")
+                                  }
                                 />
                               </div>
                             </div>
@@ -676,6 +610,6 @@ export default function ImprovementPage() {
           imageType={selectedImage.type}
         />
       )}
-    </div>
+    </Layout>
   );
 }

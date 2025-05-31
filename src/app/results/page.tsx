@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSound } from "@/hooks/useSound";
 import SocialShare from "@/components/SocialShare";
+import Layout from "@/components/Layout";
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -42,11 +43,21 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="fixed inset-0 sm:relative sm:w-auto sm:h-auto sm:p-6 md:p-8 flex items-center justify-center bg-white">
-      <div className="h-full w-full sm:max-w-3xl">
-        <div className="animate-pulse-subtle h-full">
-          <div className="rounded-none sm:rounded-2xl p-6 sm:p-8 shadow-none sm:shadow-xl h-full flex flex-col justify-center bg-white border-0 sm:border border-gray-100">
-            <div className="flex flex-col items-center space-y-4  ">
+    <Layout
+      className="bg-gradient-to-br from-blue-50 via-white to-indigo-50"
+      navbarProps={{
+        title: "LinkedIn Profil Değerlendirme",
+        subtitle: "Sonuçlarınız ve öneriler",
+        showBackButton: false,
+        showRestartButton: true,
+        maxWidth: "3xl",
+      }}
+      contentClassName="flex items-center justify-center p-4 sm:p-6 md:p-8"
+    >
+      <div className="w-full max-w-3xl">
+        <div className="transform transition-all duration-300 hover:scale-[1.02]">
+          <div className="rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-2xl bg-white border border-gray-100 flex flex-col justify-center min-h-[500px]">
+            <div className="flex flex-col items-center space-y-4">
               {/* Score Visualization */}
               <div className="flex items-center justify-center">
                 {/* Score Bar */}
@@ -137,7 +148,7 @@ export default function ResultsPage() {
               </div>
 
               {/* Score Message */}
-              <p className="text-2xl text-gray-600 text-center animate-fade-in-up">
+              <p className="text-2xl text-gray-600 text-center transition-opacity duration-500 delay-300">
                 {getScoreMessage(score)}
               </p>
 
@@ -148,7 +159,7 @@ export default function ResultsPage() {
               <button
                 onClick={handleImprovement}
                 className="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-8 py-4 rounded-xl transition-all duration-300 
-                    hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto"
+                    hover:scale-105 active:scale-95 shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl"
               >
                 <svg
                   className="w-5 h-5"
@@ -169,6 +180,6 @@ export default function ResultsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

@@ -4,28 +4,31 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSound } from "@/hooks/useSound";
 import { questionsData } from "@/data/questions";
+import Layout from "@/components/Layout";
+import OptimizedImage from "@/components/OptimizedImage";
 
-function ImageModal({
-  src,
-  alt,
-  onClose,
-}: {
+// Image Modal Component
+interface ImageModalProps {
   src: string;
   alt: string;
   onClose: () => void;
-}) {
+}
+
+const ImageModal: React.FC<ImageModalProps> = ({ src, alt, onClose }) => {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl"
+        className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <img src={src} alt={alt} className="w-full h-auto rounded-lg" />
+        <div className="relative h-[80vh]">
+          <OptimizedImage src={src} alt={alt} fill className="object-contain" />
+        </div>
         <button
-          className="absolute top-2 right-2 text-black bg-white text-2xl font-bold rounded-full h-8 w-8 opacity-80 flex items-center justify-center"
+          className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 text-2xl font-bold rounded-full h-10 w-10 flex items-center justify-center transition-colors duration-200"
           onClick={onClose}
           aria-label="Kapat"
         >
@@ -34,7 +37,7 @@ function ImageModal({
       </div>
     </div>
   );
-}
+};
 
 // Helper function to get label based on slider value
 const getSliderLabel = (value: number): string => {
@@ -57,11 +60,11 @@ const getMultiplierFromSliderValue = (value: number): number => {
 };
 
 // Debug component for faster testing
-function DebugComponent({ 
-  onFinishTest 
-}: { 
-  onFinishTest: () => void 
-}) {
+interface DebugComponentProps {
+  onFinishTest: () => void;
+}
+
+const DebugComponent: React.FC<DebugComponentProps> = ({ onFinishTest }) => {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -77,11 +80,12 @@ function DebugComponent({
 
       {/* Debug Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Debug Tools</h3>
             <p className="text-sm text-gray-600 mb-4">
-              Bu araçlar sadece test amaçlıdır. Tüm soruları rastgele cevaplarla doldurur ve sonuç ekranına geçer.
+              Bu araçlar sadece test amaçlıdır. Tüm soruları rastgele cevaplarla
+              doldurur ve sonuç ekranına geçer.
             </p>
             <div className="flex gap-3">
               <button
@@ -105,7 +109,7 @@ function DebugComponent({
       )}
     </>
   );
-}
+};
 
 export default function TestPage() {
   const router = useRouter();
@@ -119,8 +123,10 @@ export default function TestPage() {
   // Debug function to finish test with random answers
   const handleDebugFinishTest = () => {
     playClickSound();
-    const randomAnswers = questionsData.map(() => Math.floor(Math.random() * 101));
-    
+    const randomAnswers = questionsData.map(() =>
+      Math.floor(Math.random() * 101)
+    );
+
     // Calculate score with random answers
     const newScore = randomAnswers.reduce(
       (total: number, ans: number, idx: number) => {
@@ -129,12 +135,12 @@ export default function TestPage() {
       },
       0
     );
-    
+
     // Store answers and score in localStorage
-    localStorage.setItem('testAnswers', JSON.stringify(randomAnswers));
-    localStorage.setItem('testScore', Math.ceil(newScore).toString());
-    
-    router.push('/results');
+    localStorage.setItem("testAnswers", JSON.stringify(randomAnswers));
+    localStorage.setItem("testScore", Math.ceil(newScore).toString());
+
+    router.push("/results");
   };
 
   const handleSliderChange = (value: number) => {
@@ -145,7 +151,7 @@ export default function TestPage() {
 
   const handleSubmit = () => {
     playClickSound();
-    
+
     // Check if this is the last question
     if (currentQuestion === questionsData.length - 1) {
       // Calculate final score
@@ -157,116 +163,172 @@ export default function TestPage() {
         },
         0
       );
-      
+
       // Store answers and score in localStorage
-      localStorage.setItem('testAnswers', JSON.stringify(answers));
-      localStorage.setItem('testScore', Math.ceil(finalScore).toString());
-      
-      router.push('/results');
+      localStorage.setItem("testAnswers", JSON.stringify(answers));
+      localStorage.setItem("testScore", Math.ceil(finalScore).toString());
+
+      router.push("/results");
     } else {
       setCurrentQuestion((curr) => curr + 1);
     }
   };
 
+  const currentAnswer = answers[currentQuestion];
+  const isAnswered = currentAnswer !== null;
+
   return (
-    <div className="min-h-screen bg-white px-8 py-8 flex items-center justify-center">
+    <Layout
+      showNavbar={false}
+      className="bg-white"
+      contentClassName="px-8 py-8 flex items-center justify-center"
+    >
       {/* Container for two-column layout on large screens */}
       <div className="w-full max-w-5xl flex flex-col lg:grid lg:grid-cols-2 lg:gap-8">
         {/* First column: Correct and incorrect images */}
         <div className="flex flex-col gap-6 mb-6 lg:mb-0">
           {/* Correct Example */}
-          <div
-            className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
-            onClick={() =>
-              setModalImg(questionsData[currentQuestion].correctImage)
-            }
-          >
-            <img
-              src={questionsData[currentQuestion].correctImage}
-              alt="Doğru örnek"
-              className="w-full h-auto object-contain rounded-lg"
-            />
-            <img
-              src="/images/checkmark.png"
-              alt="Doğru"
-              className="absolute lg:-top-8 -top-4 lg:right-0 right-1 z-20 w-10 h-10 lg:w-16 lg:h-16"
-            />
+          <div className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer group">
+            <div
+              className="relative h-64 lg:h-80"
+              onClick={() =>
+                setModalImg(questionsData[currentQuestion].correctImage)
+              }
+            >
+              <OptimizedImage
+                src={questionsData[currentQuestion].correctImage}
+                alt="Doğru örnek"
+                fill
+                className="object-contain rounded-lg group-hover:scale-105 transition-transform duration-200"
+              />
+            </div>
+            <div className="absolute -top-4 lg:-top-8 right-1 lg:right-0 z-20 w-10 h-10 lg:w-16 lg:h-16">
+              <OptimizedImage
+                src="/images/checkmark.png"
+                alt="Doğru"
+                width={64}
+                height={64}
+                className="w-full h-full"
+              />
+            </div>
           </div>
+
           {/* Incorrect Example */}
-          <div
-            className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer"
-            onClick={() =>
-              setModalImg(questionsData[currentQuestion].wrongImage)
-            }
-          >
-            <img
-              src={questionsData[currentQuestion].wrongImage}
-              alt="Yanlış örnek"
-              className="w-full h-auto object-contain rounded-lg"
-            />
-            <img
-              src="/images/cross.png"
-              alt="Yanlış"
-              className="absolute lg:-top-8 -top-4 lg:right-0 right-1 z-20 w-10 h-10 lg:w-16 lg:h-16"
-            />
+          <div className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer group">
+            <div
+              className="relative h-64 lg:h-80"
+              onClick={() =>
+                setModalImg(questionsData[currentQuestion].wrongImage)
+              }
+            >
+              <OptimizedImage
+                src={questionsData[currentQuestion].wrongImage}
+                alt="Yanlış örnek"
+                fill
+                className="object-contain rounded-lg group-hover:scale-105 transition-transform duration-200"
+              />
+            </div>
+            <div className="absolute -top-4 lg:-top-8 right-1 lg:right-0 z-20 w-10 h-10 lg:w-16 lg:h-16">
+              <OptimizedImage
+                src="/images/cross.png"
+                alt="Yanlış"
+                width={64}
+                height={64}
+                className="w-full h-full"
+              />
+            </div>
           </div>
         </div>
-        {/* Second column: Question card */}
+
+        {/* Second column: Blue Question Card */}
         <div className="flex justify-center">
-          <div className="fade-in w-full max-w-[350px] lg:max-w-[500px]">
+          <div className="w-full max-w-[350px] lg:max-w-[500px]">
             <div className="bg-[#4a90c2] rounded-[16px] p-4 lg:p-8 shadow-xl flex flex-col items-center lg:h-full">
               <div className="flex-grow w-full flex flex-col items-center lg:justify-between">
+                {/* Progress indicator */}
+                <div className="mb-4 w-full">
+                  <div className="flex items-center justify-between text-white text-sm lg:text-base mb-2">
+                    <span>
+                      {currentQuestion + 1} / {questionsData.length}
+                    </span>
+                    <div className="flex-1 mx-4">
+                      <div className="w-full bg-white/30 rounded-full h-1">
+                        <div
+                          className="bg-white h-1 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${
+                              ((currentQuestion + 1) / questionsData.length) *
+                              100
+                            }%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Question */}
                 <div className="mb-4 w-full">
                   <p className="text-white text-sm lg:text-2xl font-medium leading-tight">
                     {questionsData[currentQuestion].question}
                   </p>
                 </div>
+
                 <div className="flex flex-col gap-4 w-full mb-4">
                   {/* Numeric Score Display */}
                   <div className="text-center">
                     <div className="text-white text-4xl lg:text-6xl font-bold mb-2">
-                      {answers[currentQuestion] || 0}
+                      {currentAnswer || 0}
                     </div>
                     <div className="text-white text-xs lg:text-sm opacity-80">
                       Score
                     </div>
                   </div>
-                  
+
                   {/* Slider */}
                   <div className="flex items-center gap-3 w-full px-2">
-                    <span className="text-white text-xs lg:text-sm opacity-70 min-w-[20px]">0</span>
+                    <span className="text-white text-xs lg:text-sm opacity-70 min-w-[20px]">
+                      0
+                    </span>
                     <div className="flex-1 relative">
                       <input
                         type="range"
                         min="0"
                         max="100"
-                        value={answers[currentQuestion] || 0}
-                        onChange={(e) => handleSliderChange(Number(e.target.value))}
+                        value={currentAnswer || 0}
+                        onChange={(e) =>
+                          handleSliderChange(Number(e.target.value))
+                        }
                         className="w-full h-2 bg-white bg-opacity-30 rounded-lg appearance-none cursor-pointer slider"
                         style={{
-                          background: `linear-gradient(to right, #ffffff ${answers[currentQuestion] || 0}%, rgba(255,255,255,0.3) ${answers[currentQuestion] || 0}%)`
+                          background: `linear-gradient(to right, #ffffff ${
+                            currentAnswer || 0
+                          }%, rgba(255,255,255,0.3) ${currentAnswer || 0}%)`,
                         }}
                       />
                     </div>
-                    <span className="text-white text-xs lg:text-sm opacity-70 min-w-[30px]">100</span>
+                    <span className="text-white text-xs lg:text-sm opacity-70 min-w-[30px]">
+                      100
+                    </span>
                   </div>
-                  
+
                   {/* Dynamic Label */}
                   <div className="text-center">
                     <div className="text-white text-base lg:text-xl font-medium bg-transparent bg-opacity-20 rounded-lg py-2 px-4">
-                      {getSliderLabel(answers[currentQuestion] || 0)}
+                      {getSliderLabel(currentAnswer || 0)}
                     </div>
                   </div>
                 </div>
+
                 <button
                   className={`w-full py-2 sm:py-1 rounded-[20px] text-xs lg:text-3xl font-normal mt-1 transition-all duration-200
                       ${
-                        answers[currentQuestion] !== null
+                        isAnswered
                           ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
                           : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
                       }`}
                   onClick={handleSubmit}
-                  disabled={answers[currentQuestion] === null}
+                  disabled={!isAnswered}
                 >
                   Gönder
                 </button>
@@ -275,15 +337,18 @@ export default function TestPage() {
           </div>
         </div>
       </div>
-      {/* Modal for image viewing */}
+
+      {/* Image Modal */}
       {modalImg && (
         <ImageModal
           src={modalImg}
-          alt="Örnek"
+          alt="Seçilen örnek"
           onClose={() => setModalImg(null)}
         />
       )}
+
+      {/* Debug Component */}
       <DebugComponent onFinishTest={handleDebugFinishTest} />
-    </div>
+    </Layout>
   );
-} 
+}
