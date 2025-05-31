@@ -271,7 +271,7 @@ export default function ImprovementPage() {
           </div>
 
           {/* Questions Card Container */}
-          <div className="bg-white/80 backdrop-blur rounded-none sm:rounded-2xl shadow-xl border-0 sm:border border-gray-200 overflow-hidden">
+          <div className="bg-white/80 backdrop-blur rounded-none sm:rounded-2xl shadow-xl border-0 sm:border border-gray-200 overflow-visible">
             {/* Accordion Questions */}
             <div className="divide-y divide-gray-200">
               {questionsData.map((question, index) => {
@@ -295,7 +295,7 @@ export default function ImprovementPage() {
                     >
                       {/* Priority Indicator */}
                       {isLowScore && (
-                        <div className="absolute -top-2 -left-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center z-10 shadow-lg">
+                        <div className="absolute top-2 lg:-top-2 right-2 lg:-left-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center z-10 shadow-lg">
                           <svg
                             className="w-3 h-3 text-white"
                             fill="none"
@@ -334,7 +334,7 @@ export default function ImprovementPage() {
                             )}
                           </div>
                           <p
-                            className={`text-base mb-3 ${
+                            className={`text-sm lg:text-base mb-3 ${
                               isExpanded ? "text-blue-700" : "text-gray-700"
                             }`}
                           >
