@@ -4,6 +4,11 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+/* Global button cursor */
+button {
+  cursor: pointer;
+}
+
 /* Custom slider styles that can't be replicated with Tailwind utilities */
 .slider {
   -webkit-appearance: none;

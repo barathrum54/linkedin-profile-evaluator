@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSound } from "@/hooks/useSound";
 import { questionsData } from "@/data/questions";
-import Layout from "@/components/Layout";
 import OptimizedImage from "@/components/OptimizedImage";
 
 // Image Modal Component
@@ -178,95 +177,59 @@ export default function TestPage() {
   const isAnswered = currentAnswer !== null;
 
   return (
-    <Layout
-      showNavbar={false}
-      className="bg-white"
-      contentClassName="px-8 py-8 flex items-center justify-center"
-    >
+    <div className="min-h-screen bg-white px-8 py-8 flex items-center justify-center">
       {/* Container for two-column layout on large screens */}
       <div className="w-full max-w-5xl flex flex-col lg:grid lg:grid-cols-2 lg:gap-8">
         {/* First column: Correct and incorrect images */}
         <div className="flex flex-col gap-6 mb-6 lg:mb-0">
           {/* Correct Example */}
-          <div className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer group">
-            <div
-              className="relative h-64 lg:h-80"
+          <div className="relative w-full bg-white rounded-xl shadow-lg overflow-visible">
+            <OptimizedImage
+              src={questionsData[currentQuestion].correctImage}
+              alt="Doğru örnek"
+              width={600}
+              height={400}
+              className="w-full h-auto object-contain rounded-lg cursor-pointer"
               onClick={() =>
                 setModalImg(questionsData[currentQuestion].correctImage)
               }
-            >
-              <OptimizedImage
-                src={questionsData[currentQuestion].correctImage}
-                alt="Doğru örnek"
-                fill
-                className="object-contain rounded-lg group-hover:scale-105 transition-transform duration-200"
-              />
-            </div>
-            <div className="absolute -top-4 lg:-top-8 right-1 lg:right-0 z-20 w-10 h-10 lg:w-16 lg:h-16">
-              <OptimizedImage
-                src="/images/checkmark.png"
-                alt="Doğru"
-                width={64}
-                height={64}
-                className="w-full h-full"
-              />
-            </div>
+            />
+            <OptimizedImage
+              src="/images/checkmark.png"
+              alt="Doğru"
+              width={64}
+              height={64}
+              className="absolute lg:-top-8 -top-4 lg:right-0 right-1 z-20 w-10 h-10 lg:w-16 lg:h-16"
+            />
           </div>
 
           {/* Incorrect Example */}
-          <div className="relative w-full bg-white rounded-xl shadow-lg overflow-visible cursor-pointer group">
-            <div
-              className="relative h-64 lg:h-80"
+          <div className="relative w-full bg-white rounded-xl shadow-lg overflow-visible">
+            <OptimizedImage
+              src={questionsData[currentQuestion].wrongImage}
+              alt="Yanlış örnek"
+              width={600}
+              height={400}
+              className="w-full h-auto object-contain rounded-lg cursor-pointer"
               onClick={() =>
                 setModalImg(questionsData[currentQuestion].wrongImage)
               }
-            >
-              <OptimizedImage
-                src={questionsData[currentQuestion].wrongImage}
-                alt="Yanlış örnek"
-                fill
-                className="object-contain rounded-lg group-hover:scale-105 transition-transform duration-200"
-              />
-            </div>
-            <div className="absolute -top-4 lg:-top-8 right-1 lg:right-0 z-20 w-10 h-10 lg:w-16 lg:h-16">
-              <OptimizedImage
-                src="/images/cross.png"
-                alt="Yanlış"
-                width={64}
-                height={64}
-                className="w-full h-full"
-              />
-            </div>
+            />
+            <OptimizedImage
+              src="/images/cross.png"
+              alt="Yanlış"
+              width={64}
+              height={64}
+              className="absolute lg:-top-8 -top-4 lg:right-0 right-1 z-20 w-10 h-10 lg:w-16 lg:h-16"
+            />
           </div>
         </div>
 
         {/* Second column: Blue Question Card */}
         <div className="flex justify-center">
-          <div className="w-full max-w-[350px] lg:max-w-[500px]">
+          <div className="fade-in w-full max-w-[350px] lg:max-w-[500px]">
             <div className="bg-[#4a90c2] rounded-[16px] p-4 lg:p-8 shadow-xl flex flex-col items-center lg:h-full">
               <div className="flex-grow w-full flex flex-col items-center lg:justify-between">
-                {/* Progress indicator */}
-                <div className="mb-4 w-full">
-                  <div className="flex items-center justify-between text-white text-sm lg:text-base mb-2">
-                    <span>
-                      {currentQuestion + 1} / {questionsData.length}
-                    </span>
-                    <div className="flex-1 mx-4">
-                      <div className="w-full bg-white/30 rounded-full h-1">
-                        <div
-                          className="bg-white h-1 rounded-full transition-all duration-300"
-                          style={{
-                            width: `${
-                              ((currentQuestion + 1) / questionsData.length) *
-                              100
-                            }%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Question */}
                 <div className="mb-4 w-full">
                   <p className="text-white text-sm lg:text-2xl font-medium leading-tight">
@@ -349,6 +312,6 @@ export default function TestPage() {
 
       {/* Debug Component */}
       <DebugComponent onFinishTest={handleDebugFinishTest} />
-    </Layout>
+    </div>
   );
 }

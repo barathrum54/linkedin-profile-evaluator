@@ -36,7 +36,7 @@ const Layout: React.FC<LayoutProps> = ({
   contentClassName = "",
 }) => {
   return (
-    <div className={`min-h-screen flex flex-col ${className}`}>
+    <div className={`h-screen flex flex-col ${className}`}>
       {showNavbar && navbarProps && (
         <div className="flex-none">
           <Navbar {...navbarProps} />
