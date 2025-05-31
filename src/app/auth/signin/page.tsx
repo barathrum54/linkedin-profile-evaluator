@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { signIn, SessionProvider } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -260,9 +260,7 @@ export default function SignInPage() {
         </div>
       }
     >
-      <SessionProvider>
-        <SignInForm />
-      </SessionProvider>
+      <SignInForm />
     </Suspense>
   );
 }
