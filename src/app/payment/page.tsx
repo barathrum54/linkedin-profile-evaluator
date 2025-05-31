@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Layout from "@/components/Layout";
 
@@ -42,7 +42,7 @@ const plans: Record<string, PlanDetails> = {
   },
 };
 
-export default function PaymentPage() {
+function PaymentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedPlan, setSelectedPlan] = useState<string>("");
@@ -505,6 +505,75 @@ export default function PaymentPage() {
                   </div>
                 </div>
 
+                {/* Billing Address */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Fatura Adresi
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Adres
+                      </label>
+                      <input
+                        type="text"
+                        name="billingAddress"
+                        value={formData.billingAddress}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Tam adresiniz"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Şehir
+                        </label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="İstanbul"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Posta Kodu
+                        </label>
+                        <input
+                          type="text"
+                          name="postalCode"
+                          value={formData.postalCode}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="34000"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Ülke
+                        </label>
+                        <select
+                          name="country"
+                          value={formData.country}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        >
+                          <option value="TR">Türkiye</option>
+                          <option value="US">
+                            Amerika Birleşik Devletleri
+                          </option>
+                          <option value="GB">Birleşik Krallık</option>
+                          <option value="DE">Almanya</option>
+                          <option value="FR">Fransa</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Submit Button */}
                 <div className="pt-6">
                   <button
@@ -546,5 +615,19 @@ export default function PaymentPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      }
+    >
+      <PaymentContent />
+    </Suspense>
   );
 }
