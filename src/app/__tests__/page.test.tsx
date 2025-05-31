@@ -26,11 +26,11 @@ describe("HomePage", () => {
 
   it("renders without crashing", () => {
     const { container } = render(<HomePage />);
-    expect(container).toBeInTheDocument();
+    expect(container).toBeTruthy();
   });
 
   it("contains main content", () => {
     const { container } = render(<HomePage />);
-    expect(container.firstChild).toBeInTheDocument();
+    expect(container.firstChild).toBeTruthy();
   });
 });

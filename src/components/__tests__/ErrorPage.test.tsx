@@ -26,16 +26,15 @@ describe("ErrorPage", () => {
     expect(container).toBeTruthy();
   });
 
-  it("renders retry button", () => {
-    const onRetry = jest.fn();
+  it("renders with refresh button", () => {
     const { container } = render(
-      <ErrorPage message="Error" onRetry={onRetry} />
+      <ErrorPage message="Error" showRefreshButton />
     );
     expect(container).toBeTruthy();
   });
 
-  it("renders home link", () => {
-    const { container } = render(<ErrorPage message="Error" showHomeLink />);
+  it("renders with home button", () => {
+    const { container } = render(<ErrorPage message="Error" showHomeButton />);
     expect(container).toBeTruthy();
   });
 });
