@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { auth } from "@/lib/auth";
 // import { Analytics } from "@vercel/analytics/react";
 // import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -124,17 +123,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-
   return (
     <html lang="tr" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
-        <Providers session={session}>{children}</Providers>
+        <Providers>{children}</Providers>
         {/* <Analytics /> */}
         {/* <SpeedInsights /> */}
 
