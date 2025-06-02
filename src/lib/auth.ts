@@ -113,10 +113,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      console.log("JWT Callback - Token:", token);
-      console.log("JWT Callback - User:", user);
-      console.log("JWT Callback - Account:", account);
-
       if (user) {
         // Store all user data in the token
         token.id = user.id;
@@ -128,13 +124,9 @@ export const authOptions: NextAuthOptions = {
         token.provider = account.provider;
       }
 
-      console.log("JWT Callback - Final token:", token);
       return token;
     },
     async session({ session, token }) {
-      console.log("Session Callback - Input token:", token);
-      console.log("Session Callback - Input session:", session);
-
       if (session?.user) {
         // Map all token data to session
         session.user.id = token.sub || (token.id as string);
@@ -144,7 +136,6 @@ export const authOptions: NextAuthOptions = {
         session.user.provider = token.provider as string;
       }
 
-      console.log("Session Callback - Final session:", session);
       return session;
     },
     async signIn({ user, account }) {
