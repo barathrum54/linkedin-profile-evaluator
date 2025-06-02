@@ -1,10 +1,10 @@
-import { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import { MongoClient } from "mongodb";
-import GitHubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
-import LinkedInProvider from "next-auth/providers/linkedin";
-import CredentialsProvider from "next-auth/providers/credentials";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
+import LinkedIn from "next-auth/providers/linkedin";
+import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
 // Extend the built-in session types
@@ -24,19 +24,19 @@ declare module "next-auth" {
 const client = new MongoClient(process.env.MONGODB_URI as string);
 const clientPromise = client.connect();
 
-export const authOptions: NextAuthOptions = {
+export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     // OAuth Providers
-    GitHubProvider({
+    GitHub({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
-    GoogleProvider({
+    Google({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
-    LinkedInProvider({
+    LinkedIn({
       clientId: process.env.LINKEDIN_CLIENT_ID as string,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
       authorization: {
@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     // Credentials Provider for email/password
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -79,8 +79,8 @@ export const authOptions: NextAuthOptions = {
           }
 
           const passwordMatch = await bcrypt.compare(
-            credentials.password,
-            user.password
+            String(credentials.password),
+            String(user.password)
           );
 
           if (!passwordMatch) {
@@ -170,7 +170,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   debug: process.env.NODE_ENV === "development",
-};
+});
 
 // Helper function to hash passwords
 export async function hashPassword(password: string): Promise<string> {
@@ -198,7 +198,11 @@ export async function getUserByEmail(email: string) {
 }
 
 // Helper function to create user
-export async function createUser(userData: {
+export async function createUser({
+  email,
+  name,
+  password,
+}: {
   email: string;
   name: string;
   password: string;
@@ -207,20 +211,24 @@ export async function createUser(userData: {
     const client = await clientPromise;
     const users = client.db().collection("users");
 
-    const hashedPassword = await hashPassword(userData.password);
+    const hashedPassword = await hashPassword(password);
 
     const result = await users.insertOne({
-      email: userData.email,
-      name: userData.name,
+      email,
+      name,
       password: hashedPassword,
-      emailVerified: null,
       image: null,
-      provider: "credentials",
+      emailVerified: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
-    return result;
+    return {
+      id: result.insertedId.toString(),
+      email,
+      name,
+      image: null,
+    };
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;

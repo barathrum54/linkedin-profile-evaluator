@@ -2,6 +2,7 @@
 
 import DashboardLayout from "@/components/DashboardLayout";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 // Mock data for activities
 const recentActivities = [
@@ -50,6 +51,7 @@ const quickActions = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="profile-analysis-icon"
       >
         <path
           strokeLinecap="round"
@@ -70,6 +72,7 @@ const quickActions = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="billing-icon"
       >
         <path
           strokeLinecap="round"
@@ -90,6 +93,7 @@ const quickActions = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="course-icon"
       >
         <path
           strokeLinecap="round"
@@ -110,6 +114,7 @@ const quickActions = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="settings-icon"
       >
         <path
           strokeLinecap="round"
@@ -165,23 +170,206 @@ const feedPosts = [
 
 export default function DashboardPage() {
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
+  const { data: session, status } = useSession();
+
+  // Extract user info with fallbacks
+  const userName = session?.user?.name || "Kullanıcı";
+  const userEmail = session?.user?.email || "";
+  const userImage = session?.user?.image;
+
+  // Extract first name for greeting
+  const firstName = userName.split(" ")[0];
+
+  // Loading state
+  if (status === "loading") {
+    return (
+      <DashboardLayout title="Dashboard">
+        <div className="p-6 space-y-8" data-testid="dashboard-loading">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+            <div className="animate-pulse">
+              <div className="h-8 bg-white/20 rounded w-64 mb-4"></div>
+              <div className="h-4 bg-white/20 rounded w-96"></div>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout title="Dashboard">
-      <div className="p-6 space-y-8">
+      <div className="p-6 space-y-8" data-testid="dashboard-content">
         {/* Welcome Banner */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+        <div
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white"
+          data-testid="welcome-banner"
+        >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Hoş Geldiniz! 👋</h1>
-              <p className="text-blue-100 text-lg">
-                LinkedIn profiliniz son 7 günde %23 daha fazla görüntülendi
+              <h1
+                className="text-3xl font-bold mb-2"
+                data-testid="welcome-message"
+              >
+                Hoş Geldin, {firstName}! 👋
+              </h1>
+              <p className="text-blue-100 text-lg" data-testid="profile-stats">
+                LinkedIn profilin son 7 günde %23 daha fazla görüntülendi
               </p>
+              {userEmail && (
+                <p
+                  className="text-blue-200 text-sm mt-2"
+                  data-testid="user-email"
+                >
+                  {userEmail}
+                </p>
+              )}
             </div>
             <div className="hidden md:block">
-              <div className="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center">
+              {userImage ? (
+                <img
+                  src={userImage}
+                  alt={userName}
+                  className="w-20 h-20 rounded-full border-4 border-white/20"
+                  data-testid="user-avatar"
+                />
+              ) : (
+                <div
+                  className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center"
+                  data-testid="user-avatar-placeholder"
+                >
+                  <svg
+                    className="w-10 h-10 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+          data-testid="quick-actions"
+        >
+          {quickActions.map((action) => (
+            <button
+              key={action.name}
+              onClick={() => (window.location.href = action.href)}
+              onMouseEnter={() => setHoveredAction(action.name)}
+              onMouseLeave={() => setHoveredAction(null)}
+              className={`group relative p-6 rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300`}
+              data-testid={`quick-action-${action.name.toLowerCase().replace(/\s+/g, "-")}`}
+            >
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="p-3 bg-white/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                  {action.icon}
+                </div>
+                <span className="font-semibold text-sm">{action.name}</span>
+              </div>
+
+              {hoveredAction === action.name && (
+                <div className="absolute inset-0 bg-white/10 rounded-xl backdrop-blur-sm flex items-center justify-center">
+                  <span className="text-white font-medium">Tıkla →</span>
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Stats Grid */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          data-testid="stats-grid"
+        >
+          <div
+            className="bg-white rounded-xl p-6 shadow-lg"
+            data-testid="profile-views-stat"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Profil Görüntülenme
+                </p>
+                <p className="text-3xl font-bold text-gray-900">1,234</p>
+                <p className="text-sm text-green-600">+23% bu hafta</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
                 <svg
-                  className="w-16 h-16 text-white"
+                  className="w-6 h-6 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="bg-white rounded-xl p-6 shadow-lg"
+            data-testid="connections-stat"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Bağlantılar</p>
+                <p className="text-3xl font-bold text-gray-900">567</p>
+                <p className="text-sm text-green-600">+12 yeni</p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <svg
+                  className="w-6 h-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="bg-white rounded-xl p-6 shadow-lg"
+            data-testid="profile-score-stat"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Profil Skoru
+                </p>
+                <p className="text-3xl font-bold text-gray-900">85/100</p>
+                <p className="text-sm text-orange-600">+5 puan</p>
+              </div>
+              <div className="p-3 bg-orange-100 rounded-lg">
+                <svg
+                  className="w-6 h-6 text-orange-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -198,99 +386,14 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Feed Section */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Feed Header */}
-            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-gray-200 p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                📰 Güncel Haberler & İpuçları
-              </h2>
-              <p className="text-gray-600">
-                Size özel hazırlanmış güncellemeler ve profesyonel gelişim
-                ipuçları
-              </p>
-            </div>
-
-            {/* Feed Posts */}
-            {feedPosts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-gray-200 p-6 hover:shadow-2xl transition-shadow"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="text-3xl">{post.icon}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {post.title}
-                      </h3>
-                      <span className="text-sm text-gray-500">{post.time}</span>
-                    </div>
-                    <p className="text-gray-700 mb-3 leading-relaxed">
-                      {post.content}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">
-                        ✍️ {post.author}
-                      </span>
-                      <div className="flex gap-3">
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                          👍 Beğen
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                          💬 Yorum
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                          📤 Paylaş
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Load More */}
-            <div className="text-center">
-              <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-indigo-700 transition-colors">
-                Daha Fazla Yükle
-              </button>
-            </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Hızlı İşlemler
-              </h2>
-              <div className="grid grid-cols-2 gap-3">
-                {quickActions.map((action) => (
-                  <div key={action.name} className="relative">
-                    <button
-                      onMouseEnter={() => setHoveredAction(action.name)}
-                      onMouseLeave={() => setHoveredAction(null)}
-                      className={`w-full bg-gradient-to-r ${action.color} text-white p-4 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg`}
-                    >
-                      {action.icon}
-                    </button>
-
-                    {/* Tooltip */}
-                    {hoveredAction === action.name && (
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap z-10">
-                        {action.name}
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-900"></div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-gray-200 p-6">
+          {/* Recent Activities */}
+          <div className="lg:col-span-2">
+            <div
+              className="bg-white rounded-xl shadow-lg p-6"
+              data-testid="recent-activities"
+            >
               <h2 className="text-xl font-bold text-gray-900 mb-6">
                 Son Aktiviteler
               </h2>
@@ -298,147 +401,58 @@ export default function DashboardPage() {
                 {recentActivities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="flex items-start gap-4 p-3 bg-gray-50/50 rounded-xl hover:bg-gray-100/50 transition-colors"
+                    className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    data-testid={`activity-${activity.id}`}
                   >
-                    <div className="text-xl">{activity.icon}</div>
+                    <div className="text-2xl">{activity.icon}</div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">
                         {activity.title}
                       </p>
-                      <p className="text-xs text-gray-600 mt-1">
+                      <p className="text-sm text-gray-600">
                         {activity.description}
                       </p>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-xs text-gray-400 mt-1">
                         {activity.time}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-4 text-center text-sm text-blue-600 hover:text-blue-700 font-medium">
-                Tümünü Görüntüle →
-              </button>
             </div>
+          </div>
 
-            {/* Profil Durumu */}
-            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">
-                  Profil Durumu
-                </h2>
-                <span className="text-sm text-gray-500">Bu ay %15 gelişme</span>
-              </div>
+          {/* Feed */}
+          <div className="lg:col-span-1">
+            <div
+              className="bg-white rounded-xl shadow-lg p-6"
+              data-testid="news-feed"
+            >
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Feed</h2>
               <div className="space-y-6">
-                <div className="text-center">
-                  <div className="relative w-20 h-20 mx-auto mb-3">
-                    <svg
-                      className="w-20 h-20 transform -rotate-90"
-                      viewBox="0 0 100 100"
-                    >
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="35"
-                        stroke="#e5e7eb"
-                        strokeWidth="6"
-                        fill="none"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="35"
-                        stroke="#3b82f6"
-                        strokeWidth="6"
-                        fill="none"
-                        strokeDasharray={`${85 * 2.2} ${100 * 2.2}`}
-                        className="transition-all duration-500"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold text-gray-900">
-                        85%
-                      </span>
+                {feedPosts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0"
+                    data-testid={`feed-post-${post.id}`}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className="text-lg">{post.icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {post.content}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-gray-400">
+                          <span>{post.author}</span>
+                          <span>{post.time}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    Profil Tamamlanma
-                  </h3>
-                  <p className="text-xs text-gray-600">Hedef: %100</p>
-                </div>
-
-                <div className="text-center">
-                  <div className="relative w-20 h-20 mx-auto mb-3">
-                    <svg
-                      className="w-20 h-20 transform -rotate-90"
-                      viewBox="0 0 100 100"
-                    >
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="35"
-                        stroke="#e5e7eb"
-                        strokeWidth="6"
-                        fill="none"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="35"
-                        stroke="#10b981"
-                        strokeWidth="6"
-                        fill="none"
-                        strokeDasharray={`${72 * 2.2} ${100 * 2.2}`}
-                        className="transition-all duration-500"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold text-gray-900">
-                        72%
-                      </span>
-                    </div>
-                  </div>
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    İçerik Kalitesi
-                  </h3>
-                  <p className="text-xs text-gray-600">Hedef: %90</p>
-                </div>
-
-                <div className="text-center">
-                  <div className="relative w-20 h-20 mx-auto mb-3">
-                    <svg
-                      className="w-20 h-20 transform -rotate-90"
-                      viewBox="0 0 100 100"
-                    >
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="35"
-                        stroke="#e5e7eb"
-                        strokeWidth="6"
-                        fill="none"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="35"
-                        stroke="#8b5cf6"
-                        strokeWidth="6"
-                        fill="none"
-                        strokeDasharray={`${68 * 2.2} ${100 * 2.2}`}
-                        className="transition-all duration-500"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-bold text-gray-900">
-                        68%
-                      </span>
-                    </div>
-                  </div>
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    Network Büyümesi
-                  </h3>
-                  <p className="text-xs text-gray-600">Hedef: %80</p>
-                </div>
+                ))}
               </div>
             </div>
           </div>

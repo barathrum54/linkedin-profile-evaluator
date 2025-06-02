@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 
 interface NavigationItem {
   name: string;
@@ -21,6 +22,7 @@ const navigation: NavigationItem[] = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="nav-dashboard-icon"
       >
         <path
           strokeLinecap="round"
@@ -41,6 +43,7 @@ const navigation: NavigationItem[] = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="nav-profile-icon"
       >
         <path
           strokeLinecap="round"
@@ -61,6 +64,7 @@ const navigation: NavigationItem[] = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="nav-billing-icon"
       >
         <path
           strokeLinecap="round"
@@ -81,6 +85,7 @@ const navigation: NavigationItem[] = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="nav-course-icon"
       >
         <path
           strokeLinecap="round"
@@ -102,6 +107,7 @@ const navigation: NavigationItem[] = [
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
+        data-testid="nav-settings-icon"
       >
         <path
           strokeLinecap="round"
@@ -131,8 +137,15 @@ export default function DashboardLayout({
   title,
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+
+  // Extract user info with fallbacks
+  const userName = session?.user?.name || "Kullanıcı";
+  const userEmail = session?.user?.email || "";
+  const userImage = session?.user?.image;
 
   const isCurrentPage = (href: string) => {
     if (href === "/dashboard") {
@@ -141,19 +154,53 @@ export default function DashboardLayout({
     return pathname.startsWith(href);
   };
 
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await signOut({ redirect: true, callbackUrl: "/" });
+    } catch (error) {
+      console.error("Logout error:", error);
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Loading state for session
+  if (status === "loading") {
+    return (
+      <div
+        className="h-screen flex bg-gradient-to-br from-blue-50 via-white to-indigo-50"
+        data-testid="dashboard-layout-loading"
+      >
+        <div className="flex items-center justify-center w-full">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-screen flex bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div
+      className="h-screen flex bg-gradient-to-br from-blue-50 via-white to-indigo-50"
+      data-testid="dashboard-layout"
+    >
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-80 bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        data-testid="sidebar"
       >
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <div
+            className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+            data-testid="sidebar-header"
+          >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+              <div
+                className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center"
+                data-testid="app-logo"
+              >
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -168,11 +215,14 @@ export default function DashboardLayout({
                   />
                 </svg>
               </div>
-              <span className="text-lg font-semibold">LinkedIn Pro</span>
+              <span className="text-lg font-semibold" data-testid="app-name">
+                LinkedIn Pro
+              </span>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden p-1 rounded-lg hover:bg-white/10 transition-colors"
+              data-testid="sidebar-close-button"
             >
               <svg
                 className="w-6 h-6"
@@ -190,8 +240,61 @@ export default function DashboardLayout({
             </button>
           </div>
 
+          {/* User Info Section */}
+          <div
+            className="p-4 border-b border-gray-200"
+            data-testid="user-info-section"
+          >
+            <div className="flex items-center space-x-3">
+              {userImage ? (
+                <img
+                  src={userImage}
+                  alt={userName}
+                  className="w-10 h-10 rounded-full"
+                  data-testid="sidebar-user-avatar"
+                />
+              ) : (
+                <div
+                  className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center"
+                  data-testid="sidebar-user-avatar-placeholder"
+                >
+                  <svg
+                    className="w-6 h-6 text-gray-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p
+                  className="text-sm font-medium text-gray-900 truncate"
+                  data-testid="sidebar-user-name"
+                >
+                  {userName}
+                </p>
+                <p
+                  className="text-xs text-gray-500 truncate"
+                  data-testid="sidebar-user-email"
+                >
+                  {userEmail}
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <nav
+            className="flex-1 px-4 py-6 space-y-2 overflow-y-auto"
+            data-testid="sidebar-navigation"
+          >
             {navigation.map((item) => {
               const isActive = isCurrentPage(item.href);
               return (
@@ -206,6 +309,7 @@ export default function DashboardLayout({
                       ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
                       : "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
                   }`}
+                  data-testid={`nav-item-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   <div
                     className={`flex-shrink-0 ${
@@ -226,6 +330,7 @@ export default function DashboardLayout({
                               ? "bg-white/20 text-white"
                               : "bg-orange-100 text-orange-800"
                           }`}
+                          data-testid={`nav-badge-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
                         >
                           {item.badge}
                         </span>
@@ -246,11 +351,77 @@ export default function DashboardLayout({
             })}
           </nav>
 
-          {/* Sidebar Footer */}
-          <div className="p-4 border-t border-gray-200">
+          {/* Logout Section */}
+          <div
+            className="p-4 border-t border-gray-200"
+            data-testid="logout-section"
+          >
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="w-full flex items-center gap-3 px-4 py-3 text-left rounded-xl transition-all duration-200 text-red-600 hover:bg-red-50 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              data-testid="logout-button"
+            >
+              <div className="flex-shrink-0">
+                {isLoggingOut ? (
+                  <svg
+                    className="animate-spin w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    data-testid="logout-icon"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">
+                  {isLoggingOut ? "Çıkış yapılıyor..." : "Çıkış Yap"}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Hesabından güvenli çıkış
+                </p>
+              </div>
+            </button>
+          </div>
+
+          {/* Premium Status */}
+          <div
+            className="p-4 border-t border-gray-200"
+            data-testid="premium-status"
+          >
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                <div
+                  className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center"
+                  data-testid="premium-icon"
+                >
                   <svg
                     className="w-5 h-5 text-white"
                     fill="none"
@@ -266,10 +437,16 @@ export default function DashboardLayout({
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-green-800">
+                  <p
+                    className="text-sm font-medium text-green-800"
+                    data-testid="premium-status-text"
+                  >
                     Premium Üye
                   </p>
-                  <p className="text-xs text-green-600">
+                  <p
+                    className="text-xs text-green-600"
+                    data-testid="premium-features-text"
+                  >
                     Tüm özelliklere erişim
                   </p>
                 </div>
@@ -284,16 +461,21 @@ export default function DashboardLayout({
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          data-testid="sidebar-overlay"
         />
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0" data-testid="main-content">
         {/* Mobile Header */}
-        <div className="lg:hidden flex items-center justify-between h-16 px-4 bg-white/80 backdrop-blur border-b border-gray-200">
+        <div
+          className="lg:hidden flex items-center justify-between h-16 px-4 bg-white/80 backdrop-blur border-b border-gray-200"
+          data-testid="mobile-header"
+        >
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            data-testid="sidebar-open-button"
           >
             <svg
               className="w-6 h-6"
@@ -309,14 +491,19 @@ export default function DashboardLayout({
               />
             </svg>
           </button>
-          <h1 className="text-lg font-semibold text-gray-900">
+          <h1
+            className="text-lg font-semibold text-gray-900"
+            data-testid="mobile-header-title"
+          >
             {title || "Dashboard"}
           </h1>
           <div className="w-10" /> {/* Spacer */}
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-auto">{children}</div>
+        <div className="flex-1 overflow-auto" data-testid="content-area">
+          {children}
+        </div>
       </div>
     </div>
   );
