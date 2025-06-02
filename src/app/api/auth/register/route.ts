@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserByEmail, createUser } from "@/lib/auth";
+import { mailService } from "@/lib/mail-v2";
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,6 +52,17 @@ export async function POST(request: NextRequest) {
       email: email.toLowerCase().trim(),
       password,
     });
+
+    // Send welcome email using template (don't fail registration if email fails)
+    try {
+      await mailService.sendWelcomeEmail(
+        email.toLowerCase().trim(),
+        name.trim()
+      );
+    } catch (emailError) {
+      console.error("Failed to send welcome email:", emailError);
+      // Continue with successful registration even if email fails
+    }
 
     return NextResponse.json(
       { message: "Hesabınız başarıyla oluşturuldu." },
