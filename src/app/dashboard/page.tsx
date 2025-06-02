@@ -172,6 +172,11 @@ export default function DashboardPage() {
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
   const { data: session, status } = useSession();
 
+  // Debug: Log what useSession is returning
+  console.log("Dashboard useSession - Status:", status);
+  console.log("Dashboard useSession - Session:", session);
+  console.log("Dashboard useSession - User name:", session?.user?.name);
+
   // Extract user info with fallbacks
   const userName = session?.user?.name || "Kullanıcı";
   const userEmail = session?.user?.email || "";
@@ -179,6 +184,9 @@ export default function DashboardPage() {
 
   // Extract first name for greeting
   const firstName = userName.split(" ")[0];
+
+  console.log("Dashboard - Final userName:", userName);
+  console.log("Dashboard - Final firstName:", firstName);
 
   // Loading state
   if (status === "loading") {

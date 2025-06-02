@@ -113,19 +113,38 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
+      console.log("JWT Callback - Token:", token);
+      console.log("JWT Callback - User:", user);
+      console.log("JWT Callback - Account:", account);
+
       if (user) {
+        // Store all user data in the token
         token.id = user.id;
+        token.name = user.name; // Explicitly set name
+        token.email = user.email; // Explicitly set email
+        token.image = user.image; // Explicitly set image
       }
       if (account) {
         token.provider = account.provider;
       }
+
+      console.log("JWT Callback - Final token:", token);
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
+      console.log("Session Callback - Input token:", token);
+      console.log("Session Callback - Input session:", session);
+
+      if (session?.user) {
+        // Map all token data to session
+        session.user.id = token.sub || (token.id as string);
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.picture || (token.image as string);
         session.user.provider = token.provider as string;
       }
+
+      console.log("Session Callback - Final session:", session);
       return session;
     },
     async signIn({ user, account }) {
