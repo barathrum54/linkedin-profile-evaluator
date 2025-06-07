@@ -1,25 +1,31 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import {
+  processPendingTestData,
+  showProcessingState,
+  getPendingTestData,
+} from '@/utils/testDataProcessor';
 
 export default function SignUpPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [isProcessingTestData, setIsProcessingTestData] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
@@ -27,28 +33,58 @@ export default function SignUpPage() {
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      setError("Ad Soyad gereklidir.");
+      setError('Ad Soyad gereklidir.');
       return false;
     }
     if (!formData.email.trim()) {
-      setError("Email adresi gereklidir.");
+      setError('Email adresi gereklidir.');
       return false;
     }
     if (formData.password.length < 8) {
-      setError("Şifre en az 8 karakter olmalıdır.");
+      setError('Şifre en az 8 karakter olmalıdır.');
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError("Şifreler eşleşmiyor.");
+      setError('Şifreler eşleşmiyor.');
       return false;
     }
     return true;
   };
 
+  const handlePostAuthFlow = async () => {
+    // Check if there's pending test data
+    const hasPendingData = getPendingTestData() !== null;
+
+    if (hasPendingData) {
+      setIsProcessingTestData(true);
+      showProcessingState(true);
+
+      // Give the session a moment to establish
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Process the pending test data
+      const success = await processPendingTestData();
+
+      showProcessingState(false);
+      setIsProcessingTestData(false);
+
+      if (success) {
+        console.log(
+          'Test data processed successfully, redirecting to dashboard'
+        );
+      } else {
+        console.log('No test data or processing failed, redirecting anyway');
+      }
+    }
+
+    // Redirect to dashboard
+    router.push('/dashboard');
+  };
+
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setError('');
     setSuccess(false);
 
     if (!validateForm()) {
@@ -57,10 +93,10 @@ export default function SignUpPage() {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: formData.name,
@@ -72,28 +108,29 @@ export default function SignUpPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "Hesap oluşturulurken bir hata oluştu.");
+        setError(data.message || 'Hesap oluşturulurken bir hata oluştu.');
         return;
       }
 
       setSuccess(true);
 
       // Auto sign in after successful registration
-      const signInResult = await signIn("credentials", {
+      const signInResult = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
         redirect: false,
       });
 
       if (signInResult?.ok) {
-        router.push("/dashboard");
+        // Handle post-auth flow including test data processing
+        await handlePostAuthFlow();
       } else {
         router.push(
-          "/auth/signin?message=Hesabınız oluşturuldu, lütfen giriş yapın."
+          '/auth/signin?message=Hesabınız oluşturuldu, lütfen giriş yapın.'
         );
       }
     } catch {
-      setError("Hesap oluşturulurken bir hata oluştu.");
+      setError('Hesap oluşturulurken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }
@@ -101,41 +138,60 @@ export default function SignUpPage() {
 
   const handleOAuthSignUp = async (provider: string) => {
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
-      await signIn(provider, { callbackUrl: "/dashboard" });
+      const result = await signIn(provider, {
+        redirect: false,
+        callbackUrl: '/dashboard',
+      });
+
+      if (result?.ok) {
+        // Handle post-auth flow including test data processing
+        await handlePostAuthFlow();
+      } else if (result?.url) {
+        // OAuth might redirect directly, handle that case
+        window.location.href = result.url;
+      }
     } catch {
-      setError("OAuth hesap oluşturulurken bir hata oluştu.");
+      setError('OAuth hesap oluşturulurken bir hata oluştu.');
       setIsLoading(false);
     }
   };
 
-  if (success) {
+  if (success || isProcessingTestData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              {isProcessingTestData ? (
+                <div className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg
+                  className="w-8 h-8 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Hesabınız Oluşturuldu!
+              {isProcessingTestData
+                ? 'Test Sonuçlarınız Kaydediliyor'
+                : 'Hesabınız Oluşturuldu!'}
             </h2>
             <p className="text-gray-600 mb-6">
-              Giriş yapılıyor ve dashboard&apos;a yönlendiriliyorsunuz...
+              {isProcessingTestData
+                ? 'Test sonuçlarınız veritabanına kaydediliyor, lütfen bekleyin...'
+                : "Giriş yapılıyor ve dashboard'a yönlendiriliyorsunuz..."}
             </p>
           </div>
         </div>
@@ -175,7 +231,7 @@ export default function SignUpPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           <div className="space-y-4 mb-6">
             <button
-              onClick={() => handleOAuthSignUp("linkedin")}
+              onClick={() => handleOAuthSignUp('linkedin')}
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 bg-[#0077B5] hover:bg-[#005885] text-white py-3 px-4 rounded-xl font-semibold transition-colors disabled:opacity-50"
             >
@@ -186,7 +242,7 @@ export default function SignUpPage() {
             </button>
 
             <button
-              onClick={() => handleOAuthSignUp("google")}
+              onClick={() => handleOAuthSignUp('google')}
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 py-3 px-4 rounded-xl font-semibold border border-gray-300 transition-colors disabled:opacity-50"
             >
@@ -212,7 +268,7 @@ export default function SignUpPage() {
             </button>
 
             <button
-              onClick={() => handleOAuthSignUp("github")}
+              onClick={() => handleOAuthSignUp('github')}
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 bg-gray-900 hover:bg-gray-800 text-white py-3 px-4 rounded-xl font-semibold transition-colors disabled:opacity-50"
             >
@@ -323,16 +379,16 @@ export default function SignUpPage() {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Hesap Oluşturuluyor..." : "Hesap Oluştur"}
+              {isLoading ? 'Hesap Oluşturuluyor...' : 'Hesap Oluştur'}
             </button>
           </form>
 
           <div className="mt-6 text-center text-xs text-gray-500">
-            Hesap oluşturarak{" "}
+            Hesap oluşturarak{' '}
             <Link href="/terms" className="text-blue-600 hover:text-blue-700">
               Kullanım Şartları
-            </Link>{" "}
-            ve{" "}
+            </Link>{' '}
+            ve{' '}
             <Link href="/privacy" className="text-blue-600 hover:text-blue-700">
               Gizlilik Politikası
             </Link>
@@ -343,7 +399,7 @@ export default function SignUpPage() {
         {/* Sign In Link */}
         <div className="text-center">
           <p className="text-gray-600">
-            Zaten hesabınız var mı?{" "}
+            Zaten hesabınız var mı?{' '}
             <Link
               href="/auth/signin"
               className="text-blue-600 hover:text-blue-700 font-semibold"

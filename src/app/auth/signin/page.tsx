@@ -1,46 +1,83 @@
-"use client";
+'use client';
 
-import { useState, useEffect, Suspense } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useState, useEffect, Suspense } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import {
+  processPendingTestData,
+  showProcessingState,
+  getPendingTestData,
+} from '@/utils/testDataProcessor';
 
 function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
+  const [isProcessingTestData, setIsProcessingTestData] = useState(false);
 
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-  const errorParam = searchParams.get("error");
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const errorParam = searchParams.get('error');
 
   useEffect(() => {
     if (errorParam) {
-      setError("Giriş yaparken bir hata oluştu. Lütfen tekrar deneyin.");
+      setError('Giriş yaparken bir hata oluştu. Lütfen tekrar deneyin.');
     }
   }, [errorParam]);
+
+  const handlePostAuthFlow = async () => {
+    // Check if there's pending test data
+    const hasPendingData = getPendingTestData() !== null;
+
+    if (hasPendingData) {
+      setIsProcessingTestData(true);
+      showProcessingState(true);
+
+      // Give the session a moment to establish
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Process the pending test data
+      const success = await processPendingTestData();
+
+      showProcessingState(false);
+      setIsProcessingTestData(false);
+
+      if (success) {
+        console.log(
+          'Test data processed successfully, redirecting to dashboard'
+        );
+      } else {
+        console.log('No test data or processing failed, redirecting anyway');
+      }
+    }
+
+    // Redirect to dashboard or callback URL
+    router.push(callbackUrl);
+  };
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
       });
 
       if (result?.error) {
-        setError("Geçersiz email veya şifre.");
+        setError('Geçersiz email veya şifre.');
       } else if (result?.ok) {
-        router.push(callbackUrl);
+        // Handle post-auth flow including test data processing
+        await handlePostAuthFlow();
       }
     } catch {
-      setError("Giriş yaparken bir hata oluştu.");
+      setError('Giriş yaparken bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }
@@ -48,15 +85,47 @@ function SignInForm() {
 
   const handleOAuthSignIn = async (provider: string) => {
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
-      await signIn(provider, { callbackUrl });
+      const result = await signIn(provider, {
+        redirect: false,
+        callbackUrl,
+      });
+
+      if (result?.ok) {
+        // Handle post-auth flow including test data processing
+        await handlePostAuthFlow();
+      } else if (result?.url) {
+        // OAuth might redirect directly, handle that case
+        window.location.href = result.url;
+      }
     } catch {
-      setError("OAuth giriş yaparken bir hata oluştu.");
+      setError('OAuth giriş yaparken bir hata oluştu.');
       setIsLoading(false);
     }
   };
+
+  // Show processing state if test data is being processed
+  if (isProcessingTestData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center">
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Test Sonuçlarınız Kaydediliyor
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Test sonuçlarınız veritabanına kaydediliyor, lütfen bekleyin...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
@@ -90,7 +159,7 @@ function SignInForm() {
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           <div className="space-y-4 mb-6">
             <button
-              onClick={() => handleOAuthSignIn("linkedin")}
+              onClick={() => handleOAuthSignIn('linkedin')}
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 bg-[#0077B5] hover:bg-[#005885] text-white py-3 px-4 rounded-xl font-semibold transition-colors disabled:opacity-50"
             >
@@ -101,7 +170,7 @@ function SignInForm() {
             </button>
 
             <button
-              onClick={() => handleOAuthSignIn("google")}
+              onClick={() => handleOAuthSignIn('google')}
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 py-3 px-4 rounded-xl font-semibold border border-gray-300 transition-colors disabled:opacity-50"
             >
@@ -127,7 +196,7 @@ function SignInForm() {
             </button>
 
             <button
-              onClick={() => handleOAuthSignIn("github")}
+              onClick={() => handleOAuthSignIn('github')}
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 bg-gray-900 hover:bg-gray-800 text-white py-3 px-4 rounded-xl font-semibold transition-colors disabled:opacity-50"
             >
@@ -168,7 +237,7 @@ function SignInForm() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 placeholder="ornek@email.com"
@@ -186,7 +255,7 @@ function SignInForm() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 placeholder="••••••••"
@@ -198,7 +267,7 @@ function SignInForm() {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Giriş Yapılıyor..." : "Giriş Yap"}
+              {isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
             </button>
           </form>
 
@@ -215,7 +284,7 @@ function SignInForm() {
         {/* Sign Up Link */}
         <div className="text-center">
           <p className="text-gray-600">
-            Hesabınız yok mu?{" "}
+            Hesabınız yok mu?{' '}
             <Link
               href="/auth/signup"
               className="text-blue-600 hover:text-blue-700 font-semibold"

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import React, { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 interface NavigationItem {
   name: string;
@@ -14,8 +14,8 @@ interface NavigationItem {
 
 const navigation: NavigationItem[] = [
   {
-    name: "Dashboard",
-    href: "/dashboard",
+    name: 'Dashboard',
+    href: '/dashboard',
     icon: (
       <svg
         className="w-5 h-5"
@@ -32,11 +32,11 @@ const navigation: NavigationItem[] = [
         />
       </svg>
     ),
-    description: "Ana sayfa ve feed",
+    description: 'Ana sayfa ve feed',
   },
   {
-    name: "Profile",
-    href: "/dashboard/profile",
+    name: 'Profile',
+    href: '/dashboard/profile',
     icon: (
       <svg
         className="w-5 h-5"
@@ -53,11 +53,11 @@ const navigation: NavigationItem[] = [
         />
       </svg>
     ),
-    description: "Profil yönetimi ve analizi",
+    description: 'Profil yönetimi ve analizi',
   },
   {
-    name: "Billing",
-    href: "/dashboard/billing",
+    name: 'Billing',
+    href: '/dashboard/billing',
     icon: (
       <svg
         className="w-5 h-5"
@@ -74,11 +74,11 @@ const navigation: NavigationItem[] = [
         />
       </svg>
     ),
-    description: "Faturalama ve abonelik",
+    description: 'Faturalama ve abonelik',
   },
   {
-    name: "Main Course",
-    href: "/dashboard/course",
+    name: 'Main Course',
+    href: '/dashboard/course',
     icon: (
       <svg
         className="w-5 h-5"
@@ -95,12 +95,12 @@ const navigation: NavigationItem[] = [
         />
       </svg>
     ),
-    badge: "Yakında",
-    description: "Ana eğitim kursu",
+    badge: 'Yakında',
+    description: 'Ana eğitim kursu',
   },
   {
-    name: "Settings",
-    href: "/dashboard/settings",
+    name: 'Settings',
+    href: '/dashboard/settings',
     icon: (
       <svg
         className="w-5 h-5"
@@ -123,14 +123,14 @@ const navigation: NavigationItem[] = [
         />
       </svg>
     ),
-    description: "Hesap ve uygulama ayarları",
+    description: 'Hesap ve uygulama ayarları',
   },
   // Add debug menu item only in development
-  ...(process.env.NODE_ENV === "development"
+  ...(process.env.NODE_ENV === 'development'
     ? [
         {
-          name: "Debug",
-          href: "/dashboard/debug",
+          name: 'Debug',
+          href: '/dashboard/debug',
           icon: (
             <svg
               className="w-5 h-5"
@@ -147,8 +147,8 @@ const navigation: NavigationItem[] = [
               />
             </svg>
           ),
-          badge: "DEV",
-          description: "Debug bilgileri ve veritabanı görünümü",
+          badge: 'DEV',
+          description: 'Debug bilgileri ve veritabanı görünümü',
         },
       ]
     : []),
@@ -170,12 +170,12 @@ export default function DashboardLayout({
   const { data: session, status } = useSession();
 
   // Extract user info with fallbacks
-  const userName = session?.user?.name || "Kullanıcı";
-  const userEmail = session?.user?.email || "";
+  const userName = session?.user?.name || 'Kullanıcı';
+  const userEmail = session?.user?.email || '';
   const userImage = session?.user?.image;
 
   const isCurrentPage = (href: string) => {
-    if (href === "/dashboard") {
+    if (href === '/dashboard') {
       return pathname === href;
     }
     return pathname.startsWith(href);
@@ -184,22 +184,22 @@ export default function DashboardLayout({
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      await signOut({ redirect: true, callbackUrl: "/" });
+      await signOut({ redirect: true, callbackUrl: '/' });
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error('Logout error:', error);
       setIsLoggingOut(false);
     }
   };
 
   // Loading state for session
-  if (status === "loading") {
+  if (status === 'loading') {
     return (
       <div
         className="h-screen flex bg-gradient-to-br from-blue-50 via-white to-indigo-50"
         data-testid="dashboard-layout-loading"
       >
-        <div className="flex items-center justify-center w-full">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -213,7 +213,7 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-80 bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         data-testid="sidebar"
       >
@@ -322,7 +322,7 @@ export default function DashboardLayout({
             className="flex-1 px-4 py-6 space-y-2 overflow-y-auto"
             data-testid="sidebar-navigation"
           >
-            {navigation.map((item) => {
+            {navigation.map(item => {
               const isActive = isCurrentPage(item.href);
               return (
                 <button
@@ -333,16 +333,16 @@ export default function DashboardLayout({
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-xl transition-all duration-200 group ${
                     isActive
-                      ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
-                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                      ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
                   }`}
-                  data-testid={`nav-item-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+                  data-testid={`nav-item-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   <div
                     className={`flex-shrink-0 ${
                       isActive
-                        ? "text-white"
-                        : "text-gray-400 group-hover:text-blue-500"
+                        ? 'text-white'
+                        : 'text-gray-400 group-hover:text-blue-500'
                     }`}
                   >
                     {item.icon}
@@ -354,10 +354,10 @@ export default function DashboardLayout({
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                             isActive
-                              ? "bg-white/20 text-white"
-                              : "bg-orange-100 text-orange-800"
+                              ? 'bg-white/20 text-white'
+                              : 'bg-orange-100 text-orange-800'
                           }`}
-                          data-testid={`nav-badge-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+                          data-testid={`nav-badge-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                         >
                           {item.badge}
                         </span>
@@ -366,7 +366,7 @@ export default function DashboardLayout({
                     {item.description && (
                       <p
                         className={`text-xs mt-1 ${
-                          isActive ? "text-blue-100" : "text-gray-500"
+                          isActive ? 'text-blue-100' : 'text-gray-500'
                         }`}
                       >
                         {item.description}
@@ -429,7 +429,7 @@ export default function DashboardLayout({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">
-                  {isLoggingOut ? "Çıkış yapılıyor..." : "Çıkış Yap"}
+                  {isLoggingOut ? 'Çıkış yapılıyor...' : 'Çıkış Yap'}
                 </p>
                 <p className="text-xs text-gray-500">
                   Hesabından güvenli çıkış
@@ -522,7 +522,7 @@ export default function DashboardLayout({
             className="text-lg font-semibold text-gray-900"
             data-testid="mobile-header-title"
           >
-            {title || "Dashboard"}
+            {title || 'Dashboard'}
           </h1>
           <div className="w-10" /> {/* Spacer */}
         </div>

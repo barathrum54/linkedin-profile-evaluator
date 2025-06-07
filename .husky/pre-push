@@ -1,0 +1,31 @@
+#!/bin/sh
+
+echo "🧪 Running tests before push..."
+
+# Run unit tests
+npm run test -- --passWithNoTests --silent
+
+if [ $? -ne 0 ]; then
+    echo "❌ Unit tests failed. Push aborted."
+    exit 1
+fi
+
+# Run type checking
+echo "🔍 Type checking..."
+npx tsc --noEmit
+
+if [ $? -ne 0 ]; then
+    echo "❌ TypeScript errors found. Push aborted."
+    exit 1
+fi
+
+# Run build to ensure everything compiles
+echo "🔨 Building project..."
+npm run build
+
+if [ $? -ne 0 ]; then
+    echo "❌ Build failed. Push aborted."
+    exit 1
+fi
+
+echo "✅ All checks passed. Pushing..." 

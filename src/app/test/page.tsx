@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSound } from "@/hooks/useSound";
-import { questionsData } from "@/data/questions";
-import OptimizedImage from "@/components/OptimizedImage";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useSound } from '@/hooks/useSound';
+import { questionsData } from '@/data/questions';
+import OptimizedImage from '@/components/OptimizedImage';
 
 // Image Modal Component
 interface ImageModalProps {
@@ -21,7 +22,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, onClose }) => {
     >
       <div
         className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className="relative h-[80vh]">
           <OptimizedImage src={src} alt={alt} fill className="object-contain" />
@@ -65,7 +66,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
       style={{
         width: `${drawerWidth}px`,
         transform: `translateX(${
-          isOpen ? "0px" : `-${drawerWidth - visibleWidth}px`
+          isOpen ? '0px' : `-${drawerWidth - visibleWidth}px`
         })`,
       }}
     >
@@ -93,12 +94,12 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
                   onClick={() => onQuestionSelect(index)}
                   className={`w-full text-left p-3 rounded-lg border transition-all duration-200 ${
                     isCurrent
-                      ? "bg-[#4a90c2] text-white border-[#4a90c2]"
+                      ? 'bg-[#4a90c2] text-white border-[#4a90c2]'
                       : isAnswered
-                      ? "bg-green-50 border-green-200 hover:bg-green-100"
-                      : shouldShowWarning
-                      ? "bg-yellow-50 border-yellow-200 hover:bg-yellow-100"
-                      : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                        ? 'bg-green-50 border-green-200 hover:bg-green-100'
+                        : shouldShowWarning
+                          ? 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100'
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -109,7 +110,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
                       {isAnswered ? (
                         <span
                           className={`text-xs font-medium ${
-                            isCurrent ? "text-white" : "text-green-700"
+                            isCurrent ? 'text-white' : 'text-green-700'
                           }`}
                         >
                           {answers[index]}
@@ -134,12 +135,12 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
                   <p
                     className={`text-xs leading-tight ${
                       isCurrent
-                        ? "text-white/90"
+                        ? 'text-white/90'
                         : isAnswered
-                        ? "text-gray-600"
-                        : shouldShowWarning
-                        ? "text-yellow-600"
-                        : "text-gray-600"
+                          ? 'text-gray-600'
+                          : shouldShowWarning
+                            ? 'text-yellow-600'
+                            : 'text-gray-600'
                     }`}
                   >
                     {question.question.length > 50
@@ -155,7 +156,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
         {/* Footer */}
         <div className="border-t bg-gray-50 p-4">
           <div className="text-sm text-gray-600">
-            Cevaplanan: {answers.filter((a) => a !== null).length} /{" "}
+            Cevaplanan: {answers.filter(a => a !== null).length} /{' '}
             {questionsData.length}
           </div>
         </div>
@@ -166,7 +167,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
         onClick={onToggle}
         className="absolute -right-10 top-4 bg-[#4a90c2] text-white p-2 rounded-lg  hover:bg-[#3d7ba3] transition-colors duration-200"
         style={{ right: `-${visibleWidth - 8}px` }}
-        aria-label={isOpen ? "Menüyü Kapat" : "Menüyü Aç"}
+        aria-label={isOpen ? 'Menüyü Kapat' : 'Menüyü Aç'}
       >
         {isOpen ? (
           <svg
@@ -204,12 +205,12 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
 
 // Helper function to get label based on slider value
 const getSliderLabel = (value: number): string => {
-  if (value >= 0 && value <= 19) return "Henüz Üzerinde Çalışmadım";
-  if (value >= 20 && value <= 39) return "Eksik ve Gelişime Açık";
-  if (value >= 40 && value <= 59) return "Temel Seviyede Hazır";
-  if (value >= 60 && value <= 79) return "Gözden Geçirilmiş ve Düzenli";
-  if (value >= 80 && value <= 100) return "Stratejik ve Etkileyici";
-  return "";
+  if (value >= 0 && value <= 19) return 'Henüz Üzerinde Çalışmadım';
+  if (value >= 20 && value <= 39) return 'Eksik ve Gelişime Açık';
+  if (value >= 40 && value <= 59) return 'Temel Seviyede Hazır';
+  if (value >= 60 && value <= 79) return 'Gözden Geçirilmiş ve Düzenli';
+  if (value >= 80 && value <= 100) return 'Stratejik ve Etkileyici';
+  return '';
 };
 
 // Helper function to convert slider value to multiplier for scoring
@@ -276,6 +277,7 @@ const DebugComponent: React.FC<DebugComponentProps> = ({ onFinishTest }) => {
 
 export default function TestPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(
     new Array(questionsData.length).fill(null)
@@ -285,15 +287,15 @@ export default function TestPage() {
   const [showWarningIndicators, setShowWarningIndicators] = useState(false);
   const { playClickSound } = useSound();
 
-  // Debug function to finish test with random answers
   const handleDebugFinishTest = () => {
-    playClickSound();
-    const randomAnswers = questionsData.map(() =>
+    // Fill all answers with random values for debugging
+    const debugAnswers = questionsData.map(() =>
       Math.floor(Math.random() * 101)
     );
+    setAnswers(debugAnswers);
 
-    // Calculate score with random answers
-    const newScore = randomAnswers.reduce(
+    // Calculate debug score
+    const debugScore = debugAnswers.reduce(
       (total: number, ans: number, idx: number) => {
         const multiplier = getMultiplierFromSliderValue(ans);
         return total + questionsData[idx].score * multiplier;
@@ -301,44 +303,71 @@ export default function TestPage() {
       0
     );
 
-    // Store answers and score in localStorage
-    localStorage.setItem("testAnswers", JSON.stringify(randomAnswers));
-    localStorage.setItem("testScore", Math.ceil(newScore).toString());
+    // Always save to localStorage first
+    localStorage.setItem('testAnswers', JSON.stringify(debugAnswers));
+    localStorage.setItem('testScore', Math.ceil(debugScore).toString());
 
-    router.push("/results");
+    // If user is authenticated, save to database and go to dashboard
+    if (session?.user) {
+      saveTestResultToDatabase(Math.ceil(debugScore), debugAnswers);
+    } else {
+      // If not authenticated, go to results page
+      router.push('/results');
+    }
+  };
+
+  const saveTestResultToDatabase = async (
+    score: number,
+    testAnswers: (number | null)[]
+  ) => {
+    try {
+      const response = await fetch('/api/test-results', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          score,
+          answers: testAnswers,
+        }),
+      });
+
+      if (response.ok) {
+        // Successfully saved to database, clear localStorage and redirect to dashboard
+        localStorage.removeItem('testAnswers');
+        localStorage.removeItem('testScore');
+        router.push('/dashboard');
+      } else {
+        console.error('Failed to save test result to database');
+        // Fallback to results page
+        router.push('/results');
+      }
+    } catch (error) {
+      console.error('Error saving test result:', error);
+      // Fallback to results page
+      router.push('/results');
+    }
   };
 
   const handleSliderChange = (value: number) => {
+    playClickSound();
     const newAnswers = [...answers];
     newAnswers[currentQuestion] = value;
     setAnswers(newAnswers);
-    // Reset warning indicators when user answers a question
-    if (showWarningIndicators) {
-      setShowWarningIndicators(false);
-    }
   };
 
   const handleQuestionSelect = (index: number) => {
     playClickSound();
     setCurrentQuestion(index);
-    setIsDrawerOpen(false); // Close drawer when question is selected
+    setIsDrawerOpen(false);
   };
 
   const handleSubmit = () => {
     playClickSound();
 
-    // If it's the last question, behave like finish test
+    // Check if this is the last question
     if (currentQuestion === questionsData.length - 1) {
-      const unansweredQuestions = answers.some((answer) => answer === null);
-
-      if (unansweredQuestions) {
-        // Enable warning indicators and open drawer
-        setShowWarningIndicators(true);
-        setIsDrawerOpen(true);
-        return;
-      }
-
-      // Calculate final score if all questions are answered
+      // This is the last question, calculate final score
       const finalScore = answers.reduce(
         (total: number, ans: number | null, idx: number) => {
           if (ans === null) return total;
@@ -348,14 +377,20 @@ export default function TestPage() {
         0
       );
 
-      // Store answers and score in localStorage
-      localStorage.setItem("testAnswers", JSON.stringify(answers));
-      localStorage.setItem("testScore", Math.ceil(finalScore).toString());
+      // Always store answers and score in localStorage first (as backup)
+      localStorage.setItem('testAnswers', JSON.stringify(answers));
+      localStorage.setItem('testScore', Math.ceil(finalScore).toString());
 
-      router.push("/results");
+      // If user is authenticated, save to database and go to dashboard
+      if (session?.user) {
+        saveTestResultToDatabase(Math.ceil(finalScore), answers);
+      } else {
+        // If not authenticated, go to results page
+        router.push('/results');
+      }
     } else {
       // Just move to next question for non-last questions
-      setCurrentQuestion((curr) => curr + 1);
+      setCurrentQuestion(curr => curr + 1);
     }
   };
 
@@ -363,7 +398,7 @@ export default function TestPage() {
     playClickSound();
 
     // Check for unanswered questions
-    const unansweredQuestions = answers.some((answer) => answer === null);
+    const unansweredQuestions = answers.some(answer => answer === null);
 
     if (unansweredQuestions) {
       // Enable warning indicators and open drawer
@@ -382,16 +417,22 @@ export default function TestPage() {
       0
     );
 
-    // Store answers and score in localStorage
-    localStorage.setItem("testAnswers", JSON.stringify(answers));
-    localStorage.setItem("testScore", Math.ceil(finalScore).toString());
+    // Always store answers and score in localStorage first (as backup)
+    localStorage.setItem('testAnswers', JSON.stringify(answers));
+    localStorage.setItem('testScore', Math.ceil(finalScore).toString());
 
-    router.push("/results");
+    // If user is authenticated, save to database and go to dashboard
+    if (session?.user) {
+      saveTestResultToDatabase(Math.ceil(finalScore), answers);
+    } else {
+      // If not authenticated, go to results page
+      router.push('/results');
+    }
   };
 
   const currentAnswer = answers[currentQuestion];
   const isAnswered = currentAnswer !== null;
-  const allQuestionsAnswered = answers.every((answer) => answer !== null);
+  const allQuestionsAnswered = answers.every(answer => answer !== null);
 
   return (
     <div className="min-h-screen bg-white">
@@ -488,7 +529,7 @@ export default function TestPage() {
                           min="0"
                           max="100"
                           value={currentAnswer || 0}
-                          onChange={(e) =>
+                          onChange={e =>
                             handleSliderChange(Number(e.target.value))
                           }
                           className="w-full h-2 bg-white bg-opacity-30 rounded-lg appearance-none cursor-pointer slider"
@@ -516,13 +557,13 @@ export default function TestPage() {
                     className={`w-full py-2 sm:py-1 rounded-[20px] text-xs lg:text-3xl font-normal mt-1 transition-all duration-200
                         ${
                           isAnswered
-                            ? "bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]"
-                            : "bg-[#e3f1fb] text-blue-200 cursor-not-allowed"
+                            ? 'bg-[#b3d9fa] text-[#276090] hover:bg-[#d0eaff] active:bg-[#a3cbe6]'
+                            : 'bg-[#e3f1fb] text-blue-200 cursor-not-allowed'
                         }`}
                     onClick={handleSubmit}
                     disabled={!isAnswered}
                   >
-                    {"Gönder"}
+                    {'Gönder'}
                   </button>
 
                   {/* Finish Test Button - Only show when all questions answered */}
