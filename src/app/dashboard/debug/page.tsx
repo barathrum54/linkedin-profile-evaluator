@@ -116,12 +116,14 @@ export default function DebugPage() {
 
   return (
     <DashboardLayout title="Debug">
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6" data-testid="debug-content-area">
         {/* Header */}
         <div className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">🐛 Debug Panel</h1>
+              <h1 className="text-3xl font-bold mb-2" data-testid="debug-title">
+                🐛 Debug Panel
+              </h1>
               <p className="text-red-100">
                 Development-only database inspection tool
               </p>
@@ -148,12 +150,15 @@ export default function DebugPage() {
           </div>
 
           {/* Current Session Info */}
-          <div className="mb-6">
+          <div className="mb-6" data-testid="current-session-section">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Current useSession() Data:
+              Current Session
             </h3>
             <div className="bg-gray-100 rounded-lg p-4">
-              <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+              <pre
+                className="text-sm text-gray-700 whitespace-pre-wrap"
+                data-testid="session-data"
+              >
                 {formatJson({
                   status,
                   session: session || null,
@@ -176,7 +181,10 @@ export default function DebugPage() {
         {debugData && (
           <div className="space-y-6">
             {/* Environment Info */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div
+              className="bg-white rounded-xl shadow-lg p-6"
+              data-testid="environment-section"
+            >
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 Environment
               </h2>
@@ -225,10 +233,11 @@ export default function DebugPage() {
             </div>
 
             {/* MongoDB Collections */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                MongoDB Collections ({debugData.mongodb.database})
-              </h2>
+            <div
+              className="bg-white rounded-xl shadow-lg p-6"
+              data-testid="mongodb-section"
+            >
+              <h2 className="text-xl font-bold text-gray-900 mb-4">MongoDB</h2>
 
               <div className="space-y-4">
                 {Object.entries(debugData.collections).map(
