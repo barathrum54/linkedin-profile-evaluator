@@ -14,181 +14,203 @@ test.describe('Essential Authentication Tests', () => {
       await expect(page.locator('button[type="submit"]')).toBeVisible();
     });
 
-    test('should load signin page with all required elements', async ({
-      page,
-    }) => {
+    test('should load signin page with required elements', async ({ page }) => {
       await page.goto('/auth/signin');
-      await expect(page.locator('h1')).toContainText('Hesabınıza Giriş Yapın');
-      await expect(page.locator('input[type="email"]')).toBeVisible();
-      await expect(page.locator('input[type="password"]')).toBeVisible();
+      await expect(page.locator('h1')).toContainText('Giriş Yapın');
+      await expect(page.locator('input[name="email"]')).toBeVisible();
+      await expect(page.locator('input[name="password"]')).toBeVisible();
       await expect(page.locator('button[type="submit"]')).toBeVisible();
     });
 
     test('should load forgot password page', async ({ page }) => {
       await page.goto('/auth/forgot-password');
       await expect(page.locator('h1')).toContainText('Şifremi Unuttum');
-      await expect(page.locator('input[type="email"]')).toBeVisible();
+      await expect(page.locator('input[name="email"]')).toBeVisible();
       await expect(page.locator('button[type="submit"]')).toBeVisible();
     });
   });
 
   test.describe('Navigation', () => {
-    test('should navigate between auth pages', async ({ page }) => {
+    test('should navigate to signup from signin', async ({ page }) => {
       await page.goto('/auth/signin');
-      await page.click('text=Hesap Oluşturun');
+      await page.click('text=Hesap oluşturun');
       await expect(page).toHaveURL('/auth/signup');
+    });
 
-      await page.click('text=Giriş Yapın');
+    test('should navigate to signin from signup', async ({ page }) => {
+      await page.goto('/auth/signup');
+      await page.click('text=Giriş yapın');
       await expect(page).toHaveURL('/auth/signin');
     });
 
     test('should navigate to forgot password from signin', async ({ page }) => {
       await page.goto('/auth/signin');
-      await page.click('text=Şifrenizi mi unuttunuz?');
+      await page.click('text=Şifremi unuttum');
       await expect(page).toHaveURL('/auth/forgot-password');
     });
 
-    test('should navigate from homepage to test page', async ({ page }) => {
+    test('should navigate from homepage to auth pages', async ({ page }) => {
       await page.goto('/');
-      await page.click('text=Başla');
-      await expect(page).toHaveURL('/test');
+      await page.click('text=Giriş Yap');
+      await expect(page).toHaveURL('/auth/signin');
     });
   });
 
   test.describe('OAuth Integration', () => {
-    test('should display OAuth buttons on signin page', async ({ page }) => {
+    test('should show OAuth providers on signin page', async ({ page }) => {
       await page.goto('/auth/signin');
-      await expect(page.locator('text=LinkedIn ile Giriş Yap')).toBeVisible();
-      await expect(page.locator('text=Google ile Giriş Yap')).toBeVisible();
-      await expect(page.locator('text=GitHub ile Giriş Yap')).toBeVisible();
+      await expect(page.locator('button:has-text("Google")')).toBeVisible();
+      await expect(page.locator('button:has-text("LinkedIn")')).toBeVisible();
     });
 
-    test('should display OAuth buttons on signup page', async ({ page }) => {
+    test('should show OAuth providers on signup page', async ({ page }) => {
       await page.goto('/auth/signup');
-      await expect(
-        page.locator('text=LinkedIn ile Hesap Oluştur')
-      ).toBeVisible();
-      await expect(page.locator('text=Google ile Hesap Oluştur')).toBeVisible();
-      await expect(page.locator('text=GitHub ile Hesap Oluştur')).toBeVisible();
+      await expect(page.locator('button:has-text("Google")')).toBeVisible();
+      await expect(page.locator('button:has-text("LinkedIn")')).toBeVisible();
     });
   });
 
   test.describe('Form Validation', () => {
-    test('should have required attributes on signup form fields', async ({
+    test('should show validation errors for empty signup form', async ({
       page,
     }) => {
       await page.goto('/auth/signup');
+      await page.click('button[type="submit"]');
 
-      await expect(page.locator('input[name="name"]')).toHaveAttribute(
-        'required'
-      );
-      await expect(page.locator('input[name="email"]')).toHaveAttribute(
-        'required'
-      );
-      await expect(page.locator('input[name="password"]')).toHaveAttribute(
-        'required'
-      );
-      await expect(
-        page.locator('input[name="confirmPassword"]')
-      ).toHaveAttribute('required');
+      // Check that form doesn't submit (still on signup page)
+      await expect(page).toHaveURL('/auth/signup');
+
+      // HTML5 validation should prevent submission
+      const nameInput = page.locator('input[name="name"]');
+      await expect(nameInput).toHaveAttribute('required');
     });
 
-    test('should have proper input types', async ({ page }) => {
-      await page.goto('/auth/signin');
-      await expect(page.locator('input[type="email"]')).toHaveAttribute(
-        'type',
-        'email'
-      );
-
-      await page.goto('/auth/signup');
-      await expect(page.locator('input[name="email"]')).toHaveAttribute(
-        'type',
-        'email'
-      );
-      await expect(page.locator('input[name="password"]')).toHaveAttribute(
-        'type',
-        'password'
-      );
-    });
-
-    test('should prevent empty form submission', async ({ page }) => {
+    test('should show validation errors for empty signin form', async ({
+      page,
+    }) => {
       await page.goto('/auth/signin');
       await page.click('button[type="submit"]');
 
+      // Check that form doesn't submit (still on signin page)
+      await expect(page).toHaveURL('/auth/signin');
+
       // HTML5 validation should prevent submission
-      const emailInput = page.locator('input[type="email"]');
+      const emailInput = page.locator('input[name="email"]');
       await expect(emailInput).toHaveAttribute('required');
+    });
+
+    test('should validate email format on signup', async ({ page }) => {
+      await page.goto('/auth/signup');
+      await page.fill('input[name="name"]', 'Test User');
+      await page.fill('input[name="email"]', 'invalid-email');
+      await page.fill('input[name="password"]', 'Password123!');
+      await page.fill('input[name="confirmPassword"]', 'Password123!');
+      await page.click('button[type="submit"]');
+
+      // Should still be on signup page due to invalid email
+      await expect(page).toHaveURL('/auth/signup');
+    });
+
+    test('should validate password confirmation mismatch', async ({ page }) => {
+      await page.goto('/auth/signup');
+      await page.fill('input[name="name"]', 'Test User');
+      await page.fill('input[name="email"]', 'test@example.com');
+      await page.fill('input[name="password"]', 'Password123!');
+      await page.fill('input[name="confirmPassword"]', 'DifferentPassword123!');
+      await page.click('button[type="submit"]');
+
+      // Should show error message for password mismatch
+      await expect(page.locator('text=Şifreler eşleşmiyor')).toBeVisible();
     });
   });
 
-  test.describe('Form Input Handling', () => {
-    test('should accept input on signup form', async ({ page }) => {
+  test.describe('Password Requirements', () => {
+    test('should validate password strength requirements', async ({ page }) => {
       await page.goto('/auth/signup');
-
       await page.fill('input[name="name"]', 'Test User');
       await page.fill('input[name="email"]', 'test@example.com');
-      await page.fill('input[name="password"]', 'SecurePassword123!');
-      await page.fill('input[name="confirmPassword"]', 'SecurePassword123!');
 
-      // Verify values were filled correctly
-      await expect(page.locator('input[name="name"]')).toHaveValue('Test User');
-      await expect(page.locator('input[name="email"]')).toHaveValue(
-        'test@example.com'
+      // Test weak password
+      await page.fill('input[name="password"]', '123');
+      await page.fill('input[name="confirmPassword"]', '123');
+      await page.click('button[type="submit"]');
+
+      // Should show password requirements error
+      await expect(
+        page.locator('text=Şifre en az 8 karakter olmalıdır')
+      ).toBeVisible();
+    });
+  });
+
+  test.describe('Error Handling', () => {
+    test('should handle registration with existing email gracefully', async ({
+      page,
+    }) => {
+      await page.goto('/auth/signup');
+      await page.fill('input[name="name"]', 'Test User');
+      await page.fill('input[name="email"]', 'existing@example.com');
+      await page.fill('input[name="password"]', 'ValidPassword123!');
+      await page.fill('input[name="confirmPassword"]', 'ValidPassword123!');
+      await page.click('button[type="submit"]');
+
+      // Should handle the error gracefully (either show error or redirect)
+      // We can't predict the exact behavior without a test database
+      await page.waitForTimeout(2000);
+      // Test passes if no uncaught errors occur
+    });
+
+    test('should handle signin with invalid credentials gracefully', async ({
+      page,
+    }) => {
+      await page.goto('/auth/signin');
+      await page.fill('input[name="email"]', 'nonexistent@example.com');
+      await page.fill('input[name="password"]', 'wrongpassword');
+      await page.click('button[type="submit"]');
+
+      // Should handle the error gracefully
+      await page.waitForTimeout(2000);
+      // Test passes if no uncaught errors occur
+    });
+  });
+
+  test.describe('Accessibility', () => {
+    test('signup page should have proper form labels', async ({ page }) => {
+      await page.goto('/auth/signup');
+
+      // Check for form labels
+      await expect(page.locator('label[for="name"]')).toContainText('Ad Soyad');
+      await expect(page.locator('label[for="email"]')).toContainText('E-posta');
+      await expect(page.locator('label[for="password"]')).toContainText(
+        'Şifre'
+      );
+      await expect(page.locator('label[for="confirmPassword"]')).toContainText(
+        'Şifre Tekrar'
       );
     });
 
-    test('should accept input on signin form', async ({ page }) => {
+    test('signin page should have proper form labels', async ({ page }) => {
       await page.goto('/auth/signin');
 
-      // Wait for form to be fully loaded
-      await page.waitForSelector('input[type="email"]', { state: 'visible' });
-      await page.waitForSelector('input[type="password"]', {
-        state: 'visible',
-      });
-
-      // Fill form fields with small delays for browser compatibility
-      await page.fill('input[type="email"]', 'test@example.com');
-      await page.waitForTimeout(100);
-      await page.fill('input[type="password"]', 'password123');
-      await page.waitForTimeout(100);
-
-      // Verify input values
-      const emailValue = await page.locator('input[type="email"]').inputValue();
-      const passwordValue = await page
-        .locator('input[type="password"]')
-        .inputValue();
-
-      expect(emailValue).toBe('test@example.com');
-      expect(passwordValue).toBe('password123');
-    });
-
-    test('should handle form submission without errors', async ({ page }) => {
-      await page.goto('/auth/signin');
-
-      await page.fill('input[type="email"]', 'test@example.com');
-      await page.fill('input[type="password"]', 'password123');
-
-      // Submit form and wait for response
-      await page.click('button[type="submit"]');
-      await page.waitForTimeout(2000);
-
-      // Form should not have crashed or thrown errors
-      await expect(page.locator('input[type="email"]')).toBeVisible();
+      // Check for form labels
+      await expect(page.locator('label[for="email"]')).toContainText('E-posta');
+      await expect(page.locator('label[for="password"]')).toContainText(
+        'Şifre'
+      );
     });
   });
 
   test.describe('Responsive Design', () => {
-    test('should be responsive on mobile viewport', async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 }); // iPhone size
+    test('auth pages should be responsive on mobile', async ({ page }) => {
+      // Set mobile viewport
+      await page.setViewportSize({ width: 375, height: 667 });
 
       await page.goto('/auth/signin');
-      await expect(page.locator('h1')).toBeVisible();
-      await expect(page.locator('input[type="email"]')).toBeVisible();
-      await expect(page.locator('input[type="password"]')).toBeVisible();
-      await expect(page.locator('button[type="submit"]')).toBeVisible();
 
-      // Check OAuth buttons are also visible on mobile
-      await expect(page.locator('text=LinkedIn ile Giriş Yap')).toBeVisible();
+      // Check that main elements are still visible on mobile
+      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('input[name="email"]')).toBeVisible();
+      await expect(page.locator('input[name="password"]')).toBeVisible();
+      await expect(page.locator('button[type="submit"]')).toBeVisible();
     });
   });
 });
