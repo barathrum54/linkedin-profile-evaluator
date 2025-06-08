@@ -5,11 +5,6 @@ import { authOptions } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { MongoClient, ObjectId } from 'mongodb';
 
-// Only allow in development
-if (process.env.NODE_ENV !== 'development') {
-  throw new Error('Debug API is only available in development environment');
-}
-
 const client = new MongoClient(process.env.MONGODB_URI as string);
 
 interface DebugData {
