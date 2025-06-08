@@ -1,18 +1,20 @@
-import { EmailTemplates } from "./template-engine";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { EmailTemplates } from './template-engine';
 import {
   MailProvider,
   MailProviderFactory,
   EmailOptions,
   EmailResponse,
-} from "./providers";
+} from './providers';
 
 export interface MailServiceConfig {
-  provider?: "resend" | "nodemailer" | "sendgrid" | "awsses" | "auto";
+  provider?: 'resend' | 'nodemailer' | 'sendgrid' | 'awsses' | 'auto';
   providerConfig?: any;
   defaultFrom?: string;
 }
 
-export class MailService {
+export class AdvancedMailService {
   private provider: MailProvider;
   private defaultFrom: string;
 
@@ -20,10 +22,10 @@ export class MailService {
     this.defaultFrom =
       config.defaultFrom ||
       process.env.DEFAULT_FROM_EMAIL ||
-      "noreply@yourapp.com";
+      'noreply@yourapp.com';
 
     // Initialize mail provider
-    if (config.provider === "auto" || !config.provider) {
+    if (config.provider === 'auto' || !config.provider) {
       this.provider = MailProviderFactory.autoDetectProvider();
     } else {
       this.provider = MailProviderFactory.createProvider(
@@ -67,11 +69,11 @@ export class MailService {
         text,
       });
     } catch (error) {
-      console.error("Failed to send welcome email:", error);
+      console.error('Failed to send welcome email:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Template rendering failed",
+          error instanceof Error ? error.message : 'Template rendering failed',
       };
     }
   }
@@ -93,16 +95,16 @@ export class MailService {
 
       return this.sendEmail({
         to,
-        subject: "Şifre Sıfırlama - LinkedIn Profil Değerlendirici",
+        subject: 'Şifre Sıfırlama - LinkedIn Profil Değerlendirici',
         html,
         text,
       });
     } catch (error) {
-      console.error("Failed to send password reset email:", error);
+      console.error('Failed to send password reset email:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Template rendering failed",
+          error instanceof Error ? error.message : 'Template rendering failed',
       };
     }
   }
@@ -128,16 +130,16 @@ export class MailService {
 
       return this.sendEmail({
         to,
-        subject: "LinkedIn Profil Değerlendirme Sonuçlarınız",
+        subject: 'LinkedIn Profil Değerlendirme Sonuçlarınız',
         html,
         text,
       });
     } catch (error) {
-      console.error("Failed to send evaluation results email:", error);
+      console.error('Failed to send evaluation results email:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Template rendering failed",
+          error instanceof Error ? error.message : 'Template rendering failed',
       };
     }
   }
@@ -169,7 +171,7 @@ export class MailService {
           </p>
         </div>
       `;
-      emailOptions.text = message.replace(/<[^>]*>/g, ""); // Strip HTML for text version
+      emailOptions.text = message.replace(/<[^>]*>/g, ''); // Strip HTML for text version
     } else {
       emailOptions.text = message;
     }
@@ -182,13 +184,13 @@ export class MailService {
    */
   async sendBulkEmails(emails: EmailOptions[]): Promise<EmailResponse[]> {
     const results = await Promise.allSettled(
-      emails.map((emailOptions) => this.sendEmail(emailOptions))
+      emails.map(emailOptions => this.sendEmail(emailOptions))
     );
 
-    return results.map((result) =>
-      result.status === "fulfilled"
+    return results.map(result =>
+      result.status === 'fulfilled'
         ? result.value
-        : { success: false, error: "Failed to send email" }
+        : { success: false, error: 'Failed to send email' }
     );
   }
 
@@ -213,7 +215,7 @@ export class MailService {
    * Switch to a different provider
    */
   switchProvider(
-    providerType: "resend" | "nodemailer" | "sendgrid" | "awsses",
+    providerType: 'resend' | 'nodemailer' | 'sendgrid' | 'awsses',
     config?: any
   ): void {
     this.provider = MailProviderFactory.createProvider(providerType, config);
@@ -221,7 +223,6 @@ export class MailService {
 }
 
 // Export a singleton instance with auto-detection
-export const mailService = new MailService({ provider: "auto" });
-
-// Export the class for custom instances
-export { MailService };
+export const advancedMailService = new AdvancedMailService({
+  provider: 'auto',
+});

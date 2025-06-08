@@ -1,37 +1,27 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [validToken, setValidToken] = useState<boolean | null>(null);
 
-  const token = searchParams.get("token");
-  const email = searchParams.get("email");
+  const token = searchParams.get('token');
+  const email = searchParams.get('email');
 
-  useEffect(() => {
-    if (!token || !email) {
-      setValidToken(false);
-      setError("Geçersiz sıfırlama bağlantısı.");
-    } else {
-      // Validate token on component mount
-      validateToken();
-    }
-  }, [token, email]);
-
-  const validateToken = async () => {
+  const validateToken = useCallback(async () => {
     try {
-      const response = await fetch("/api/auth/validate-reset-token", {
-        method: "POST",
+      const response = await fetch('/api/auth/validate-reset-token', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ token, email }),
       });
@@ -43,32 +33,42 @@ export default function ResetPasswordPage() {
       } else {
         setValidToken(false);
         setError(
-          data.message || "Sıfırlama bağlantısı geçersiz veya süresi dolmuş."
+          data.message || 'Sıfırlama bağlantısı geçersiz veya süresi dolmuş.'
         );
       }
     } catch {
       setValidToken(false);
-      setError("Bağlantı doğrulanırken bir hata oluştu.");
+      setError('Bağlantı doğrulanırken bir hata oluştu.');
     }
-  };
+  }, [token, email]);
+
+  useEffect(() => {
+    if (!token || !email) {
+      setValidToken(false);
+      setError('Geçersiz sıfırlama bağlantısı.');
+    } else {
+      // Validate token on component mount
+      validateToken();
+    }
+  }, [token, email, validateToken]);
 
   const validatePassword = (password: string): string[] => {
     const errors: string[] = [];
 
     if (password.length < 8) {
-      errors.push("Şifre en az 8 karakter olmalıdır");
+      errors.push('Şifre en az 8 karakter olmalıdır');
     }
     if (!/[A-Z]/.test(password)) {
-      errors.push("Şifre en az bir büyük harf içermelidir");
+      errors.push('Şifre en az bir büyük harf içermelidir');
     }
     if (!/[a-z]/.test(password)) {
-      errors.push("Şifre en az bir küçük harf içermelidir");
+      errors.push('Şifre en az bir küçük harf içermelidir');
     }
     if (!/[0-9]/.test(password)) {
-      errors.push("Şifre en az bir rakam içermelidir");
+      errors.push('Şifre en az bir rakam içermelidir');
     }
     if (!/[^A-Za-z0-9]/.test(password)) {
-      errors.push("Şifre en az bir özel karakter içermelidir");
+      errors.push('Şifre en az bir özel karakter içermelidir');
     }
 
     return errors;
@@ -77,27 +77,27 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setError('');
 
     // Validate passwords
     const passwordErrors = validatePassword(password);
     if (passwordErrors.length > 0) {
-      setError(passwordErrors.join(", "));
+      setError(passwordErrors.join(', '));
       setIsLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Şifreler eşleşmiyor.");
+      setError('Şifreler eşleşmiyor.');
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch("/api/auth/reset-password", {
-        method: "POST",
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ token, email, password }),
       });
@@ -107,10 +107,10 @@ export default function ResetPasswordPage() {
       if (response.ok) {
         setSuccess(true);
       } else {
-        setError(data.message || "Şifre sıfırlanırken bir hata oluştu.");
+        setError(data.message || 'Şifre sıfırlanırken bir hata oluştu.');
       }
     } catch {
-      setError("Şifre sıfırlanırken bir hata oluştu. Lütfen tekrar deneyin.");
+      setError('Şifre sıfırlanırken bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }
@@ -254,7 +254,7 @@ export default function ResetPasswordPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 placeholder="En az 8 karakter, büyük harf, rakam ve özel karakter"
@@ -272,7 +272,7 @@ export default function ResetPasswordPage() {
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={e => setConfirmPassword(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 placeholder="Şifrenizi tekrar girin"
@@ -284,7 +284,7 @@ export default function ResetPasswordPage() {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Şifre Güncelleniyor..." : "Şifreyi Güncelle"}
+              {isLoading ? 'Şifre Güncelleniyor...' : 'Şifreyi Güncelle'}
             </button>
           </form>
         </div>

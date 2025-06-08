@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import { Resend } from 'resend';
 
 // Initialize Resend with API key from environment variables
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -26,10 +26,10 @@ class MailService {
   constructor() {
     // Set a default from address - you can customize this
     this.defaultFrom =
-      process.env.DEFAULT_FROM_EMAIL || "onboarding@resend.dev";
+      process.env.DEFAULT_FROM_EMAIL || 'onboarding@resend.dev';
 
     if (!process.env.RESEND_API_KEY) {
-      console.warn("RESEND_API_KEY is not set in environment variables");
+      console.warn('RESEND_API_KEY is not set in environment variables');
     }
   }
 
@@ -39,7 +39,7 @@ class MailService {
   async sendEmail(options: EmailOptions): Promise<EmailResponse> {
     try {
       if (!process.env.RESEND_API_KEY) {
-        throw new Error("RESEND_API_KEY is not configured");
+        throw new Error('RESEND_API_KEY is not configured');
       }
 
       // Use Resend's interface directly
@@ -52,6 +52,7 @@ class MailService {
         replyTo: options.replyTo,
         cc: options.cc,
         bcc: options.bcc,
+        react: undefined, // Required by Resend interface
       });
 
       return {
@@ -59,11 +60,11 @@ class MailService {
         id: result.data?.id,
       };
     } catch (error) {
-      console.error("Failed to send email:", error);
+      console.error('Failed to send email:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -103,12 +104,12 @@ class MailService {
     recommendations: string[]
   ): Promise<EmailResponse> {
     const recommendationsList = recommendations
-      .map((rec) => `<li>${rec}</li>`)
-      .join("");
+      .map(rec => `<li>${rec}</li>`)
+      .join('');
 
     return this.sendEmail({
       to,
-      subject: "LinkedIn Profil Değerlendirme Sonuçlarınız",
+      subject: 'LinkedIn Profil Değerlendirme Sonuçlarınız',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #0077b5;">Profil Değerlendirme Sonuçlarınız</h2>
@@ -128,7 +129,7 @@ class MailService {
           <p>Saygılarımızla,<br>LinkedIn Profil Değerlendirici Ekibi</p>
         </div>
       `,
-      text: `Merhaba ${userName}, LinkedIn profil değerlendirmeniz tamamlandı. Genel Puan: ${score}/100. Öneriler: ${recommendations.join(", ")}`,
+      text: `Merhaba ${userName}, LinkedIn profil değerlendirmeniz tamamlandı. Genel Puan: ${score}/100. Öneriler: ${recommendations.join(', ')}`,
     });
   }
 
@@ -141,7 +142,7 @@ class MailService {
   ): Promise<EmailResponse> {
     return this.sendEmail({
       to,
-      subject: "Şifre Sıfırlama - LinkedIn Profil Değerlendirici",
+      subject: 'Şifre Sıfırlama - LinkedIn Profil Değerlendirici',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #0077b5;">Şifre Sıfırlama İsteği</h2>
@@ -190,7 +191,7 @@ class MailService {
           <p>Best regards,<br>The LinkedIn Profile Evaluator Team</p>
         </div>
       `;
-      emailOptions.text = message.replace(/<[^>]*>/g, ""); // Strip HTML for text version
+      emailOptions.text = message.replace(/<[^>]*>/g, ''); // Strip HTML for text version
     } else {
       emailOptions.text = message;
     }
@@ -203,13 +204,13 @@ class MailService {
    */
   async sendBulkEmails(emails: EmailOptions[]): Promise<EmailResponse[]> {
     const results = await Promise.allSettled(
-      emails.map((emailOptions) => this.sendEmail(emailOptions))
+      emails.map(emailOptions => this.sendEmail(emailOptions))
     );
 
-    return results.map((result) =>
-      result.status === "fulfilled"
+    return results.map(result =>
+      result.status === 'fulfilled'
         ? result.value
-        : { success: false, error: "Failed to send email" }
+        : { success: false, error: 'Failed to send email' }
     );
   }
 }

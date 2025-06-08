@@ -1,11 +1,13 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { NextResponse } from "next/server";
-import { MongoClient, ObjectId } from "mongodb";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { NextResponse } from 'next/server';
+import { MongoClient, ObjectId } from 'mongodb';
 
 // Only allow in development
-if (process.env.NODE_ENV !== "development") {
-  throw new Error("Debug API is only available in development environment");
+if (process.env.NODE_ENV !== 'development') {
+  throw new Error('Debug API is only available in development environment');
 }
 
 const client = new MongoClient(process.env.MONGODB_URI as string);
@@ -36,9 +38,9 @@ interface DebugData {
 export async function GET() {
   try {
     // Check if we're in development
-    if (process.env.NODE_ENV !== "development") {
+    if (process.env.NODE_ENV !== 'development') {
       return NextResponse.json(
-        { error: "Debug API only available in development" },
+        { error: 'Debug API only available in development' },
         { status: 403 }
       );
     }
@@ -47,7 +49,7 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json(
-        { error: "No authenticated user" },
+        { error: 'No authenticated user' },
         { status: 401 }
       );
     }
@@ -60,9 +62,9 @@ export async function GET() {
     const userId = session.user.id;
 
     console.log(
-      "Debug API - Fetching data for user:",
+      'Debug API - Fetching data for user:',
       userEmail,
-      "ID:",
+      'ID:',
       userId
     );
 
@@ -71,11 +73,11 @@ export async function GET() {
       currentSession: session,
       environment: {
         nodeEnv: process.env.NODE_ENV,
-        mongoUri: process.env.MONGODB_URI ? "***CONFIGURED***" : "NOT SET",
-        nextAuthUrl: process.env.NEXTAUTH_URL || "NOT SET",
+        mongoUri: process.env.MONGODB_URI ? '***CONFIGURED***' : 'NOT SET',
+        nextAuthUrl: process.env.NEXTAUTH_URL || 'NOT SET',
         nextAuthSecret: process.env.NEXTAUTH_SECRET
-          ? "***CONFIGURED***"
-          : "NOT SET",
+          ? '***CONFIGURED***'
+          : 'NOT SET',
       },
       mongodb: {
         connected: true,
@@ -87,8 +89,8 @@ export async function GET() {
     // Get all collections in the database
     const collections = await db.listCollections().toArray();
     console.log(
-      "Available collections:",
-      collections.map((c) => c.name)
+      'Available collections:',
+      collections.map(c => c.name)
     );
 
     // Search for user data in each collection
@@ -100,7 +102,7 @@ export async function GET() {
         let userData: any[] = [];
 
         // Try different search strategies for each collection
-        if (collectionName === "users") {
+        if (collectionName === 'users') {
           // Search by email and by ObjectId
           const userByEmail = await coll.findOne({ email: userEmail });
           const userById = userId
@@ -108,14 +110,14 @@ export async function GET() {
             : null;
 
           if (userByEmail)
-            userData.push({ searchType: "email", data: userByEmail });
+            userData.push({ searchType: 'email', data: userByEmail });
           if (
             userById &&
             userById._id.toString() !== userByEmail?._id.toString()
           ) {
-            userData.push({ searchType: "objectId", data: userById });
+            userData.push({ searchType: 'objectId', data: userById });
           }
-        } else if (collectionName === "accounts") {
+        } else if (collectionName === 'accounts') {
           // Search for OAuth accounts linked to this user
           const accounts = await coll
             .find({
@@ -126,11 +128,11 @@ export async function GET() {
               ],
             })
             .toArray();
-          userData = accounts.map((acc) => ({
-            searchType: "userId",
+          userData = accounts.map(acc => ({
+            searchType: 'userId',
             data: acc,
           }));
-        } else if (collectionName === "sessions") {
+        } else if (collectionName === 'sessions') {
           // Search for sessions
           const sessions = await coll
             .find({
@@ -141,8 +143,8 @@ export async function GET() {
               ],
             })
             .toArray();
-          userData = sessions.map((sess) => ({
-            searchType: "userId",
+          userData = sessions.map(sess => ({
+            searchType: 'userId',
             data: sess,
           }));
         } else {
@@ -162,7 +164,7 @@ export async function GET() {
             const results = await coll.find(query).limit(10).toArray();
             if (results.length > 0) {
               userData.push(
-                ...results.map((result) => ({
+                ...results.map(result => ({
                   searchType: Object.keys(query)[0],
                   data: result,
                 }))
@@ -198,25 +200,25 @@ export async function GET() {
     await client.close();
 
     console.log(
-      "Debug API - Returning data for collections:",
+      'Debug API - Returning data for collections:',
       Object.keys(debugData.collections)
     );
 
     return NextResponse.json(debugData, { status: 200 });
   } catch (error) {
-    console.error("Debug API Error:", error);
+    console.error('Debug API Error:', error);
     try {
       await client.close();
     } catch (closeError) {
-      console.error("Error closing MongoDB connection:", closeError);
+      console.error('Error closing MongoDB connection:', closeError);
     }
 
     return NextResponse.json(
       {
-        error: "Failed to fetch debug data",
+        error: 'Failed to fetch debug data',
         details: error instanceof Error ? error.message : String(error),
         stack:
-          process.env.NODE_ENV === "development" && error instanceof Error
+          process.env.NODE_ENV === 'development' && error instanceof Error
             ? error.stack
             : undefined,
       },

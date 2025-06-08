@@ -1,11 +1,13 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import DashboardLayout from "@/components/DashboardLayout";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+'use client';
+
+import DashboardLayout from '@/components/DashboardLayout';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 // Only show in development
-const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 interface DebugData {
   currentSession: any;
@@ -45,7 +47,7 @@ export default function DebugPage() {
   // Redirect if not in development
   useEffect(() => {
     if (!isDevelopment) {
-      window.location.href = "/dashboard";
+      window.location.href = '/dashboard';
       return;
     }
   }, []);
@@ -55,16 +57,16 @@ export default function DebugPage() {
     setError(null);
 
     try {
-      const response = await fetch("/api/debug/user-data");
+      const response = await fetch('/api/debug/user-data');
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch debug data");
+        throw new Error(data.error || 'Failed to fetch debug data');
       }
 
       setDebugData(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -99,7 +101,7 @@ export default function DebugPage() {
     return null;
   }
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return (
       <DashboardLayout title="Debug">
         <div className="p-6">
@@ -141,7 +143,7 @@ export default function DebugPage() {
               disabled={loading}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold disabled:opacity-50"
             >
-              {loading ? "Loading..." : "Fetch User Data"}
+              {loading ? 'Loading...' : 'Fetch User Data'}
             </button>
           </div>
 
@@ -256,7 +258,7 @@ export default function DebugPage() {
                           )}
                         </div>
                         <span className="text-gray-500">
-                          {expandedCollections.has(collectionName) ? "▼" : "▶"}
+                          {expandedCollections.has(collectionName) ? '▼' : '▶'}
                         </span>
                       </button>
 
@@ -299,8 +301,8 @@ export default function DebugPage() {
                                     </div>
                                     <span className="text-gray-500">
                                       {expandedDocuments.has(docId)
-                                        ? "▼"
-                                        : "▶"}
+                                        ? '▼'
+                                        : '▶'}
                                     </span>
                                   </button>
 

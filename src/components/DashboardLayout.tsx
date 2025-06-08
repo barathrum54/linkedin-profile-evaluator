@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import Image from 'next/image';
 
 interface NavigationItem {
   name: string;
@@ -274,9 +275,11 @@ export default function DashboardLayout({
           >
             <div className="flex items-center space-x-3">
               {userImage ? (
-                <img
+                <Image
                   src={userImage}
                   alt={userName}
+                  width={40}
+                  height={40}
                   className="w-10 h-10 rounded-full"
                   data-testid="sidebar-user-avatar"
                 />

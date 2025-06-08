@@ -1,50 +1,51 @@
-"use client";
+'use client';
 
-import DashboardLayout from "@/components/DashboardLayout";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import DashboardLayout from '@/components/DashboardLayout';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 // Mock data for activities
 const recentActivities = [
   {
     id: 1,
-    type: "profile_update",
-    title: "Profil başlığı güncellendi",
-    description: "LinkedIn başlığınızı optimize ettiniz",
-    time: "2 saat önce",
-    icon: "✏️",
+    type: 'profile_update',
+    title: 'Profil başlığı güncellendi',
+    description: 'LinkedIn başlığınızı optimize ettiniz',
+    time: '2 saat önce',
+    icon: '✏️',
   },
   {
     id: 2,
-    type: "connection",
-    title: "Yeni bağlantı eklendi",
-    description: "5 yeni profesyonel bağlantı kuruldu",
-    time: "5 saat önce",
-    icon: "🤝",
+    type: 'connection',
+    title: 'Yeni bağlantı eklendi',
+    description: '5 yeni profesyonel bağlantı kuruldu',
+    time: '5 saat önce',
+    icon: '🤝',
   },
   {
     id: 3,
-    type: "content",
-    title: "İçerik önerisi oluşturuldu",
-    description: "Yeni haftalık içerik planınız hazır",
-    time: "1 gün önce",
-    icon: "📝",
+    type: 'content',
+    title: 'İçerik önerisi oluşturuldu',
+    description: 'Yeni haftalık içerik planınız hazır',
+    time: '1 gün önce',
+    icon: '📝',
   },
   {
     id: 4,
-    type: "analysis",
-    title: "Haftalık analiz tamamlandı",
-    description: "Profil performans raporu oluşturuldu",
-    time: "2 gün önce",
-    icon: "📊",
+    type: 'analysis',
+    title: 'Haftalık analiz tamamlandı',
+    description: 'Profil performans raporu oluşturuldu',
+    time: '2 gün önce',
+    icon: '📊',
   },
 ];
 
 // Quick actions for icon buttons
 const quickActions = [
   {
-    name: "Profil Analizi",
-    href: "/dashboard/profile",
+    name: 'Profil Analizi',
+    href: '/dashboard/profile',
     icon: (
       <svg
         className="w-5 h-5"
@@ -61,11 +62,11 @@ const quickActions = [
         />
       </svg>
     ),
-    color: "from-blue-500 to-blue-600",
+    color: 'from-blue-500 to-blue-600',
   },
   {
-    name: "Faturalama",
-    href: "/dashboard/billing",
+    name: 'Faturalama',
+    href: '/dashboard/billing',
     icon: (
       <svg
         className="w-5 h-5"
@@ -82,11 +83,11 @@ const quickActions = [
         />
       </svg>
     ),
-    color: "from-green-500 to-emerald-600",
+    color: 'from-green-500 to-emerald-600',
   },
   {
-    name: "Ana Kurs",
-    href: "/dashboard/course",
+    name: 'Ana Kurs',
+    href: '/dashboard/course',
     icon: (
       <svg
         className="w-5 h-5"
@@ -103,11 +104,11 @@ const quickActions = [
         />
       </svg>
     ),
-    color: "from-purple-500 to-purple-600",
+    color: 'from-purple-500 to-purple-600',
   },
   {
-    name: "Ayarlar",
-    href: "/dashboard/settings",
+    name: 'Ayarlar',
+    href: '/dashboard/settings',
     icon: (
       <svg
         className="w-5 h-5"
@@ -130,7 +131,7 @@ const quickActions = [
         />
       </svg>
     ),
-    color: "from-orange-500 to-orange-600",
+    color: 'from-orange-500 to-orange-600',
   },
 ];
 
@@ -138,33 +139,33 @@ const quickActions = [
 const feedPosts = [
   {
     id: 1,
-    type: "announcement",
-    title: "Yeni Özellik: AI Destekli Profil Analizi",
+    type: 'announcement',
+    title: 'Yeni Özellik: AI Destekli Profil Analizi',
     content:
-      "LinkedIn profilinizi yapay zeka ile analiz etmek artık daha kolay! Yeni AI destekli sistemimiz, profilinizin güçlü ve zayıf yönlerini detaylı bir şekilde analiz ediyor.",
-    time: "3 saat önce",
-    author: "LinkedIn Pro Ekibi",
-    icon: "🤖",
+      'LinkedIn profilinizi yapay zeka ile analiz etmek artık daha kolay! Yeni AI destekli sistemimiz, profilinizin güçlü ve zayıf yönlerini detaylı bir şekilde analiz ediyor.',
+    time: '3 saat önce',
+    author: 'LinkedIn Pro Ekibi',
+    icon: '🤖',
   },
   {
     id: 2,
-    type: "tip",
-    title: "LinkedIn Profil İpucu",
+    type: 'tip',
+    title: 'LinkedIn Profil İpucu',
     content:
-      "Profil özetinizi düzenli olarak güncelleyin. Son 6 ay içinde edindiğiniz yeni becerileri ve deneyimleri eklemeyi unutmayın.",
-    time: "1 gün önce",
-    author: "Uzman Tavsiyeleri",
-    icon: "💡",
+      'Profil özetinizi düzenli olarak güncelleyin. Son 6 ay içinde edindiğiniz yeni becerileri ve deneyimleri eklemeyi unutmayın.',
+    time: '1 gün önce',
+    author: 'Uzman Tavsiyeleri',
+    icon: '💡',
   },
   {
     id: 3,
-    type: "success",
-    title: "Başarı Hikayesi",
+    type: 'success',
+    title: 'Başarı Hikayesi',
     content:
-      "Bu ay premium üyelerimiz profil görüntülenmelerinde ortalama %34 artış yaşadı. Siz de profilinizi optimize ederek daha fazla fırsata ulaşabilirsiniz.",
-    time: "2 gün önce",
-    author: "İstatistik Raporu",
-    icon: "📈",
+      'Bu ay premium üyelerimiz profil görüntülenmelerinde ortalama %34 artış yaşadı. Siz de profilinizi optimize ederek daha fazla fırsata ulaşabilirsiniz.',
+    time: '2 gün önce',
+    author: 'İstatistik Raporu',
+    icon: '📈',
   },
 ];
 
@@ -173,15 +174,15 @@ export default function DashboardPage() {
   const { data: session, status } = useSession();
 
   // Extract user info with fallbacks
-  const userName = session?.user?.name || "Kullanıcı";
-  const userEmail = session?.user?.email || "";
+  const userName = session?.user?.name || 'Kullanıcı';
+  const userEmail = session?.user?.email || '';
   const userImage = session?.user?.image;
 
   // Extract first name for greeting
-  const firstName = userName.split(" ")[0];
+  const firstName = userName.split(' ')[0];
 
   // Loading state
-  if (status === "loading") {
+  if (status === 'loading') {
     return (
       <DashboardLayout title="Dashboard">
         <div className="p-6 space-y-8" data-testid="dashboard-loading">
@@ -226,9 +227,11 @@ export default function DashboardPage() {
             </div>
             <div className="hidden md:block">
               {userImage ? (
-                <img
+                <Image
                   src={userImage}
                   alt={userName}
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-full border-4 border-white/20"
                   data-testid="user-avatar"
                 />
@@ -261,14 +264,14 @@ export default function DashboardPage() {
           className="grid grid-cols-2 lg:grid-cols-4 gap-4"
           data-testid="quick-actions"
         >
-          {quickActions.map((action) => (
+          {quickActions.map(action => (
             <button
               key={action.name}
               onClick={() => (window.location.href = action.href)}
               onMouseEnter={() => setHoveredAction(action.name)}
               onMouseLeave={() => setHoveredAction(null)}
               className={`group relative p-6 rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300`}
-              data-testid={`quick-action-${action.name.toLowerCase().replace(/\s+/g, "-")}`}
+              data-testid={`quick-action-${action.name.toLowerCase().replace(/\s+/g, '-')}`}
             >
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="p-3 bg-white/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
@@ -398,7 +401,7 @@ export default function DashboardPage() {
                 Son Aktiviteler
               </h2>
               <div className="space-y-4">
-                {recentActivities.map((activity) => (
+                {recentActivities.map(activity => (
                   <div
                     key={activity.id}
                     className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -430,7 +433,7 @@ export default function DashboardPage() {
             >
               <h2 className="text-xl font-bold text-gray-900 mb-6">Feed</h2>
               <div className="space-y-6">
-                {feedPosts.map((post) => (
+                {feedPosts.map(post => (
                   <div
                     key={post.id}
                     className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0"

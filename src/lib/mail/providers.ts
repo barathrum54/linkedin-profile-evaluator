@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 export interface EmailOptions {
   to: string | string[];
   from?: string;
@@ -21,7 +25,7 @@ export abstract class MailProvider {
 
   constructor(defaultFrom?: string) {
     this.defaultFrom =
-      defaultFrom || process.env.DEFAULT_FROM_EMAIL || "noreply@yourapp.com";
+      defaultFrom || process.env.DEFAULT_FROM_EMAIL || 'noreply@yourapp.com';
   }
 
   abstract sendEmail(options: EmailOptions): Promise<EmailResponse>;
@@ -30,22 +34,24 @@ export abstract class MailProvider {
 
 // Resend implementation
 export class ResendProvider extends MailProvider {
-  private resend: any;
+  private resend: {
+    emails: { send: (data: unknown) => Promise<{ data?: { id: string } }> };
+  } | null = null;
 
   constructor(apiKey?: string, defaultFrom?: string) {
     super(defaultFrom);
 
     if (!apiKey && !process.env.RESEND_API_KEY) {
-      console.warn("Resend API key not provided");
+      console.warn('Resend API key not provided');
       return;
     }
 
     try {
       // Dynamic import to avoid issues if Resend is not installed
-      const { Resend } = require("resend");
+      const { Resend } = require('resend');
       this.resend = new Resend(apiKey || process.env.RESEND_API_KEY);
     } catch (error) {
-      console.error("Failed to initialize Resend:", error);
+      console.error('Failed to initialize Resend:', error);
     }
   }
 
@@ -53,7 +59,7 @@ export class ResendProvider extends MailProvider {
     if (!this.resend) {
       return {
         success: false,
-        error: "Resend not configured properly",
+        error: 'Resend not configured properly',
       };
     }
 
@@ -76,11 +82,11 @@ export class ResendProvider extends MailProvider {
         id: result.data?.id,
       };
     } catch (error) {
-      console.error("Resend send error:", error);
+      console.error('Resend send error:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -92,19 +98,21 @@ export class ResendProvider extends MailProvider {
 
 // NodeMailer implementation (as fallback or alternative)
 export class NodeMailerProvider extends MailProvider {
-  private transporter: any;
+  private transporter: {
+    sendMail: (options: unknown) => Promise<{ messageId: string }>;
+  } | null = null;
 
-  constructor(config?: any, defaultFrom?: string) {
+  constructor(config?: Record<string, unknown>, defaultFrom?: string) {
     super(defaultFrom);
 
     try {
-      const nodemailer = require("nodemailer");
+      const nodemailer = require('nodemailer');
 
       // Default SMTP configuration
       const defaultConfig = {
         host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || "587"),
-        secure: process.env.SMTP_SECURE === "true",
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_SECURE === 'true',
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASSWORD,
@@ -113,7 +121,7 @@ export class NodeMailerProvider extends MailProvider {
 
       this.transporter = nodemailer.createTransporter(config || defaultConfig);
     } catch (error) {
-      console.error("Failed to initialize NodeMailer:", error);
+      console.error('Failed to initialize NodeMailer:', error);
     }
   }
 
@@ -121,20 +129,20 @@ export class NodeMailerProvider extends MailProvider {
     if (!this.transporter) {
       return {
         success: false,
-        error: "NodeMailer not configured properly",
+        error: 'NodeMailer not configured properly',
       };
     }
 
     try {
       const mailOptions = {
         from: options.from || this.defaultFrom,
-        to: Array.isArray(options.to) ? options.to.join(", ") : options.to,
+        to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
         subject: options.subject,
         html: options.html,
         text: options.text,
         replyTo: options.replyTo,
-        cc: Array.isArray(options.cc) ? options.cc.join(", ") : options.cc,
-        bcc: Array.isArray(options.bcc) ? options.bcc.join(", ") : options.bcc,
+        cc: Array.isArray(options.cc) ? options.cc.join(', ') : options.cc,
+        bcc: Array.isArray(options.bcc) ? options.bcc.join(', ') : options.bcc,
       };
 
       const result = await this.transporter.sendMail(mailOptions);
@@ -144,11 +152,11 @@ export class NodeMailerProvider extends MailProvider {
         id: result.messageId,
       };
     } catch (error) {
-      console.error("NodeMailer send error:", error);
+      console.error('NodeMailer send error:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -167,17 +175,21 @@ export class NodeMailerProvider extends MailProvider {
 
 // SendGrid implementation
 export class SendGridProvider extends MailProvider {
-  private sgMail: any;
+  private sgMail: {
+    send: (
+      msg: unknown
+    ) => Promise<[{ headers?: { 'x-message-id'?: string } }]>;
+  } | null = null;
 
   constructor(apiKey?: string, defaultFrom?: string) {
     super(defaultFrom);
 
     try {
-      const sgMail = require("@sendgrid/mail");
+      const sgMail = require('@sendgrid/mail');
       sgMail.setApiKey(apiKey || process.env.SENDGRID_API_KEY);
       this.sgMail = sgMail;
     } catch (error) {
-      console.error("Failed to initialize SendGrid:", error);
+      console.error('Failed to initialize SendGrid:', error);
     }
   }
 
@@ -185,7 +197,7 @@ export class SendGridProvider extends MailProvider {
     if (!this.sgMail) {
       return {
         success: false,
-        error: "SendGrid not configured properly",
+        error: 'SendGrid not configured properly',
       };
     }
 
@@ -205,14 +217,14 @@ export class SendGridProvider extends MailProvider {
 
       return {
         success: true,
-        id: result[0]?.headers?.["x-message-id"],
+        id: result[0]?.headers?.['x-message-id'],
       };
     } catch (error) {
-      console.error("SendGrid send error:", error);
+      console.error('SendGrid send error:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -224,16 +236,20 @@ export class SendGridProvider extends MailProvider {
 
 // AWS SES implementation
 export class AWSESProvider extends MailProvider {
-  private ses: any;
+  private ses: {
+    sendEmail: (params: unknown) => {
+      promise: () => Promise<{ MessageId: string }>;
+    };
+  } | null = null;
 
-  constructor(config?: any, defaultFrom?: string) {
+  constructor(config?: Record<string, unknown>, defaultFrom?: string) {
     super(defaultFrom);
 
     try {
-      const AWS = require("aws-sdk");
+      const AWS = require('aws-sdk');
 
       const sesConfig = {
-        region: process.env.AWS_REGION || "us-east-1",
+        region: process.env.AWS_REGION || 'us-east-1',
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         ...config,
@@ -241,7 +257,7 @@ export class AWSESProvider extends MailProvider {
 
       this.ses = new AWS.SES(sesConfig);
     } catch (error) {
-      console.error("Failed to initialize AWS SES:", error);
+      console.error('Failed to initialize AWS SES:', error);
     }
   }
 
@@ -249,7 +265,7 @@ export class AWSESProvider extends MailProvider {
     if (!this.ses) {
       return {
         success: false,
-        error: "AWS SES not configured properly",
+        error: 'AWS SES not configured properly',
       };
     }
 
@@ -269,13 +285,13 @@ export class AWSESProvider extends MailProvider {
         Message: {
           Body: {
             ...(options.html && {
-              Html: { Charset: "UTF-8", Data: options.html },
+              Html: { Charset: 'UTF-8', Data: options.html },
             }),
             ...(options.text && {
-              Text: { Charset: "UTF-8", Data: options.text },
+              Text: { Charset: 'UTF-8', Data: options.text },
             }),
           },
-          Subject: { Charset: "UTF-8", Data: options.subject },
+          Subject: { Charset: 'UTF-8', Data: options.subject },
         },
         Source: options.from || this.defaultFrom,
         ...(options.replyTo && { ReplyToAddresses: [options.replyTo] }),
@@ -288,11 +304,11 @@ export class AWSESProvider extends MailProvider {
         id: result.MessageId,
       };
     } catch (error) {
-      console.error("AWS SES send error:", error);
+      console.error('AWS SES send error:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -308,17 +324,17 @@ export class AWSESProvider extends MailProvider {
 // Provider factory
 export class MailProviderFactory {
   static createProvider(
-    providerType: "resend" | "nodemailer" | "sendgrid" | "awsses" = "resend",
+    providerType: 'resend' | 'nodemailer' | 'sendgrid' | 'awsses' = 'resend',
     config?: any
   ): MailProvider {
     switch (providerType.toLowerCase()) {
-      case "resend":
+      case 'resend':
         return new ResendProvider(config?.apiKey, config?.defaultFrom);
-      case "nodemailer":
+      case 'nodemailer':
         return new NodeMailerProvider(config, config?.defaultFrom);
-      case "sendgrid":
+      case 'sendgrid':
         return new SendGridProvider(config?.apiKey, config?.defaultFrom);
-      case "awsses":
+      case 'awsses':
         return new AWSESProvider(config, config?.defaultFrom);
       default:
         throw new Error(`Unsupported mail provider: ${providerType}`);
@@ -348,7 +364,7 @@ export class MailProviderFactory {
       }
     }
 
-    console.warn("No configured mail provider found, falling back to Resend");
+    console.warn('No configured mail provider found, falling back to Resend');
     return new ResendProvider();
   }
 }

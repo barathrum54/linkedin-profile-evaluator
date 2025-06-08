@@ -1,4 +1,7 @@
-import { EmailTemplates } from "./mail/template-engine";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
+
+import { EmailTemplates } from './mail/template-engine';
 
 // Re-export types for convenience
 export interface EmailOptions {
@@ -31,16 +34,16 @@ class ResendProvider implements MailProvider {
 
   constructor(defaultFrom?: string) {
     this.defaultFrom =
-      defaultFrom || process.env.DEFAULT_FROM_EMAIL || "noreply@yourapp.com";
+      defaultFrom || process.env.DEFAULT_FROM_EMAIL || 'noreply@yourapp.com';
 
     try {
       if (process.env.RESEND_API_KEY) {
         // Dynamic import to avoid issues if Resend is not installed
-        const { Resend } = require("resend");
+        const { Resend } = require('resend');
         this.resend = new Resend(process.env.RESEND_API_KEY);
       }
     } catch (error) {
-      console.warn("Resend not available:", error);
+      console.warn('Resend not available:', error);
     }
   }
 
@@ -48,7 +51,7 @@ class ResendProvider implements MailProvider {
     if (!this.resend) {
       return {
         success: false,
-        error: "Resend not configured properly",
+        error: 'Resend not configured properly',
       };
     }
 
@@ -71,11 +74,11 @@ class ResendProvider implements MailProvider {
         id: result.data?.id,
       };
     } catch (error) {
-      console.error("Resend send error:", error);
+      console.error('Resend send error:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -90,13 +93,13 @@ export class TemplateMailService {
   private provider: MailProvider;
   private defaultFrom: string;
 
-  constructor(providerType: "resend" = "resend", defaultFrom?: string) {
+  constructor(providerType: 'resend' = 'resend', defaultFrom?: string) {
     this.defaultFrom =
-      defaultFrom || process.env.DEFAULT_FROM_EMAIL || "noreply@yourapp.com";
+      defaultFrom || process.env.DEFAULT_FROM_EMAIL || 'noreply@yourapp.com';
 
     // Initialize mail provider
     switch (providerType) {
-      case "resend":
+      case 'resend':
       default:
         this.provider = new ResendProvider(this.defaultFrom);
         break;
@@ -137,11 +140,11 @@ export class TemplateMailService {
         text,
       });
     } catch (error) {
-      console.error("Failed to send welcome email:", error);
+      console.error('Failed to send welcome email:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Template rendering failed",
+          error instanceof Error ? error.message : 'Template rendering failed',
       };
     }
   }
@@ -163,16 +166,16 @@ export class TemplateMailService {
 
       return this.sendEmail({
         to,
-        subject: "Şifre Sıfırlama - LinkedIn Profil Değerlendirici",
+        subject: 'Şifre Sıfırlama - LinkedIn Profil Değerlendirici',
         html,
         text,
       });
     } catch (error) {
-      console.error("Failed to send password reset email:", error);
+      console.error('Failed to send password reset email:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Template rendering failed",
+          error instanceof Error ? error.message : 'Template rendering failed',
       };
     }
   }
@@ -198,16 +201,16 @@ export class TemplateMailService {
 
       return this.sendEmail({
         to,
-        subject: "LinkedIn Profil Değerlendirme Sonuçlarınız",
+        subject: 'LinkedIn Profil Değerlendirme Sonuçlarınız',
         html,
         text,
       });
     } catch (error) {
-      console.error("Failed to send evaluation results email:", error);
+      console.error('Failed to send evaluation results email:', error);
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : "Template rendering failed",
+          error instanceof Error ? error.message : 'Template rendering failed',
       };
     }
   }
@@ -238,7 +241,7 @@ export class TemplateMailService {
           </p>
         </div>
       `;
-      emailOptions.text = message.replace(/<[^>]*>/g, "");
+      emailOptions.text = message.replace(/<[^>]*>/g, '');
     } else {
       emailOptions.text = message;
     }
@@ -251,13 +254,13 @@ export class TemplateMailService {
    */
   async sendBulkEmails(emails: EmailOptions[]): Promise<EmailResponse[]> {
     const results = await Promise.allSettled(
-      emails.map((emailOptions) => this.sendEmail(emailOptions))
+      emails.map(emailOptions => this.sendEmail(emailOptions))
     );
 
-    return results.map((result) =>
-      result.status === "fulfilled"
+    return results.map(result =>
+      result.status === 'fulfilled'
         ? result.value
-        : { success: false, error: "Failed to send email" }
+        : { success: false, error: 'Failed to send email' }
     );
   }
 
@@ -280,7 +283,7 @@ export class TemplateMailService {
 }
 
 // Export a singleton instance
-export const mailService = new TemplateMailService("resend");
+export const mailService = new TemplateMailService('resend');
 
 // Backward compatibility - re-export the old interface
 export { TemplateMailService as MailService };
